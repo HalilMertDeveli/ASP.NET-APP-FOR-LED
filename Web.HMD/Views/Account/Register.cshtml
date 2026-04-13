@@ -1,0 +1,56 @@
+@model Web.HMD.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+<div class="row align-items-center auth-container vh-100 mt-negative flex-row-reverse">
+    <div class="col-md-6 d-none d-md-block h-100 p-0 position-relative auth-bg-register">
+        <div class="auth-overlay d-flex align-items-center justify-content-center flex-column text-white p-5">
+            <h2 class="display-5 fw-bold mb-3 animation-slide-up">Aramıza Katılın</h2>
+            <p class="lead animation-slide-up-delay">Hemen hesabınızı oluşturun ve profesyonel LED onarım hizmetlerimizden faydalanın.</p>
+        </div>
+    </div>
+    <div class="col-md-6 pb-5 pb-md-0 position-relative">
+        <div class="card border-0 auth-form-card mx-auto shadow-lg animation-fade-in">
+            <div class="card-body p-5">
+                <div class="text-center mb-5">
+                    <h3 class="fw-bolder">Yeni Hesap Oluştur</h3>
+                    <p class="text-muted">Aşağıdaki formu doldurarak kayıt işlemlerini tamamlayın.</p>
+                </div>
+                
+                <form asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 font-weight-bold"></div>
+
+                    <div class="form-floating mb-4 form-group-animated">
+                        <input asp-for="FullName" type="text" class="form-control auth-input" id="floatingName" placeholder="Adınız Soyadınız" required autocomplete="off">
+                        <label for="floatingName">İsim ve Soyisim</label>
+                        <span asp-validation-for="FullName" class="text-danger small mt-1 d-block text-start"></span>
+                    </div>
+
+                    <div class="form-floating mb-4 form-group-animated">
+                        <input asp-for="Email" type="email" class="form-control auth-input" id="floatingEmail" placeholder="ornek@mail.com" required autocomplete="off">
+                        <label for="floatingEmail">E-Posta Adresiniz</label>
+                        <span asp-validation-for="Email" class="text-danger small mt-1 d-block text-start"></span>
+                    </div>
+                    
+                    <div class="form-floating mb-4 form-group-animated">
+                        <input asp-for="Phone" type="tel" class="form-control auth-input" id="floatingPhone" placeholder="0555..." autocomplete="off">
+                        <label for="floatingPhone">Telefon Numaranız</label>
+                        <span asp-validation-for="Phone" class="text-danger small mt-1 d-block text-start"></span>
+                    </div>
+
+                    <div class="form-floating mb-4 form-group-animated">
+                        <input asp-for="Password" type="password" class="form-control auth-input" id="floatingRegPass" placeholder="Şifreniz" required autocomplete="new-password">
+                        <label for="floatingRegPass">Şifreniz</label>
+                        <span asp-validation-for="Password" class="text-danger small mt-1 d-block text-start"></span>
+                    </div>
+                    
+                    <button class="btn btn-primary auth-submit-btn w-100 py-3 mb-4" type="submit">Kayıt Ol</button>
+                    
+                    <p class="text-center text-muted mb-0">Zaten bir hesabınız var mı? <a asp-controller="Account" asp-action="Login" class="text-decoration-none fw-bold redirect-link">Giriş Yapın</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

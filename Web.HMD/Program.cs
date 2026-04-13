@@ -1,5 +1,6 @@
 using Entity.HMD.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Web.HMD
 {
@@ -13,9 +14,15 @@ namespace Web.HMD
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<LedContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("LedAppDb")));
 
-
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/Logout";
+                    options.Cookie.Name = "LedAppCookie";
+                });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -29,6 +36,7 @@ namespace Web.HMD
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();

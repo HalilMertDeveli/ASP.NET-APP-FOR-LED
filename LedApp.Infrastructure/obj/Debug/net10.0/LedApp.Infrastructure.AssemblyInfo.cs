@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LedApp.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dfd2800ad6a6d284b726e848d92d845490ec670a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cbec4f96d098a88726fbd6c071f9576012f0ba61")]
 [assembly: System.Reflection.AssemblyProductAttribute("LedApp.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LedApp.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

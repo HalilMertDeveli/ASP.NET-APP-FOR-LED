@@ -155,7 +155,6 @@ C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\scopedcss\bundle\LedApp.Web.styles.css
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\scopedcss\projectbundle\LedApp.Web.bundle.scp.css
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\e02r51egau-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\sxwu2nur64-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\b5nnr3xb70-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\m2srnf42w4-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -224,7 +223,8 @@ C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\staticwebassets.development.json
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\swae.build.ex.cache
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\LedApp.Web.csproj.Up2Date
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\LedApp.Web.genruntimeconfig.cache
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\ref\LedApp.Web.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\e02r51egau-{0}-pfy5drmf2l-pfy5drmf2l.gz
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

@@ -1,8 +1,52 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model IEnumerable<Web.HMD.Models.LedRepairViewModel>
+
+@{
+    ViewData["Title"] = "LED Tamir Servisleri";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="repair-container">
+    <!-- Giriş/Kayıt başarılı mesajı popup olarak ekrana gelecek -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm text-center fw-bold" role="alert">
+            <i class="me-2 text-success"></i>@TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="text-center mb-5 animation-fade-in">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <!-- Kullanıcı Giriş Yaptığında Göreceği Selamlama -->
+            <h1 class="display-4 fw-bold gradient-text">Hoş Geldin, @User.Identity.Name!</h1>
+            <p class="lead text-muted">Aşağıdan led sistemleriniz için uzman onarım hizmetlerimizi inceleyebilirsiniz.</p>
+        }
+        else
+        {
+            <!-- Kullanıcı Giriş Yapmadığında Normal Ziyaretçi Ekranı -->
+            <h1 class="display-4 fw-bold gradient-text">Profesyonel LED Ekran Tamiri</h1>
+            <p class="lead text-muted">Açıklayıcı, hızlı ve garantili çözümlerle ekranlarınızı hayata döndürüyoruz.</p>
+        }
+    </div>
+
+    <div class="row g-4">
+        @foreach (var service in Model)
+        {
+            <div class="col-md-6 col-lg-3">
+                <div class="card repair-card h-100">
+                    <div class="card-img-wrapper">
+                        <img src="@service.ImageUrl" class="card-img-top" alt="@service.Title">
+                        <div class="price-badge">₺@service.Price</div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">@service.Title</h5>
+                        <p class="card-text text-secondary">@service.Description</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pb-3 text-center">
+                        <button class="btn btn-primary premium-btn w-100">Hemen Teklif Al</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
