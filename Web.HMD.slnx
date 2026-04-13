@@ -1,5 +1,4 @@
 <Solution>
-  <Project Path="Entity.HMD/Entity.HMD.csproj" />
   <Project Path="LedApp.API/LedApp.API.csproj" />
   <Project Path="LedApp.Application/LedApp.Application.csproj" />
   <Project Path="LedApp.Domain/LedApp.Domain.csproj" />

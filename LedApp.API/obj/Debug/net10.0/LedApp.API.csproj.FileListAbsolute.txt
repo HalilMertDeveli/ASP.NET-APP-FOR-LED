@@ -1,0 +1,12 @@
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\bin\Debug\net10.0\LedApp.API.deps.json
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\bin\Debug\net10.0\LedApp.API.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\bin\Debug\net10.0\LedApp.API.pdb
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\obj\Debug\net10.0\LedApp.API.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\obj\Debug\net10.0\LedApp.API.AssemblyInfoInputs.cache
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\obj\Debug\net10.0\LedApp.API.AssemblyInfo.cs
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\obj\Debug\net10.0\LedApp.API.csproj.CoreCompileInputs.cache
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\obj\Debug\net10.0\LedApp.API.sourcelink.json
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\obj\Debug\net10.0\LedApp.API.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\obj\Debug\net10.0\refint\LedApp.API.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\obj\Debug\net10.0\LedApp.API.pdb
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.API\obj\Debug\net10.0\ref\LedApp.API.dll

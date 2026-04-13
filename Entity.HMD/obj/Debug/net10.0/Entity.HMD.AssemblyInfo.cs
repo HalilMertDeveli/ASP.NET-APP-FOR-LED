@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Entity.HMD")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26f7ca6daab6144d9349bccd4888a3a76d399127")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dfd2800ad6a6d284b726e848d92d845490ec670a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Entity.HMD")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Entity.HMD")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

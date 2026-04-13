@@ -1,0 +1,12 @@
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\bin\Debug\net10.0\LedApp.Domain.deps.json
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\bin\Debug\net10.0\LedApp.Domain.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\bin\Debug\net10.0\LedApp.Domain.pdb
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\obj\Debug\net10.0\LedApp.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\obj\Debug\net10.0\LedApp.Domain.AssemblyInfoInputs.cache
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\obj\Debug\net10.0\LedApp.Domain.AssemblyInfo.cs
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\obj\Debug\net10.0\LedApp.Domain.csproj.CoreCompileInputs.cache
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\obj\Debug\net10.0\LedApp.Domain.sourcelink.json
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\obj\Debug\net10.0\LedApp.Domain.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\obj\Debug\net10.0\refint\LedApp.Domain.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\obj\Debug\net10.0\LedApp.Domain.pdb
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Domain\obj\Debug\net10.0\ref\LedApp.Domain.dll

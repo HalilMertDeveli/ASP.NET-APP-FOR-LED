@@ -1,4 +1,6 @@
 ﻿
+using Entity.HMD.Entity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;

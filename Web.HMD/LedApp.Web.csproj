@@ -20,11 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Entity.HMD\Entity.HMD.csproj" />
+    <Folder Include="Middleware\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Middleware\" />
+    <ProjectReference Include="..\LedApp.Infrastructure\LedApp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

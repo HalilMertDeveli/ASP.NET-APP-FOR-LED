@@ -1029,18 +1029,29 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
-      "Entity.HMD/1.0.0": {
+      "LedApp.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/LedApp.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LedApp.Domain.dll": {}
+        }
+      },
+      "LedApp.Infrastructure/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
+          "LedApp.Domain": "1.0.0",
           "Microsoft.EntityFrameworkCore": "10.0.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "10.0.5"
         },
         "compile": {
-          "bin/placeholder/Entity.HMD.dll": {}
+          "bin/placeholder/LedApp.Infrastructure.dll": {}
         },
         "runtime": {
-          "bin/placeholder/Entity.HMD.dll": {}
+          "bin/placeholder/LedApp.Infrastructure.dll": {}
         }
       }
     }
@@ -3086,15 +3097,20 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Entity.HMD/1.0.0": {
+    "LedApp.Domain/1.0.0": {
       "type": "project",
-      "path": "../Entity.HMD/Entity.HMD.csproj",
-      "msbuildProject": "../Entity.HMD/Entity.HMD.csproj"
+      "path": "../LedApp.Domain/LedApp.Domain.csproj",
+      "msbuildProject": "../LedApp.Domain/LedApp.Domain.csproj"
+    },
+    "LedApp.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../LedApp.Infrastructure/LedApp.Infrastructure.csproj",
+      "msbuildProject": "../LedApp.Infrastructure/LedApp.Infrastructure.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
-      "Entity.HMD >= 1.0.0",
+      "LedApp.Infrastructure >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 10.0.5",
       "Microsoft.EntityFrameworkCore.Design >= 10.0.5",
       "Microsoft.EntityFrameworkCore.SqlServer >= 10.0.5",
@@ -3135,8 +3151,8 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\Entity.HMD\\Entity.HMD.csproj": {
-              "projectPath": "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\Entity.HMD\\Entity.HMD.csproj"
+            "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\LedApp.Infrastructure\\LedApp.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\LedApp.Infrastructure\\LedApp.Infrastructure.csproj"
             }
           }
         }
