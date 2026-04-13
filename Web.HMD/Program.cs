@@ -1,3 +1,6 @@
+using Entity.HMD.Context;
+using Microsoft.EntityFrameworkCore;
+
 namespace Web.HMD
 {
     public class Program
@@ -8,6 +11,10 @@ namespace Web.HMD
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<LedContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
             var app = builder.Build();
 

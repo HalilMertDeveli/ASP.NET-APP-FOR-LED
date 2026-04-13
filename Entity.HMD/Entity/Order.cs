@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Entity.HMD.Entity
+{
+    public class Order
+    {
+        public int Id { get; set; }
+
+        public int Quantity { get; set; }
+
+        public decimal TotalPrice { get; set; }
+
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+
+        public string Status { get; set; }
+
+        // User
+        public int UserId { get; set; }
+        public User User { get; set; }
+
+        // Product
+        public int ProductId { get; set; }
+        public Product Product { get; set; }
+    }
+}

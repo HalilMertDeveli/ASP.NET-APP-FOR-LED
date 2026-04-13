@@ -1,3 +1,8 @@
 <Solution>
-  <Project Path="Web.HMD/Web.HMD.csproj" />
+  <Project Path="Entity.HMD/Entity.HMD.csproj" />
+  <Project Path="LedApp.API/LedApp.API.csproj" />
+  <Project Path="LedApp.Application/LedApp.Application.csproj" />
+  <Project Path="LedApp.Domain/LedApp.Domain.csproj" />
+  <Project Path="LedApp.Infrastructure/LedApp.Infrastructure.csproj" />
+  <Project Path="Web.HMD/LedApp.Web.csproj" />
 </Solution>

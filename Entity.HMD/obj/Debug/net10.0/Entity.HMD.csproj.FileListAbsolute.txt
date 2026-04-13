@@ -1,0 +1,15 @@
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\bin\Debug\net10.0\Entity.HMD.deps.json
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\bin\Debug\net10.0\Entity.HMD.runtimeconfig.json
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\bin\Debug\net10.0\Entity.HMD.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\bin\Debug\net10.0\Entity.HMD.pdb
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\Entity.HMD.csproj.AssemblyReference.cache
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\Entity.HMD.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\Entity.HMD.AssemblyInfoInputs.cache
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\Entity.HMD.AssemblyInfo.cs
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\Entity.HMD.csproj.CoreCompileInputs.cache
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\Entity.HMD.sourcelink.json
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\Entity.HMD.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\refint\Entity.HMD.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\Entity.HMD.pdb
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\Entity.HMD.genruntimeconfig.cache
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Entity.HMD\obj\Debug\net10.0\ref\Entity.HMD.dll
