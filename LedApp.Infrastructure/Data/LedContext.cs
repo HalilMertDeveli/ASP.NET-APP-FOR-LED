@@ -1,4 +1,4 @@
-﻿
+
 using Entity.HMD.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,6 +19,7 @@ namespace Entity.HMD.Context
         public DbSet<Product> Products { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<PanelSupportFile> PanelSupportFiles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

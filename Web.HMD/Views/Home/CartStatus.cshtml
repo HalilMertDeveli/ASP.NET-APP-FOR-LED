@@ -1,0 +1,55 @@
+@model IEnumerable<Web.HMD.Models.LedRepairViewModel>
+
+@{
+    ViewData["Title"] = "Sepet Durumu";
+    var total = Model.Sum(x => x.Price);
+}
+
+<section class="cart-status-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h4 mb-0">Sepet Durumu</h1>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-sm">Servislere Dön</a>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Sepetiniz şu an boş.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Paket</th>
+                        <th>Tahmini Süre</th>
+                        <th>Fiyat</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td>@item.EstimatedTime</td>
+                            <td>₺@item.Price</td>
+                            <td class="text-end">
+                                <form asp-controller="Home" asp-action="RemoveFromCart" method="post">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Kaldır</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="text-end fw-bold">Toplam: ₺@total</div>
+    }
+</section>

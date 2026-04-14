@@ -1,11 +1,8 @@
-using Entity.HMD.Context;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
-using LedApp.Domain.Interfaces;
-using LedApp.Infrastructure.Repositories;
-using LedApp.Application.Services;
+using LedApp.Application;
+using LedApp.Infrastructure;
 
 namespace Web.HMD
 {
@@ -17,15 +14,15 @@ namespace Web.HMD
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
-            builder.Services.AddDbContext<LedContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("LedAppDb")));
-
-            // ONION MİMARİSİ: DEPENDENCY INJECTION (Bağımlılık Enjeksiyonu)
-            // Sistem "IGenericRepository" isteri gördüğünde "GenericRepository" sınıfını verecek.
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddSession(options =>
+            {
+                options.Cookie.Name = ".LedApp.Session";
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            builder.Services.AddApplication();
+            builder.Services.AddInfrastructure(builder.Configuration);
 
             var authenticationBuilder = builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -70,6 +67,7 @@ namespace Web.HMD
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthentication();
             app.UseAuthorization();

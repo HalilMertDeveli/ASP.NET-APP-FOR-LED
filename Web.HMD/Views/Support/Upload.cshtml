@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Panel Dosya Yukleme";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Panel Dosya Yukleme</h4>
+        </div>
+        <div class="card-body">
+            @if (TempData["UploadMessage"] != null)
+            {
+                <div class="alert alert-info">@TempData["UploadMessage"]</div>
+            }
+
+            <form asp-controller="Support" asp-action="Upload" method="post" enctype="multipart/form-data" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Panel Turu (SMD/COB)</label>
+                    <input name="panelType" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Chipset Degeri</label>
+                    <input name="chipsetValue" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Decoder Degeri</label>
+                    <input name="decoderValue" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">P Degeri</label>
+                    <input name="pValue" class="form-control" required />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Dosya</label>
+                    <input type="file" name="file" class="form-control" required />
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

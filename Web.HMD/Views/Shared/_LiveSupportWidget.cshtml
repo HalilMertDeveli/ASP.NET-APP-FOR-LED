@@ -1,0 +1,28 @@
+<div id="liveSupportWidget" class="live-support-widget">
+    <button id="liveSupportToggle" type="button" class="live-support-toggle" aria-label="Canli destek">
+        <span class="live-dot"></span>
+        Canli Destek
+    </button>
+
+    <div id="liveSupportPanel" class="live-support-panel" aria-hidden="true">
+        <div class="live-support-header">
+            <strong>LED Service Pro Destek</strong>
+            <span class="small">Cevrim ici</span>
+        </div>
+
+        <div id="liveSupportMessages" class="live-support-messages">
+            <div class="msg bot">Merhaba! Sorunuzu yazin, size yardimci olayim.</div>
+        </div>
+
+        <div class="live-support-suggestions">
+            <button type="button" class="suggestion-btn" data-question="Servis sureci kac gun suruyor?">Servis sureci kac gun suruyor?</button>
+            <button type="button" class="suggestion-btn" data-question="Odeme secenekleri nelerdir?">Odeme secenekleri nelerdir?</button>
+            <button type="button" class="suggestion-btn" data-question="Panel dosyasi bulmak istiyorum.">Panel dosyasi bul</button>
+        </div>
+
+        <form id="liveSupportForm" class="live-support-form">
+            <input id="liveSupportInput" type="text" class="form-control form-control-sm" placeholder="Mesajinizi yazin..." />
+            <button type="submit" class="btn btn-sm btn-primary">Gonder</button>
+        </form>
+    </div>
+</div>

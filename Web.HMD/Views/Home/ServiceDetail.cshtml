@@ -1,0 +1,30 @@
+@model Web.HMD.Models.LedRepairViewModel
+
+@{
+    ViewData["Title"] = "Servis Detayı";
+}
+
+<section class="service-detail-page">
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <img src="@Model.ImageUrl" class="img-fluid rounded-4 shadow-sm" alt="@Model.Title" />
+        </div>
+        <div class="col-lg-6">
+            <div class="service-detail-card p-4">
+                <h1 class="h3 mb-3">@Model.Title</h1>
+                <p class="text-secondary mb-3">@Model.Description</p>
+                <p class="mb-3">@Model.Details</p>
+                <div class="d-flex gap-3 mb-4">
+                    <span class="badge text-bg-primary p-2">Fiyat: ₺@Model.Price</span>
+                    <span class="badge text-bg-secondary p-2">Süre: @Model.EstimatedTime</span>
+                </div>
+
+                <form asp-controller="Home" asp-action="AddToCart" method="post" class="d-grid gap-2">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-primary">Sepete Ekle</button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Paket Listesine Dön</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "+3ldFay/5/8=",
+  "dgSpecHash": "Ho+cg4M8vYg=",
   "success": true,
   "projectFilePath": "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\LedApp.Application\\LedApp.Application.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512"
+    "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
+    "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.0\\microsoft.extensions.dependencyinjection.abstractions.10.0.0.nupkg.sha512"
   ],
   "logs": []
 }

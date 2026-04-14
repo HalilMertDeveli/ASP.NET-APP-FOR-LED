@@ -1,0 +1,47 @@
+.auth-body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+    color: #0f172a;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.auth-shell {
+    min-height: 100vh;
+}
+
+.auth-brand {
+    text-decoration: none;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.auth-brand:hover {
+    color: #1d4ed8;
+}
+
+.auth-card {
+    border-radius: 14px;
+    background: #fff;
+}
+
+.auth-info-panel {
+    border-radius: 14px;
+    padding: 1.5rem;
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+.auth-info-panel h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.auth-info-panel p,
+.auth-info-panel li {
+    color: #cbd5e1;
+}
+
+.auth-info-panel ul {
+    padding-left: 1.2rem;
+}

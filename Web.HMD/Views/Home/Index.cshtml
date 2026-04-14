@@ -4,59 +4,91 @@
     ViewData["Title"] = "LED Tamir Servisleri";
 }
 
-<div class="repair-container antigravity-home">
-    <div class="antigravity-bg" aria-hidden="true">
-        <span class="ag-orb orb-1"></span>
-        <span class="ag-orb orb-2"></span>
-        <span class="ag-orb orb-3"></span>
-        <span class="ag-orb orb-4"></span>
-        <span class="ag-grid"></span>
-    </div>
-
-    <div class="antigravity-content">
-    <!-- Giriş/Kayıt başarılı mesajı popup olarak ekrana gelecek -->
-    @if (TempData["Message"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm text-center fw-bold" role="alert">
-            <i class="me-2 text-success"></i>@TempData["Message"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+<div class="home-long-page">
+    <section class="home-hero">
+        <div class="home-hero-bg" aria-hidden="true">
+            <span class="home-orb ho-1"></span>
+            <span class="home-orb ho-2"></span>
+            <span class="home-orb ho-3"></span>
+            <span class="home-grid"></span>
         </div>
-    }
+        <div class="home-hero-content">
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show shadow-sm text-center fw-bold mb-4" role="alert">
+                    <i class="me-2 text-success"></i>@TempData["Message"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+                </div>
+            }
 
-    <div class="text-center mb-5 animation-fade-in">
-        @if (User.Identity.IsAuthenticated)
-        {
-            <!-- Kullanıcı Giriş Yaptığında Göreceği Selamlama -->
-            <h1 class="display-4 fw-bold gradient-text">Hoş Geldin, @User.Identity.Name!</h1>
-            <p class="lead text-muted">Aşağıdan led sistemleriniz için uzman onarım hizmetlerimizi inceleyebilirsiniz.</p>
-        }
-        else
-        {
-            <!-- Kullanıcı Giriş Yapmadığında Normal Ziyaretçi Ekranı -->
-            <h1 class="display-4 fw-bold gradient-text">Profesyonel LED Ekran Tamiri</h1>
-            <p class="lead text-muted">Açıklayıcı, hızlı ve garantili çözümlerle ekranlarınızı hayata döndürüyoruz.</p>
-        }
-    </div>
+            @if (User?.Identity?.IsAuthenticated == true)
+            {
+                <h1 class="display-4 fw-bold home-title">Hos Geldin, @(User?.Identity?.Name ?? "Kullanici")</h1>
+                <p class="lead home-subtitle">Paneline devam et, LED servis operasyonlarini tek ekrandan yonet.</p>
+            }
+            else
+            {
+                <h1 class="display-4 fw-bold home-title">Profesyonel LED Servis ve Operasyon Platformu</h1>
+                <p class="lead home-subtitle">Animasyonlu, modern ve hizli altyapi ile LED ekran sureclerini uctan uca yonet.</p>
+            }
 
-    <div class="row g-4">
-        @foreach (var service in Model)
-        {
-            <div class="col-md-6 col-lg-3">
-                <div class="card repair-card h-100">
-                    <div class="card-img-wrapper">
-                        <img src="@service.ImageUrl" class="card-img-top" alt="@service.Title">
-                        <div class="price-badge">₺@service.Price</div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">@service.Title</h5>
-                        <p class="card-text text-secondary">@service.Description</p>
-                    </div>
-                    <div class="card-footer bg-transparent border-0 pb-3 text-center">
-                        <button class="btn btn-primary premium-btn w-100">Hemen Teklif Al</button>
+            <div class="home-cta-row">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-light btn-lg px-4">Hemen Giris Yap</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg px-4">Yeni Hesap Olustur</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-stats-section">
+        <div class="row g-3">
+            <div class="col-md-3"><div class="home-stat-card"><h4>2.5K+</h4><p>Aylik Servis Kaydi</p></div></div>
+            <div class="col-md-3"><div class="home-stat-card"><h4>99.2%</h4><p>Zamaninda Teslimat</p></div></div>
+            <div class="col-md-3"><div class="home-stat-card"><h4>7/24</h4><p>Destek Takibi</p></div></div>
+            <div class="col-md-3"><div class="home-stat-card"><h4>420+</h4><p>Kurumsal Musteri</p></div></div>
+        </div>
+    </section>
+
+    <section class="home-services-section">
+        <div class="section-head">
+            <h2>One Cikan LED Servis Paketleri</h2>
+            <p>Isletmene uygun hizmeti sec, teklif al ve sureci hizli baslat.</p>
+        </div>
+        <div class="row g-4">
+            @foreach (var service in Model)
+            {
+                <div class="col-md-6 col-xl-3">
+                    <div class="card repair-card h-100">
+                        <div class="card-img-wrapper">
+                            <img src="@service.ImageUrl" class="card-img-top" alt="@service.Title">
+                            <div class="price-badge">₺@service.Price</div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@service.Title</h5>
+                            <p class="card-text text-secondary">@service.Description</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pb-3 text-center">
+                            <a asp-controller="Home" asp-action="ServiceDetail" asp-route-id="@service.Id" class="btn btn-primary premium-btn w-100">Detayları Gör</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-    </div>
+            }
+        </div>
+    </section>
+
+    <section class="home-process-section">
+        <div class="section-head">
+            <h2>Nasil Ilerliyor?</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4"><div class="process-card"><span>1</span><h5>Talep Olustur</h5><p>Ariza ve ihtiyac detaylarini sisteme gir.</p></div></div>
+            <div class="col-md-4"><div class="process-card"><span>2</span><h5>Canli Takip Et</h5><p>Durum degisimlerini panelden anlik izle.</p></div></div>
+            <div class="col-md-4"><div class="process-card"><span>3</span><h5>Teslim Al</h5><p>Testi tamamlanan urunu guvenle teslim al.</p></div></div>
+        </div>
+    </section>
+
+    <section class="home-bottom-cta">
+        <h3>LED Operasyonunu Bir Ust Seviyeye Tasimaya Hazir misin?</h3>
+        <p>Hemen hesap olustur ve tum teknik surecleri modern bir panelde yonetmeye basla.</p>
+        <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-4">Ucretsiz Basla</a>
+    </section>
 </div>
