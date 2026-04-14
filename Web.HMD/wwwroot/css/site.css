@@ -19,10 +19,120 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+.led-animated-bg {
+    background: radial-gradient(circle at 20% 20%, #0b1220 0%, #111827 42%, #030712 100%);
+}
+
+.led-site-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(34, 211, 238, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+    animation: led-grid-drift 18s linear infinite;
+}
+
+.led-site-orb {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(6px);
+    opacity: 0.45;
+}
+
+.led-site-orb-1 {
+    width: 380px;
+    height: 380px;
+    top: -120px;
+    left: -90px;
+    background: rgba(56, 189, 248, 0.35);
+    animation: led-orb-float-1 15s ease-in-out infinite;
+}
+
+.led-site-orb-2 {
+    width: 320px;
+    height: 320px;
+    bottom: -110px;
+    right: -70px;
+    background: rgba(99, 102, 241, 0.35);
+    animation: led-orb-float-2 17s ease-in-out infinite;
+}
+
+.led-site-orb-3 {
+    width: 260px;
+    height: 260px;
+    top: 35%;
+    left: 45%;
+    background: rgba(34, 211, 238, 0.22);
+    animation: led-orb-float-3 13s ease-in-out infinite;
+}
+
+.led-site-scanline {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(56, 189, 248, 0.02) 45%,
+        rgba(56, 189, 248, 0.10) 50%,
+        rgba(56, 189, 248, 0.02) 55%,
+        transparent 100%
+    );
+    animation: led-screen-scan 7s linear infinite;
+}
+
 .led-main-navbar {
     background: linear-gradient(135deg, #0b1220, #162238);
     border: 1px solid rgba(99, 102, 241, 0.18);
     border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(2, 6, 23, 0.35);
+}
+
+.led-sidebar-trigger {
+    color: #dbeafe;
+    border: 1px solid rgba(125, 211, 252, 0.35);
+    background: rgba(30, 41, 59, 0.55);
+}
+
+.led-sidebar-trigger:hover {
+    color: #e0f2fe;
+    border-color: rgba(34, 211, 238, 0.6);
+    background: rgba(30, 41, 59, 0.85);
+}
+
+.led-offcanvas {
+    background: linear-gradient(165deg, #020617, #0f172a 55%, #1e293b);
+    color: #dbeafe;
+    border-right: 1px solid rgba(99, 102, 241, 0.2);
+    width: min(88vw, 360px);
+}
+
+.led-side-link {
+    display: block;
+    color: #cbd5e1;
+    text-decoration: none;
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    background: rgba(15, 23, 42, 0.45);
+    border-radius: 10px;
+    padding: 0.65rem 0.8rem;
+    margin-bottom: 0.6rem;
+    transition: all 0.2s ease;
+}
+
+.led-side-link:hover {
+    color: #67e8f9;
+    border-color: rgba(34, 211, 238, 0.5);
+    transform: translateX(2px);
+}
+
+.led-side-box {
+    border: 1px solid rgba(100, 116, 139, 0.35);
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.45);
+    padding: 0.9rem;
 }
 
 .led-brand {
@@ -166,6 +276,26 @@ body {
 .section-head p {
     color: #64748b;
     margin-bottom: 1rem;
+}
+
+.service-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.service-count-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.35rem 0.8rem;
+    margin-top: 0.25rem;
 }
 
 .process-card {
@@ -362,6 +492,11 @@ body {
     color: #0f172a;
     font-size: 1.25rem;
     margin-bottom: 0.75rem;
+}
+
+.service-actions {
+    display: grid;
+    gap: 0.55rem;
 }
 
 .premium-btn {
@@ -789,4 +924,127 @@ body {
         opacity: 1;
         transform: scale(1);
     }
+}
+
+@keyframes led-grid-drift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(32px, 32px); }
+}
+
+@keyframes led-orb-float-1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(60px, 40px); }
+}
+
+@keyframes led-orb-float-2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-55px, -45px); }
+}
+
+@keyframes led-orb-float-3 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-40px, 35px); }
+}
+
+@keyframes led-screen-scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* Global centered toast-like alerts */
+.app-toast-center {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    width: min(92vw, 680px);
+    margin: 0;
+    text-align: center;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.18);
+}
+
+/* Support admin upload ui */
+.support-admin-page {
+    max-width: 1080px;
+}
+
+.support-page-hero {
+    border-radius: 16px;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #e2e8f0;
+    padding: 1.25rem;
+}
+
+.support-card {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.support-card-header {
+    background: linear-gradient(135deg, #0f172a, #1d4ed8);
+    color: #fff;
+}
+
+.support-input {
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+}
+
+.support-input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+
+.support-btn {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.support-dropzone {
+    position: relative;
+    border: 2px dashed #93c5fd;
+    border-radius: 14px;
+    background: linear-gradient(160deg, #f8fafc, #eff6ff);
+    padding: 1.4rem 1rem;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.support-dropzone.dragover {
+    border-color: #2563eb;
+    background: linear-gradient(160deg, #eff6ff, #dbeafe);
+    transform: translateY(-1px);
+}
+
+.support-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.support-dropzone-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    color: #334155;
+}
+
+.support-dropzone-content strong {
+    color: #1e293b;
+}
+
+.support-file-list {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.support-file-item {
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.92rem;
+    color: #334155;
 }

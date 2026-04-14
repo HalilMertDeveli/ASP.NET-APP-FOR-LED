@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Admin Giris";
+}
+
+<section class="container py-5 admin-login-page" style="max-width: 760px;">
+    <div class="row g-4 align-items-center">
+        <div class="col-md-6">
+            <h2 class="fw-bold mb-2 text-dark">Admin Arayuz Girisi</h2>
+            <p class="text-dark mb-0">Yonetim paneline gecip dosya, destek ve sistem islemlerini yonetin.</p>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-header admin-login-header">
+                    <h4 class="mb-0">Admin Giris</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["AdminLoginError"] != null)
+                    {
+                        <div class="alert alert-danger app-toast-center">@TempData["AdminLoginError"]</div>
+                    }
+
+                    <form asp-controller="Admin" asp-action="Login" method="post" class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold text-dark">Kullanici Adi</label>
+                            <input name="username" class="form-control" required />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold text-dark">Sifre</label>
+                            <input name="password" type="password" class="form-control" required />
+                        </div>
+                        <div class="col-12 d-grid gap-2">
+                            <button type="submit" class="btn btn-primary w-100">Giris Yap</button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Ana Sayfaya Don</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .admin-login-page {
+        background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 16px;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .admin-login-header {
+        background: #0f172a;
+        color: #f8fafc;
+    }
+
+    .admin-login-page .form-control {
+        border: 1px solid #94a3b8;
+        color: #0f172a;
+        background-color: #ffffff;
+    }
+
+    .admin-login-page .form-control:focus {
+        border-color: #1d4ed8;
+        box-shadow: 0 0 0 0.2rem rgba(29, 78, 216, 0.18);
+    }
+</style>

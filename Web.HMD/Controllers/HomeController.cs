@@ -124,6 +124,46 @@ namespace Web.HMD.Controllers
                     ImageUrl = "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&q=80",
                     Details = "Dış yüzey ve bağlantı noktaları temizlenir, conta yenileme yapılır, kabin su ve toz dayanım testinden geçirilir.",
                     EstimatedTime = "2-3 iş günü"
+                },
+                new LedRepairViewModel
+                {
+                    Id = 5,
+                    Title = "LED Kalibrasyon ve Renk Ayari",
+                    Description = "Parlaklik, gamma ve renk dengesini profesyonel ekipmanlarla optimize eder.",
+                    Price = 1200,
+                    ImageUrl = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500&q=80",
+                    Details = "Tum panellerde renk farkliliklari giderilir, goruntu butunlugu ve canliligi iyilestirilir.",
+                    EstimatedTime = "3-6 saat"
+                },
+                new LedRepairViewModel
+                {
+                    Id = 6,
+                    Title = "Modul Degisimi ve Lehim Onarimi",
+                    Description = "Hasarli modul, soket ve lehim noktalarini hassas onarimla yeniler.",
+                    Price = 1750,
+                    ImageUrl = "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=500&q=80",
+                    Details = "Kart seviyesi analiz ile arizali bolge belirlenir, parca degisimi yapilarak test edilir.",
+                    EstimatedTime = "1 iş günü"
+                },
+                new LedRepairViewModel
+                {
+                    Id = 7,
+                    Title = "Kurulum ve Saha Devreye Alma",
+                    Description = "Yeni LED ekranlarin montaji, kablolama ve yayin entegrasyonunu tamamlar.",
+                    Price = 4500,
+                    ImageUrl = "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&q=80",
+                    Details = "Saha kesifi, guc ve data planlamasi ile sorunsuz devreye alma hizmeti sunulur.",
+                    EstimatedTime = "1-2 iş günü"
+                },
+                new LedRepairViewModel
+                {
+                    Id = 8,
+                    Title = "Acil Servis ve Yerinde Mudahale",
+                    Description = "Kritik arizalara oncelikli ekip yonlendirmesi ile hizli mudahale eder.",
+                    Price = 2500,
+                    ImageUrl = "https://images.unsplash.com/photo-1556155092-490a1ba16284?w=500&q=80",
+                    Details = "Acil durumlarda yerinde kontrol, parca degisimi ve gecici/kalici cozum saglanir.",
+                    EstimatedTime = "2-6 saat"
                 }
             };
         }

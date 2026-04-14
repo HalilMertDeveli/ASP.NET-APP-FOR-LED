@@ -38,6 +38,19 @@
           }
         }
       },
+      "BCrypt.Net-Next/4.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net10.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0/BCrypt.Net-Next.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "type": "package",
         "compile": {
@@ -1246,6 +1259,21 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "LedApp.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "BCrypt.Net-Next": "4.1.0",
+          "LedApp.Domain": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.0"
+        },
+        "compile": {
+          "bin/placeholder/LedApp.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LedApp.Application.dll": {}
+        }
+      },
       "LedApp.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
@@ -1297,6 +1325,35 @@
         "lib/net8.0/Azure.Identity.xml",
         "lib/netstandard2.0/Azure.Identity.dll",
         "lib/netstandard2.0/Azure.Identity.xml"
+      ]
+    },
+    "BCrypt.Net-Next/4.1.0": {
+      "sha512": "5YT3DKllmtkyW68PjURu/V1TOe4MKiByKwsRNVcfYE1S5KuFTeozdmKzyNzolKiQF391OXCaQtINvYT3j1ERzQ==",
+      "type": "package",
+      "path": "bcrypt.net-next/4.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "bcrypt.net-next.4.1.0.nupkg.sha512",
+        "bcrypt.net-next.nuspec",
+        "ico.png",
+        "lib/net10.0/BCrypt.Net-Next.dll",
+        "lib/net10.0/BCrypt.Net-Next.xml",
+        "lib/net20/BCrypt.Net-Next.dll",
+        "lib/net20/BCrypt.Net-Next.xml",
+        "lib/net35/BCrypt.Net-Next.dll",
+        "lib/net35/BCrypt.Net-Next.xml",
+        "lib/net462/BCrypt.Net-Next.dll",
+        "lib/net462/BCrypt.Net-Next.xml",
+        "lib/net472/BCrypt.Net-Next.dll",
+        "lib/net472/BCrypt.Net-Next.xml",
+        "lib/net48/BCrypt.Net-Next.dll",
+        "lib/net48/BCrypt.Net-Next.xml",
+        "lib/netstandard2.0/BCrypt.Net-Next.dll",
+        "lib/netstandard2.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.1/BCrypt.Net-Next.dll",
+        "lib/netstandard2.1/BCrypt.Net-Next.xml",
+        "readme.md"
       ]
     },
     "Humanizer.Core/2.14.1": {
@@ -3660,6 +3717,11 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "LedApp.Application/1.0.0": {
+      "type": "project",
+      "path": "../LedApp.Application/LedApp.Application.csproj",
+      "msbuildProject": "../LedApp.Application/LedApp.Application.csproj"
+    },
     "LedApp.Domain/1.0.0": {
       "type": "project",
       "path": "../LedApp.Domain/LedApp.Domain.csproj",
@@ -3668,6 +3730,7 @@
   },
   "projectFileDependencyGroups": {
     "net10.0": [
+      "LedApp.Application >= 1.0.0",
       "LedApp.Domain >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 10.0.5",
       "Microsoft.EntityFrameworkCore.Design >= 10.0.5",
@@ -3709,6 +3772,9 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
+            "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\LedApp.Application\\LedApp.Application.csproj": {
+              "projectPath": "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\LedApp.Application\\LedApp.Application.csproj"
+            },
             "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\LedApp.Domain\\LedApp.Domain.csproj": {
               "projectPath": "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\LedApp.Domain\\LedApp.Domain.csproj"
             }

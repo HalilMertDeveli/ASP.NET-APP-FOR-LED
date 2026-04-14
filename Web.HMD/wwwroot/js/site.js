@@ -23,10 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
         currentStepIndex: 0,
         data: {},
         steps: [
-            { key: "panelType", question: "1) Hangi panel turu kullaniyorsunuz? SMD mi COB mi?" },
-            { key: "chipsetValue", question: "2) Panel arkasindaki etikette yazan chipset degerini girin." },
-            { key: "decoderValue", question: "3) Panelin arkasindaki decoder degerini girin." },
-            { key: "pValue", question: "4) Panelin P degerini girin. (Orn: P2.5)" }
+            { key: "pValue", question: "1) Panelin P degerini girin. (Orn: p2.5)" },
+            { key: "chipsetValue", question: "2) Chipset degerini girin. (Orn: 1065s)" },
+            { key: "decoderValue", question: "3) Decoding/decoder degerini girin. (Orn: 2012)" }
         ]
     };
 
@@ -34,6 +33,31 @@ document.addEventListener("DOMContentLoaded", () => {
         const msg = document.createElement("div");
         msg.className = `msg ${type}`;
         msg.textContent = text;
+        messages.appendChild(msg);
+        messages.scrollTop = messages.scrollHeight;
+    };
+
+    const appendFileLinkMessage = (file) => {
+        const msg = document.createElement("div");
+        msg.className = "msg bot";
+
+        const fileType = (file.fileType || "").toUpperCase();
+        const fileName = file.fileName || "Dosya";
+        const fileUrl = file.fileUrl || "#";
+
+        const prefix = document.createElement("span");
+        prefix.textContent = `${fileType} | `;
+
+        const link = document.createElement("a");
+        link.href = fileUrl;
+        link.textContent = fileName;
+        link.className = "text-info fw-semibold";
+        link.setAttribute("download", fileName);
+        link.setAttribute("target", "_blank");
+        link.setAttribute("rel", "noopener noreferrer");
+
+        msg.appendChild(prefix);
+        msg.appendChild(link);
         messages.appendChild(msg);
         messages.scrollTop = messages.scrollHeight;
     };
@@ -63,17 +87,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const completePanelFlow = async () => {
         const summary = [
-            `Panel: ${panelFlow.data.panelType}`,
+            `P: ${panelFlow.data.pValue}`,
             `Chipset: ${panelFlow.data.chipsetValue}`,
-            `Decoder: ${panelFlow.data.decoderValue}`,
-            `P: ${panelFlow.data.pValue}`
+            `Decoder: ${panelFlow.data.decoderValue}`
         ].join(" | ");
 
         appendMessage(`Bilgileri aldim. Arama yapiyorum... (${summary})`, "bot");
 
         try {
             const query = new URLSearchParams({
-                panelType: panelFlow.data.panelType || "",
                 chipsetValue: panelFlow.data.chipsetValue || "",
                 decoderValue: panelFlow.data.decoderValue || "",
                 pValue: panelFlow.data.pValue || ""
@@ -93,10 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            appendMessage(`Eslesen ${files.length} dosya bulundu. Indirme linkleri:`, "bot");
+            appendMessage(`Eslesen ${files.length} dosya bulundu (rcvp/hex):`, "bot");
             files.forEach((file) => {
-                const text = `${file.fileName || "Dosya"} -> ${file.fileUrl || "#"}`;
-                appendMessage(text, "bot");
+                appendFileLinkMessage(file);
             });
         } catch (error) {
             appendMessage("Sistem hatasi olustu. Lutfen biraz sonra tekrar deneyin.", "bot");

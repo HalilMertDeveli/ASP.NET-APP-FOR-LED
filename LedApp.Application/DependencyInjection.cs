@@ -8,6 +8,7 @@ namespace LedApp.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IPanelSupportService, PanelSupportService>();
             return services;
         }
     }

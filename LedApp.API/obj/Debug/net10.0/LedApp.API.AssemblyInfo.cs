@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LedApp.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1e230039a474cd8d65d669ed8c446e03a9771271")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+49eb898fe320c2001ba58345df9f6548e253db9c")]
 [assembly: System.Reflection.AssemblyProductAttribute("LedApp.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LedApp.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

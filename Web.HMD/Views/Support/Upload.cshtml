@@ -2,42 +2,104 @@
     ViewData["Title"] = "Panel Dosya Yukleme";
 }
 
-<div class="container py-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white">
-            <h4 class="mb-0">Panel Dosya Yukleme</h4>
+<div class="container py-4 support-admin-page">
+    <div class="support-page-hero mb-4">
+        <h3 class="mb-2">Admin Dosya Islem Ekrani</h3>
+        <p class="mb-0">Panel dosyalarini SQL Server'a aktar, manuel yukle veya kutuphane importu ile toplu guncelle.</p>
+    </div>
+
+    <div class="card shadow-sm border-0 support-card">
+        <div class="card-header support-card-header">
+            <h4 class="mb-0">Panel Dosya Yukleme Merkezi</h4>
         </div>
         <div class="card-body">
             @if (TempData["UploadMessage"] != null)
             {
-                <div class="alert alert-info">@TempData["UploadMessage"]</div>
+                <div class="alert alert-info app-toast-center">@TempData["UploadMessage"]</div>
             }
 
+            <h5 class="mb-3">1) Klasor Kutuphanesinden SQL Server'a Toplu Import</h5>
+            <form asp-controller="Support" asp-action="ImportFromLibrary" method="post" class="row g-3 mb-4">
+                <div class="col-md-10">
+                    <label class="form-label">Kok Klasor (bos birakirsan appsettings PanelLibrary:RootPath kullanilir)</label>
+                    <input name="rootPath" class="form-control support-input" placeholder="Orn: D:\PanelLibrary" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-dark w-100 support-btn">Import Et</button>
+                </div>
+            </form>
+
+            <hr />
+
+            <h5 class="mb-3 mt-4">2) Tek Dosya Manuel Yukleme</h5>
             <form asp-controller="Support" asp-action="Upload" method="post" enctype="multipart/form-data" class="row g-3">
                 <div class="col-md-3">
-                    <label class="form-label">Panel Turu (SMD/COB)</label>
-                    <input name="panelType" class="form-control" required />
+                    <label class="form-label">P Degeri</label>
+                    <input name="pValue" class="form-control support-input" placeholder="p2.5" required />
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Chipset Degeri</label>
-                    <input name="chipsetValue" class="form-control" required />
+                    <input name="chipsetValue" class="form-control support-input" placeholder="1065s" required />
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Decoder Degeri</label>
-                    <input name="decoderValue" class="form-control" required />
+                    <input name="decoderValue" class="form-control support-input" placeholder="2012" required />
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">P Degeri</label>
-                    <input name="pValue" class="form-control" required />
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Dosya</label>
-                    <input type="file" name="file" class="form-control" required />
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary support-btn w-100">Kaydet</button>
                 </div>
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <label class="form-label">Dosya (.rcvp veya .hex)</label>
+                    <div class="support-dropzone" id="singleDropzone">
+                        <input type="file" name="file" id="singleFileInput" class="support-file-input" accept=".rcvp,.hex" required />
+                        <div class="support-dropzone-content">
+                            <strong>Dosyayi buraya surukle-birak</strong>
+                            <span>veya tiklayarak sec</span>
+                            <small>Sadece .rcvp ve .hex kabul edilir</small>
+                        </div>
+                    </div>
+                    <div class="support-file-list mt-2" id="singleFileList"></div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const dropzone = document.getElementById("singleDropzone");
+            const fileInput = document.getElementById("singleFileInput");
+            const fileList = document.getElementById("singleFileList");
+
+            if (!dropzone || !fileInput || !fileList) return;
+
+            const render = () => {
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    fileList.innerHTML = "";
+                    return;
+                }
+                const file = fileInput.files[0];
+                fileList.innerHTML = `<div class="support-file-item">${file.name} <small>(${Math.round(file.size / 1024)} KB)</small></div>`;
+            };
+
+            dropzone.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropzone.classList.add("dragover");
+            });
+
+            dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+
+            dropzone.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropzone.classList.remove("dragover");
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    render();
+                }
+            });
+
+            fileInput.addEventListener("change", render);
+        })();
+    </script>
+}

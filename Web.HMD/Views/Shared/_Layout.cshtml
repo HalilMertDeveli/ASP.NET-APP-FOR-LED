@@ -20,10 +20,19 @@
     <link rel="stylesheet" href="~/css/chatbot.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Web.HMD.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="led-animated-bg">
+    <div class="led-site-bg" aria-hidden="true">
+        <span class="led-site-orb led-site-orb-1"></span>
+        <span class="led-site-orb led-site-orb-2"></span>
+        <span class="led-site-orb led-site-orb-3"></span>
+        <span class="led-site-scanline"></span>
+    </div>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm led-main-navbar mb-3">
             <div class="container-fluid">
+                <button class="btn led-sidebar-trigger me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#siteSidebar" aria-controls="siteSidebar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <a class="navbar-brand led-brand" asp-area="" asp-controller="Home" asp-action="Index">
                     <span class="led-brand-dot"></span> LED Service Pro
                 </a>
@@ -43,9 +52,6 @@
                             <a class="nav-link led-nav-link" asp-area="" asp-controller="Home" asp-action="CartStatus">
                                 Sepet Durumu <span class="badge text-bg-light ms-1">@cartCount</span>
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link led-nav-link" asp-area="" asp-controller="Support" asp-action="Upload">Dosya Yukle</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav">
@@ -75,6 +81,38 @@
             </div>
         </nav>
     </header>
+
+    <div class="offcanvas offcanvas-start led-offcanvas" tabindex="-1" id="siteSidebar" aria-labelledby="siteSidebarLabel">
+        <div class="offcanvas-header border-bottom border-secondary-subtle">
+            <h5 class="offcanvas-title d-flex align-items-center gap-2" id="siteSidebarLabel">
+                <span class="led-brand-dot"></span> Site Menusu
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="mb-3">
+                <a class="led-side-link" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                <a class="led-side-link" asp-controller="Home" asp-action="Privacy">Servisler</a>
+                <a class="led-side-link" asp-controller="Home" asp-action="CartStatus">Sepet Durumu (@cartCount)</a>
+                <a class="led-side-link" asp-controller="Admin" asp-action="Login">Admin Panel</a>
+            </div>
+
+            <div class="led-side-box mt-2">
+                <h6 class="mb-2">Site Ozellikleri</h6>
+                <ul class="small mb-0 ps-3">
+                    <li>Canli destek ile hizli teknik yonlendirme</li>
+                    <li>Panel dosya import ve merkezi SQL kayit</li>
+                    <li>P + Chipset + Decoder bazli otomatik dosya bulma</li>
+                    <li>Modern dashboard ve sepet yonetimi</li>
+                </ul>
+            </div>
+
+            <div class="mt-auto pt-3 small text-secondary">
+                LED Service Pro - Profesyonel operasyon paneli
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

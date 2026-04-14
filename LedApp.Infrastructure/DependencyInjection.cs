@@ -1,5 +1,7 @@
 using Entity.HMD.Context;
+using LedApp.Application.Abstractions;
 using LedApp.Domain.Interfaces;
+using LedApp.Infrastructure.Configuration;
 using LedApp.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,7 @@ namespace LedApp.Infrastructure
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPanelLibraryPathProvider, PanelLibraryPathProvider>();
 
             return services;
         }

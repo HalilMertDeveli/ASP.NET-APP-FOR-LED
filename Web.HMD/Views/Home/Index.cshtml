@@ -15,7 +15,7 @@
         <div class="home-hero-content">
             @if (TempData["Message"] != null)
             {
-                <div class="alert alert-success alert-dismissible fade show shadow-sm text-center fw-bold mb-4" role="alert">
+                <div class="alert alert-success alert-dismissible fade show shadow-sm text-center fw-bold app-toast-center" role="alert">
                     <i class="me-2 text-success"></i>@TempData["Message"]
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
                 </div>
@@ -49,14 +49,17 @@
     </section>
 
     <section class="home-services-section">
-        <div class="section-head">
-            <h2>One Cikan LED Servis Paketleri</h2>
-            <p>Isletmene uygun hizmeti sec, teklif al ve sureci hizli baslat.</p>
+        <div class="section-head service-toolbar">
+            <div>
+                <h2>One Cikan LED Servis Paketleri</h2>
+                <p>Isletmene uygun hizmeti sec, teklif al ve sureci hizli baslat.</p>
+            </div>
+            <span class="service-count-badge">@Model.Count() aktif servis</span>
         </div>
         <div class="row g-4">
             @foreach (var service in Model)
             {
-                <div class="col-md-6 col-xl-3">
+                <div class="col-md-6 col-xl-4">
                     <div class="card repair-card h-100">
                         <div class="card-img-wrapper">
                             <img src="@service.ImageUrl" class="card-img-top" alt="@service.Title">
@@ -66,8 +69,13 @@
                             <h5 class="card-title fw-bold">@service.Title</h5>
                             <p class="card-text text-secondary">@service.Description</p>
                         </div>
-                        <div class="card-footer bg-transparent border-0 pb-3 text-center">
-                            <a asp-controller="Home" asp-action="ServiceDetail" asp-route-id="@service.Id" class="btn btn-primary premium-btn w-100">Detayları Gör</a>
+                        <div class="card-footer bg-transparent border-0 pb-3">
+                            <div class="service-actions">
+                                <a asp-controller="Home" asp-action="ServiceDetail" asp-route-id="@service.Id" class="btn btn-primary premium-btn w-100">Detaylari Gor</a>
+                                <form asp-controller="Home" asp-action="AddToCart" asp-route-id="@service.Id" method="post" class="w-100">
+                                    <button type="submit" class="btn btn-outline-primary w-100">Sepete Ekle</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

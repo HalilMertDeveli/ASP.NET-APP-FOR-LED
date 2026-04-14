@@ -1,0 +1,89 @@
+@{
+    ViewData["Title"] = "Tarama Dosyasi Yukleme";
+}
+
+<div class="container py-4 support-admin-page">
+    <div class="card shadow-sm border-0 support-card">
+        <div class="card-header support-card-header">
+            <h4 class="mb-0">Yeni Gelen Tarama Dosyalari</h4>
+        </div>
+        <div class="card-body">
+            @if (TempData["ScanUploadMessage"] != null)
+            {
+                <div class="alert alert-info app-toast-center">@TempData["ScanUploadMessage"]</div>
+            }
+
+            <form asp-controller="Support" asp-action="ScanUpload" method="post" enctype="multipart/form-data" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">P Degeri</label>
+                    <input name="pValue" class="form-control support-input" placeholder="p2.5" required />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Chipset Degeri</label>
+                    <input name="chipsetValue" class="form-control support-input" placeholder="1065s" required />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Decoder Degeri</label>
+                    <input name="decoderValue" class="form-control support-input" placeholder="2012" required />
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Tarama Dosyalari (.rcvp ve .hex)</label>
+                    <div class="support-dropzone" id="multiDropzone">
+                        <input type="file" name="files" id="multiFileInput" class="support-file-input" accept=".rcvp,.hex" multiple required />
+                        <div class="support-dropzone-content">
+                            <strong>Dosyalari buraya surukle-birak</strong>
+                            <span>veya tiklayarak birden fazla sec</span>
+                            <small>Birden fazla dosya secilebilir. Sadece .rcvp ve .hex kabul edilir.</small>
+                        </div>
+                    </div>
+                    <div class="support-file-list mt-2" id="multiFileList"></div>
+                </div>
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary support-btn">Yukle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const dropzone = document.getElementById("multiDropzone");
+            const fileInput = document.getElementById("multiFileInput");
+            const fileList = document.getElementById("multiFileList");
+
+            if (!dropzone || !fileInput || !fileList) return;
+
+            const render = () => {
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    fileList.innerHTML = "";
+                    return;
+                }
+
+                const items = Array.from(fileInput.files)
+                    .map(f => `<div class="support-file-item">${f.name} <small>(${Math.round(f.size / 1024)} KB)</small></div>`)
+                    .join("");
+                fileList.innerHTML = items;
+            };
+
+            dropzone.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropzone.classList.add("dragover");
+            });
+
+            dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+
+            dropzone.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropzone.classList.remove("dragover");
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    render();
+                }
+            });
+
+            fileInput.addEventListener("change", render);
+        })();
+    </script>
+}
