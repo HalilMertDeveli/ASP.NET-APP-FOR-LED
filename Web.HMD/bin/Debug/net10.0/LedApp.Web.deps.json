@@ -8,7 +8,10 @@
     ".NETCoreApp,Version=v10.0": {
       "LedApp.Web/1.0.0": {
         "dependencies": {
+          "LedApp.Application": "1.0.0",
           "LedApp.Infrastructure": "1.0.0",
+          "Microsoft.AspNetCore.Authentication.Facebook": "10.0.5",
+          "Microsoft.AspNetCore.Authentication.Google": "10.0.5",
           "Microsoft.EntityFrameworkCore": "10.0.5",
           "Microsoft.EntityFrameworkCore.Design": "10.0.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "10.0.5"
@@ -43,11 +46,35 @@
           }
         }
       },
+      "BCrypt.Net-Next/4.1.0": {
+        "runtime": {
+          "lib/net10.0/BCrypt.Net-Next.dll": {
+            "assemblyVersion": "4.1.0.0",
+            "fileVersion": "4.1.0.0"
+          }
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "runtime": {
           "lib/net6.0/Humanizer.dll": {
             "assemblyVersion": "2.14.0.0",
             "fileVersion": "2.14.1.48190"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.Facebook/10.0.5": {
+        "runtime": {
+          "lib/net10.0/Microsoft.AspNetCore.Authentication.Facebook.dll": {
+            "assemblyVersion": "10.0.5.0",
+            "fileVersion": "10.0.526.15411"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.Google/10.0.5": {
+        "runtime": {
+          "lib/net10.0/Microsoft.AspNetCore.Authentication.Google.dll": {
+            "assemblyVersion": "10.0.5.0",
+            "fileVersion": "10.0.526.15411"
           }
         }
       },
@@ -748,6 +775,18 @@
           }
         }
       },
+      "LedApp.Application/1.0.0": {
+        "dependencies": {
+          "BCrypt.Net-Next": "4.1.0",
+          "LedApp.Domain": "1.0.0"
+        },
+        "runtime": {
+          "LedApp.Application.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "LedApp.Domain/1.0.0": {
         "runtime": {
           "LedApp.Domain.dll": {
@@ -791,12 +830,33 @@
       "path": "azure.identity/1.14.2",
       "hashPath": "azure.identity.1.14.2.nupkg.sha512"
     },
+    "BCrypt.Net-Next/4.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5YT3DKllmtkyW68PjURu/V1TOe4MKiByKwsRNVcfYE1S5KuFTeozdmKzyNzolKiQF391OXCaQtINvYT3j1ERzQ==",
+      "path": "bcrypt.net-next/4.1.0",
+      "hashPath": "bcrypt.net-next.4.1.0.nupkg.sha512"
+    },
     "Humanizer.Core/2.14.1": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw==",
       "path": "humanizer.core/2.14.1",
       "hashPath": "humanizer.core.2.14.1.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Authentication.Facebook/10.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-V7/ZXXH11Zu+IspWWNrT9svjSAMElEeM2XmtxbaidSsaPa+I38fgbuvvxRuGt7AzKl7EdNOcDByj+M/RkbZoUg==",
+      "path": "microsoft.aspnetcore.authentication.facebook/10.0.5",
+      "hashPath": "microsoft.aspnetcore.authentication.facebook.10.0.5.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Authentication.Google/10.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-y0Y04EYL1VwhuIQvnpjD5XoECl8EEPeXtBiveDXpsh9q3TnWDAfDuLJDp+LrCmOx9jbp23b6SAEBMmVO7zRtNQ==",
+      "path": "microsoft.aspnetcore.authentication.google/10.0.5",
+      "hashPath": "microsoft.aspnetcore.authentication.google.10.0.5.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/8.0.0": {
       "type": "package",
@@ -1077,6 +1137,11 @@
       "sha512": "sha512-o94k2RKuAce3GeDMlUvIXlhVa1kWpJw95E6C9LwW0KlG0nj5+SgCiIxJ2Eroqb9sLtG1mEMbFttZIBZ13EJPvQ==",
       "path": "system.security.cryptography.protecteddata/9.0.4",
       "hashPath": "system.security.cryptography.protecteddata.9.0.4.nupkg.sha512"
+    },
+    "LedApp.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "LedApp.Domain/1.0.0": {
       "type": "project",

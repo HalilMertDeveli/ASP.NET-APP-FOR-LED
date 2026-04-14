@@ -1,0 +1,117 @@
+@model Web.HMD.Models.SettingsViewModel
+
+@{
+    ViewData["Title"] = "Hesap Ayarları";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="repair-card animation-fade-in p-4 p-md-5 shadow-lg border-0" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);">
+                <div class="d-flex align-items-center mb-5 animation-slide-up">
+                    <div class="bg-primary bg-opacity-10 p-4 rounded-4 me-4 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-gear text-primary" viewBox="0 0 16 16">
+                            <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="fw-bold mb-1 gradient-text">Hesap Ayarları</h2>
+                        <p class="text-muted mb-0">Kişisel bilgilerinizi ve giriş verilerinizi yönetin</p>
+                    </div>
+                </div>
+
+                @if (TempData["Message"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm animation-fade-in" role="alert" style="background: rgba(16, 185, 129, 0.1); color: #065f46; border-left: 4px solid #10b981 !important;">
+                        <div class="d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                            </svg>
+                            @TempData["Message"]
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form asp-action="Settings" method="post" class="needs-validation">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4 p-3 rounded" style="background: rgba(239, 68, 68, 0.05);"></div>
+
+                    <div class="section-title mb-4 animation-slide-up" style="animation-delay: 0.1s">
+                        <h5 class="fw-bold d-flex align-items-center">
+                            <span class="badge bg-primary me-2" style="width: 8px; height: 18px; padding: 0;"> </span>
+                            Profil Bilgileri
+                        </h5>
+                    </div>
+
+                    <div class="row g-4 mb-5 animation-slide-up" style="animation-delay: 0.2s">
+                        <div class="col-md-6">
+                            <div class="form-floating form-group-animated">
+                                <input asp-for="FullName" class="form-control auth-input" placeholder="Ad Soyad" />
+                                <label asp-for="FullName">Tam Adınız</label>
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating form-group-animated">
+                                <input asp-for="Email" class="form-control auth-input" placeholder="E-Posta" />
+                                <label asp-for="Email">E-Posta Adresiniz</label>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating form-group-animated">
+                                <input asp-for="Phone" class="form-control auth-input" placeholder="Telefon" />
+                                <label asp-for="Phone">Telefon Numaranız</label>
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title mb-4 animation-slide-up" style="animation-delay: 0.3s">
+                        <h5 class="fw-bold d-flex align-items-center">
+                            <span class="badge bg-primary me-2" style="width: 8px; height: 18px; padding: 0;"> </span>
+                            Güvenlik ve Şifre
+                        </h5>
+                    </div>
+
+                    <div class="row g-4 animation-slide-up" style="animation-delay: 0.4s">
+                        <div class="col-md-12">
+                            <div class="form-floating form-group-animated">
+                                <input asp-for="CurrentPassword" type="password" class="form-control auth-input" placeholder="Mevcut Şifre" autocomplete="off" />
+                                <label asp-for="CurrentPassword">Mevcut Şifre (Sadece değiştirmek istiyorsanız)</label>
+                                <span asp-validation-for="CurrentPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating form-group-animated">
+                                <input asp-for="NewPassword" type="password" class="form-control auth-input" placeholder="Yeni Şifre" autocomplete="new-password" />
+                                <label asp-for="NewPassword">Yeni Şifre</label>
+                                <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating form-group-animated">
+                                <input asp-for="ConfirmPassword" type="password" class="form-control auth-input" placeholder="Yeni Şifre Tekrar" autocomplete="new-password" />
+                                <label asp-for="ConfirmPassword">Yeni Şifre Tekrar</label>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 pt-3 animation-slide-up" style="animation-delay: 0.5s">
+                        <button type="submit" class="btn btn-primary premium-btn w-100 py-3 shadow-lg d-flex align-items-center justify-content-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cloud-upload-fill" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0zm-.5 14.5V11h1v3.5a.5.5 0 0 1-1 0z"/>
+                            </svg>
+                            Ayarları Güncelle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

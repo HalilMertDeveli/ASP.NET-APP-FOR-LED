@@ -1,12 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "iY/rqBAoUOU=",
+  "dgSpecHash": "+o5vx5p67vE=",
   "success": true,
   "projectFilePath": "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\Web.HMD\\LedApp.Web.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
+    "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\microsoft.aspnetcore.authentication.facebook\\10.0.5\\microsoft.aspnetcore.authentication.facebook.10.0.5.nupkg.sha512",
+    "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\10.0.5\\microsoft.aspnetcore.authentication.google.10.0.5.nupkg.sha512",
     "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",
     "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\microsoft.bcl.cryptography\\9.0.4\\microsoft.bcl.cryptography.9.0.4.nupkg.sha512",
     "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",

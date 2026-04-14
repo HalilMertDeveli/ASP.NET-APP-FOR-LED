@@ -34,6 +34,9 @@
                                 <span class="nav-link text-muted pe-3 border-end">Profil: <strong class="text-dark">@User.Identity.Name</strong></span>
                             </li>
                             <li class="nav-item ms-2">
+                                <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Account" asp-action="Settings">Ayarlar</a>
+                            </li>
+                            <li class="nav-item ms-2">
                                 <a class="btn btn-outline-danger shadow-sm fw-bold" asp-area="" asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
                             </li>
                         }

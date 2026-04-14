@@ -10,3 +10,10 @@ C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Application\obj\
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Application\obj\Debug\net10.0\refint\LedApp.Application.dll
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Application\obj\Debug\net10.0\LedApp.Application.pdb
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Application\obj\Debug\net10.0\ref\LedApp.Application.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Application\obj\Debug\net10.0\LedApp.Application.csproj.AssemblyReference.cache
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Application\bin\Debug\net10.0\LedApp.Domain.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Application\bin\Debug\net10.0\LedApp.Domain.pdb
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Application\obj\Debug\net10.0\LedApp.A.881CEB8A.Up2Date
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\LedApp.Application.deps.json
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\LedApp.Application.dll
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\LedApp.Application.pdb

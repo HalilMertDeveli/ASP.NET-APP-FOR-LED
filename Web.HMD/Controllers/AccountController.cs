@@ -1,23 +1,93 @@
 using Microsoft.AspNetCore.Mvc;
 using Web.HMD.Models;
-using Entity.HMD.Context;
-using Entity.HMD.Entity;
-using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LedApp.Application.Services;
+using LedApp.Application.DTOs;
+using System;
+using System.Linq;
+
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.HMD.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly LedContext _context;
+        // ARTIK VERİTABANINI (LedContext) BİLMİYOR! Sadece AuthService'ten hizmet alıyor.
+        private readonly IAuthService _authService;
 
-        public AccountController(LedContext context)
+        public AccountController(IAuthService authService)
         {
-            _context = context;
+            _authService = authService;
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Settings()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out int userId)) return Unauthorized();
+
+            var user = await _authService.GetUserByIdAsync(userId);
+            if (user == null) return NotFound();
+
+            var model = new SettingsViewModel
+            {
+                FullName = user.FullName,
+                Email = user.Email,
+                Phone = user.Phone
+            };
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Settings(SettingsViewModel model)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out int userId)) return Unauthorized();
+
+            if (ModelState.IsValid)
+            {
+                // Profil Güncelleme
+                var updateDto = new UpdateUserDto
+                {
+                    FullName = model.FullName,
+                    Email = model.Email,
+                    Phone = model.Phone
+                };
+
+                var updateResult = await _authService.UpdateUserAsync(userId, updateDto);
+                if (!updateResult)
+                {
+                    ModelState.AddModelError("", "Profil güncellenirken bir hata oluştu.");
+                    return View(model);
+                }
+
+                // Şifre Değiştirme (Eğer alanlar doluysa)
+                if (!string.IsNullOrEmpty(model.CurrentPassword) && !string.IsNullOrEmpty(model.NewPassword))
+                {
+                    var passwordResult = await _authService.ChangePasswordAsync(userId, model.CurrentPassword, model.NewPassword);
+                    if (!passwordResult)
+                    {
+                        ModelState.AddModelError("CurrentPassword", "Mevcut şifre hatalı.");
+                        return View(model);
+                    }
+                    TempData["Message"] = "Profil ve şifre başarıyla güncellendi.";
+                }
+                else
+                {
+                    TempData["Message"] = "Profil bilgileri başarıyla güncellendi.";
+                }
+
+                return RedirectToAction(nameof(Settings));
+            }
+
+            return View(model);
         }
 
         [HttpGet]
@@ -27,33 +97,107 @@ namespace Web.HMD.Controllers
         }
 
         [HttpPost]
+        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { provider, returnUrl }) ?? "/Account/Login";
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, provider);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback(string provider, string? returnUrl = null, string? remoteError = null)
+        {
+            returnUrl ??= Url.Action("Index", "Home") ?? "/";
+            var providerLabel = string.IsNullOrWhiteSpace(provider) ? "Harici Sağlayıcı" : provider;
+
+            if (!string.IsNullOrWhiteSpace(remoteError))
+            {
+                ModelState.AddModelError(string.Empty, $"{providerLabel} ile giriş başarısız: {remoteError}");
+                return View("Login");
+            }
+
+            var externalResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (externalResult?.Principal == null)
+            {
+                ModelState.AddModelError(string.Empty, $"{providerLabel} kimlik doğrulaması tamamlanamadı.");
+                return View("Login");
+            }
+
+            var email = externalResult.Principal.FindFirstValue(ClaimTypes.Email);
+            var providerUserId = externalResult.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(providerUserId))
+            {
+                providerUserId = Guid.NewGuid().ToString("N");
+            }
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                email = $"{providerLabel.ToLowerInvariant()}_{providerUserId}@external.local";
+            }
+
+            var fullName = externalResult.Principal.FindFirstValue(ClaimTypes.Name);
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                fullName = email.Split('@').FirstOrDefault() ?? $"{providerLabel} Kullanıcısı";
+            }
+
+            var userDto = await _authService.GetByEmailAsync(email);
+            if (userDto == null)
+            {
+                var generatedPassword = $"{providerLabel}_{providerUserId}_{Guid.NewGuid():N}";
+                userDto = await _authService.RegisterAsync(new CreateUserDto
+                {
+                    FullName = fullName,
+                    Email = email,
+                    Phone = providerLabel,
+                    Password = generatedPassword
+                });
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, userDto.Id.ToString()),
+                new Claim(ClaimTypes.Name, userDto.FullName),
+                new Claim(ClaimTypes.Email, userDto.Email)
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                new AuthenticationProperties { IsPersistent = true });
+
+            TempData["Message"] = $"{providerLabel} ile giriş başarılı, hoş geldiniz {userDto.FullName}!";
+            return Url.IsLocalUrl(returnUrl) ? LocalRedirect(returnUrl) : RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = _context.Users.FirstOrDefault(x => x.Email == model.Email && x.PasswordHash == model.Password);
+                // Artık SQL sorgusu yazmıyoruz, şifre kıyaslamıyoruz. Hepsini Service yapıyor.
+                var userDto = await _authService.LoginAsync(model.Email, model.Password);
                 
-                if (user != null)
+                if (userDto != null) // Başarılıysa
                 {
-                    // Kimlik (Claim) oluşturma işlemi
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Name, user.FullName),
-                        new Claim(ClaimTypes.Email, user.Email)
+                        new Claim(ClaimTypes.NameIdentifier, userDto.Id.ToString()),
+                        new Claim(ClaimTypes.Name, userDto.FullName),
+                        new Claim(ClaimTypes.Email, userDto.Email)
                     };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                     var authProperties = new AuthenticationProperties
                     {
-                        IsPersistent = model.RememberMe // Beni Hatırla işaretlendiyse kalıcı çerez
+                        IsPersistent = model.RememberMe
                     };
 
-                    // Tarayıcıya ASP.NET Cookie'sini basıyor ve oturumu resmen açıyor
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                    TempData["Message"] = $"Hoş Geldiniz, {user.FullName}!";
+                    TempData["Message"] = $"Hoş Geldiniz, {userDto.FullName}!";
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -75,34 +219,34 @@ namespace Web.HMD.Controllers
         {
             if (ModelState.IsValid)
             {
-                var isEmailExist = _context.Users.Any(x => x.Email == model.Email);
+                var isEmailExist = await _authService.CheckEmailExistsAsync(model.Email);
                 if (isEmailExist)
                 {
                     ModelState.AddModelError("Email", "Bu e-posta adresi zaten kullanımda.");
                     return View(model);
                 }
                 
-                var newUser = new User
+                // Form'dan gelen ViewModel'ı, Application'ın anladığı DTO'ya çeviriyoruz:
+                var createDto = new CreateUserDto
                 {
                     FullName = model.FullName,
                     Email = model.Email,
                     Phone = model.Phone,
-                    PasswordHash = model.Password 
+                    Password = model.Password 
                 };
 
-                _context.Users.Add(newUser);
-                _context.SaveChanges();
+                // İçeride BCrypt ile şifrelenip veritabanına eklenecek
+                var newUserDto = await _authService.RegisterAsync(createDto);
 
-                // KAYıT BAŞARILI, O HALDE KULLANICIYI DOĞRUDAN SİSTEME DAHİL ET (OTOMATİK GİRİŞ)
+                // Otomatik Giriş
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, newUser.Id.ToString()),
-                    new Claim(ClaimTypes.Name, newUser.FullName),
-                    new Claim(ClaimTypes.Email, newUser.Email)
+                    new Claim(ClaimTypes.NameIdentifier, newUserDto.Id.ToString()),
+                    new Claim(ClaimTypes.Name, newUserDto.FullName),
+                    new Claim(ClaimTypes.Email, newUserDto.Email)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
                 TempData["Message"] = "Kayıt Başarıyla Gerçekleşti ve Giriş Yapıldı!";
@@ -111,7 +255,6 @@ namespace Web.HMD.Controllers
             return View(model);
         }
 
-        // Çıkış Yapma (Logout) İşlemi
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

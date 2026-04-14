@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "TNKcDCF1hjE=",
+  "dgSpecHash": "+3ldFay/5/8=",
   "success": true,
   "projectFilePath": "C:\\Users\\LEDAJANS COLORLIGHT\\Desktop\\HMD-ASP-NET\\Web.HMD\\LedApp.Application\\LedApp.Application.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\LEDAJANS COLORLIGHT\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512"
+  ],
   "logs": []
 }

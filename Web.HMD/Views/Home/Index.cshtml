@@ -4,7 +4,16 @@
     ViewData["Title"] = "LED Tamir Servisleri";
 }
 
-<div class="repair-container">
+<div class="repair-container antigravity-home">
+    <div class="antigravity-bg" aria-hidden="true">
+        <span class="ag-orb orb-1"></span>
+        <span class="ag-orb orb-2"></span>
+        <span class="ag-orb orb-3"></span>
+        <span class="ag-orb orb-4"></span>
+        <span class="ag-grid"></span>
+    </div>
+
+    <div class="antigravity-content">
     <!-- Giriş/Kayıt başarılı mesajı popup olarak ekrana gelecek -->
     @if (TempData["Message"] != null)
     {
@@ -48,5 +57,6 @@
                 </div>
             </div>
         }
+    </div>
     </div>
 </div>
