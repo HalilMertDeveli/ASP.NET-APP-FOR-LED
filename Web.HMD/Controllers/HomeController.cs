@@ -67,7 +67,7 @@ namespace Web.HMD.Controllers
 
         public IActionResult Privacy()
         {
-            return View();
+            return View(GetFeaturedServices());
         }
 
         public IActionResult Sepet()

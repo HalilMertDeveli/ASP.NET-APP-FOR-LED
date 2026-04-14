@@ -795,6 +795,7 @@
       },
       "LedApp.Infrastructure/1.0.0": {
         "dependencies": {
+          "LedApp.Application": "1.0.0",
           "LedApp.Domain": "1.0.0",
           "Microsoft.EntityFrameworkCore": "10.0.5",
           "Microsoft.EntityFrameworkCore.SqlServer": "10.0.5"

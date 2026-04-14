@@ -17,9 +17,3 @@ C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\LedApp.Application\obj\
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\LedApp.Application.deps.json
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\LedApp.Application.dll
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\LedApp.Application.pdb
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh\LedApp.Application.deps.json
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh\LedApp.Application.dll
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh\LedApp.Application.pdb
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Application.deps.json
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Application.dll
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Application.pdb

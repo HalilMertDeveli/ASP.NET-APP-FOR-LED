@@ -242,14 +242,5 @@ C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\bin\Debug\net10
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\b5nnr3xb70-{0}-ma7i0nw7gu-ma7i0nw7gu.gz
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\appsettings.Development.json
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\appsettings.json
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Web.staticwebassets.runtime.json
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Web.staticwebassets.endpoints.json
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Web.exe
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Web.deps.json
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Web.runtimeconfig.json
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Web.dll
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\onionrefresh2\LedApp.Web.pdb
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\e02r51egau-{0}-f8wnfpflxo-f8wnfpflxo.gz
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

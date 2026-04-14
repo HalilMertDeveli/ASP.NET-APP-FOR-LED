@@ -1,6 +1,50 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+@model IEnumerable<Web.HMD.Models.LedRepairViewModel>
 
-<p>Use this page to detail your site's privacy policy.</p>
+@{
+    ViewData["Title"] = "Servisler";
+}
+
+<div class="home-long-page">
+    <section class="home-services-section mt-0">
+        <div class="section-head service-toolbar">
+            <div>
+                <h2>Sunulan LED Servisleri</h2>
+                <p>Giris sonrasi kullanicilarin gorecegi aktif servis listesi.</p>
+            </div>
+            <span class="service-count-badge">@Model.Count() aktif servis</span>
+        </div>
+
+        @if (User?.Identity?.IsAuthenticated != true)
+        {
+            <div class="alert alert-warning mb-4">
+                Servis islemlerini (sepete ekleme/teklif) kullanmak icin lutfen once giris yapin.
+            </div>
+        }
+
+        <div class="row g-4">
+            @foreach (var service in Model)
+            {
+                <div class="col-md-6 col-xl-4">
+                    <div class="card repair-card h-100">
+                        <div class="card-img-wrapper">
+                            <img src="@service.ImageUrl" class="card-img-top" alt="@service.Title">
+                            <div class="price-badge">₺@service.Price</div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@service.Title</h5>
+                            <p class="card-text text-secondary">@service.Description</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pb-3">
+                            <div class="service-actions">
+                                <a asp-controller="Home" asp-action="ServiceDetail" asp-route-id="@service.Id" class="btn btn-primary premium-btn w-100">Detaylari Gor</a>
+                                <form asp-controller="Home" asp-action="AddToCart" asp-route-id="@service.Id" method="post" class="w-100">
+                                    <button type="submit" class="btn btn-outline-primary w-100">Sepete Ekle</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+</div>
