@@ -19,6 +19,42 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* Improve contrast on dark animated background pages */
+.led-animated-bg {
+    color: #e2e8f0;
+}
+
+.led-animated-bg .text-dark:not(.badge),
+.led-animated-bg .text-black:not(.badge),
+.led-animated-bg .text-dark-emphasis {
+    color: #e2e8f0 !important;
+}
+
+.led-animated-bg .text-muted,
+.led-animated-bg .text-secondary {
+    color: #cbd5e1 !important;
+}
+
+.led-animated-bg .section-head h1,
+.led-animated-bg .section-head h2,
+.led-animated-bg .section-head h3 {
+    color: #f8fafc;
+}
+
+.led-animated-bg .section-head p {
+    color: #cbd5e1;
+}
+
+/* Keep dark text only on light surfaces */
+.led-animated-bg .card .text-dark,
+.led-animated-bg .table .text-dark,
+.led-animated-bg .badge.text-dark,
+.led-animated-bg .dropdown-menu .text-dark,
+.led-animated-bg .bg-light .text-dark,
+.led-animated-bg .bg-white .text-dark {
+    color: #0f172a !important;
+}
+
 .led-animated-bg {
     background: radial-gradient(circle at 20% 20%, #0b1220 0%, #111827 42%, #030712 100%);
 }
@@ -36,11 +72,31 @@ body {
     animation: led-grid-drift 18s linear infinite;
 }
 
+.global-led-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.global-led-dot {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(51, 65, 85, 0.32);
+    transform: scale(1);
+    will-change: transform, box-shadow, background;
+    transition: none;
+}
+
 .led-site-orb {
     position: absolute;
     border-radius: 999px;
     filter: blur(6px);
     opacity: 0.45;
+    z-index: 1;
 }
 
 .led-site-orb-1 {
@@ -73,6 +129,7 @@ body {
 .led-site-scanline {
     position: absolute;
     inset: 0;
+    z-index: 2;
     background: linear-gradient(
         to bottom,
         transparent 0%,
@@ -147,6 +204,26 @@ body {
     color: #bae6fd;
 }
 
+.led-brand-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #e2e8f0;
+    background: linear-gradient(145deg, #0ea5e9, #1d4ed8);
+    border: 1px solid rgba(125, 211, 252, 0.6);
+    box-shadow: 0 0 14px rgba(14, 165, 233, 0.55);
+}
+
+.led-brand-text {
+    line-height: 1;
+}
+
 .led-brand-dot {
     width: 10px;
     height: 10px;
@@ -177,6 +254,15 @@ body {
 
 .led-main-footer a:hover {
     color: #bae6fd;
+}
+
+.panel-type-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.panel-type-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.25) !important;
 }
 
 /* Premium Styles for LED Repair */
@@ -246,8 +332,66 @@ body {
 
 .home-stats-section,
 .home-services-section,
+.receiver-section,
 .home-process-section {
     margin-top: 1.5rem;
+}
+
+.receiver-card {
+    border-radius: 14px;
+    background: linear-gradient(170deg, #ffffff, #eaf2ff);
+    border: 1px solid #dbeafe;
+    padding: 1rem;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+.receiver-card h5 {
+    margin-bottom: 0.55rem;
+    color: #0f172a;
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.receiver-card p {
+    margin: 0;
+    color: #475569;
+}
+
+.receiver-badge {
+    display: inline-flex;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.18rem 0.55rem;
+}
+
+.mainboard-table-wrap {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #dbeafe;
+    box-shadow: 0 12px 25px rgba(15, 23, 42, 0.08);
+}
+
+.mainboard-table thead th {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    color: #e2e8f0;
+    border: none;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.mainboard-table tbody td {
+    background: rgba(255, 255, 255, 0.92);
+    color: #1e293b;
+    border-color: #e2e8f0;
+}
+
+.mainboard-table tbody tr:hover td {
+    background: #eef6ff;
 }
 
 .home-stat-card {

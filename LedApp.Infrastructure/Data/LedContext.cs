@@ -22,6 +22,12 @@ namespace Entity.HMD.Context
         public DbSet<PanelSupportFile> PanelSupportFiles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<PanelSupportFile>()
+                .HasIndex(x => new { x.PValue, x.ChipsetValue, x.DecoderValue, x.FileType })
+                .IsUnique();
+
+            modelBuilder.Entity<PanelSupportFile>()
+                .HasIndex(x => new { x.PValue, x.ChipsetValue, x.DecoderValue });
 
             base.OnModelCreating(modelBuilder);
         }

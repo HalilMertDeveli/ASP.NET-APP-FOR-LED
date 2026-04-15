@@ -1,0 +1,60 @@
+@model IEnumerable<Web.HMD.Models.ReceiverTypeViewModel>
+
+@{
+    ViewData["Title"] = "Receiver Modelleri";
+}
+
+<section class="receiver-section py-3">
+    <div class="section-head">
+        <h2 class="text-white">Receiver Modelleri</h2>
+        <p class="text-white-50">Paylastigin teknik tabloya gore receiver modelleri. Satira tiklayip detayina gidebilir ve sepete ekleyebilirsin.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body py-2 px-3 d-flex flex-wrap gap-2 align-items-center justify-content-between bg-dark">
+            <span class="fw-semibold text-white">Receiver Teknik Tablo</span>
+            <span class="badge bg-info text-dark rounded-pill">@Model.Count() Model</span>
+        </div>
+        <div class="table-responsive mainboard-table-wrap">
+            <table class="table table-sm table-hover table-striped table-bordered align-middle mb-0 mainboard-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Interface</th>
+                        <th>Ports</th>
+                        <th>Calibration Accuracy</th>
+                        <th>PWM Capacity</th>
+                        <th>Normal Capacity</th>
+                        <th>LS Capacity</th>
+                        <th>Remark</th>
+                        <th>Islem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="Products" asp-action="@item.RouteAction" class="text-decoration-none fw-semibold">
+                                    @item.Code
+                                </a>
+                            </td>
+                            <td>@item.Interface</td>
+                            <td>@item.Ports</td>
+                            <td>@item.CalibrationAccuracy</td>
+                            <td>@item.PwmCapacity</td>
+                            <td>@item.NormalCapacity</td>
+                            <td>@item.LsCapacity</td>
+                            <td>@item.Remark</td>
+                            <td>
+                                <a asp-controller="Products" asp-action="@item.RouteAction" class="btn btn-sm btn-outline-primary">
+                                    Detay
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

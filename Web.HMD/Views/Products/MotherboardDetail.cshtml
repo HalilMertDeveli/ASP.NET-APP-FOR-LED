@@ -1,0 +1,31 @@
+@model Web.HMD.Models.MotherboardTypeViewModel
+
+@{
+    ViewData["Title"] = $"{Model.Model} Detaylari";
+}
+
+<section class="receiver-section py-3">
+    <div class="section-head">
+        <h2 class="text-white">@Model.Model Ozellikleri</h2>
+        <p class="text-white-50">Secilen X serisi kontrol kartinin teknik detaylari.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body py-2 px-3 d-flex flex-wrap gap-2 align-items-center justify-content-between bg-dark">
+            <span class="fw-semibold text-white">Teknik Bilgiler</span>
+            <span class="badge bg-info text-dark rounded-pill">@Model.Model</span>
+        </div>
+        <div class="table-responsive mainboard-table-wrap">
+            <table class="table table-sm table-hover table-striped table-bordered align-middle mb-0 mainboard-table">
+                <tbody>
+                    <tr><th>Model</th><td>@Model.Model</td></tr>
+                    <tr><th>Port / Cikis</th><td>@Model.Port</td></tr>
+                    <tr><th>Maks. Piksel Kapasitesi</th><td>@Model.Pixel</td></tr>
+                    <tr><th>Maks. Cozunurluk</th><td>@Model.Resolution</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a asp-controller="Products" asp-action="Motherboards" class="btn btn-outline-secondary">Ana Kartlar Listesine Don</a>
+</section>

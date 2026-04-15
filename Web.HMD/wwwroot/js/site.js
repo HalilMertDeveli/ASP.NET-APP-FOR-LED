@@ -1,4 +1,96 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const initGlobalLedBackground = () => {
+        const bg = document.getElementById("globalLedBg");
+        if (!bg) return;
+
+        const dotSize = 7;
+        const gap = 14;
+        const influenceRadius = 220;
+        const influenceRadiusSquared = influenceRadius * influenceRadius;
+        const maxDots = 2200;
+        const rgbPalette = [
+            [255, 64, 64],
+            [64, 255, 96],
+            [64, 140, 255]
+        ];
+        const dots = [];
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let targetMouseX = mouseX;
+        let targetMouseY = mouseY;
+
+        const buildGrid = () => {
+            bg.innerHTML = "";
+            dots.length = 0;
+
+            const w = bg.clientWidth;
+            const h = bg.clientHeight;
+            const cols = Math.max(1, Math.floor(w / (dotSize + gap)));
+            const rows = Math.max(1, Math.floor(h / (dotSize + gap)));
+            const total = cols * rows;
+            const step = Math.max(1, Math.ceil(total / maxDots));
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const index = r * cols + c;
+                    if (index % step !== 0) continue;
+
+                    const dot = document.createElement("span");
+                    dot.className = "global-led-dot";
+                    const x = c * (dotSize + gap);
+                    const y = r * (dotSize + gap);
+                    dot.style.left = `${x}px`;
+                    dot.style.top = `${y}px`;
+                    bg.appendChild(dot);
+                    dots.push({ el: dot, x: x + dotSize * 0.5, y: y + dotSize * 0.5, colorIndex: index % 3 });
+                }
+            }
+        };
+
+        const animate = () => {
+            // Smooth and fast cursor tracking without jitter.
+            mouseX += (targetMouseX - mouseX) * 0.28;
+            mouseY += (targetMouseY - mouseY) * 0.28;
+
+            for (let i = 0; i < dots.length; i++) {
+                const dot = dots[i];
+                const dx = mouseX - dot.x;
+                const dy = mouseY - dot.y;
+                const distanceSquared = dx * dx + dy * dy;
+                const intensity = distanceSquared < influenceRadiusSquared
+                    ? 1 - distanceSquared / influenceRadiusSquared
+                    : 0;
+
+                if (intensity > 0) {
+                    const alpha = 0.2 + intensity * 0.8;
+                    const [r, g, b] = rgbPalette[dot.colorIndex];
+                    dot.el.style.background = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    dot.el.style.boxShadow = `0 0 ${8 + intensity * 18}px rgba(${r}, ${g}, ${b}, ${0.5 + intensity * 0.45})`;
+                    dot.el.style.transform = `scale(${1 + intensity * 0.95})`;
+                } else {
+                    dot.el.style.background = "rgba(51, 65, 85, 0.28)";
+                    dot.el.style.boxShadow = "none";
+                    dot.el.style.transform = "scale(1)";
+                }
+            }
+
+            requestAnimationFrame(animate);
+        };
+
+        document.addEventListener("mousemove", (e) => {
+            const rect = bg.getBoundingClientRect();
+            targetMouseX = e.clientX - rect.left;
+            targetMouseY = e.clientY - rect.top;
+        }, { passive: true });
+
+        window.addEventListener("resize", buildGrid);
+
+        buildGrid();
+        animate();
+    };
+
+    initGlobalLedBackground();
+
     const widget = document.getElementById("liveSupportWidget");
     const toggle = document.getElementById("liveSupportToggle");
     const panel = document.getElementById("liveSupportPanel");
@@ -7,9 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("liveSupportInput");
     const suggestionButtons = document.querySelectorAll(".suggestion-btn");
 
-    if (!widget || !toggle || !panel || !messages || !form || !input) {
-        return;
-    }
+    if (!widget || !toggle || !panel || !messages || !form || !input) return;
 
     const botResponses = {
         "servis sureci kac gun suruyor?": "Paket tipine gore 4 saat ile 3 is gunu arasinda tamamliyoruz.",

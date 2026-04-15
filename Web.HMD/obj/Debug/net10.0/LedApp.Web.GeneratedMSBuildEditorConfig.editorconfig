@@ -22,7 +22,7 @@ build_property.RootNamespace = LedApp.Web
 build_property.ProjectDir = C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
-build_property.RazorLangVersion = 9.0
+build_property.RazorLangVersion = 10.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
 build_property.MSBuildProjectDirectory = C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD
@@ -68,6 +68,42 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Home/ServiceDetail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTZXJ2aWNlRGV0YWlsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Products/ASeries.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcQVNlcmllcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Products/Category.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcQ2F0ZWdvcnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Products/MotherboardDetail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcTW90aGVyYm9hcmREZXRhaWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Products/Motherboards.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcTW90aGVyYm9hcmRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Products/PanelDetail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcUGFuZWxEZXRhaWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Products/PanelTypes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcUGFuZWxUeXBlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Products/PowerSupplies.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcUG93ZXJTdXBwbGllcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Products/ReceiverDetail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcUmVjZWl2ZXJEZXRhaWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Products/Receivers.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcUmVjZWl2ZXJzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/LEDAJANS COLORLIGHT/Desktop/HMD-ASP-NET/Web.HMD/Web.HMD/Views/Shared/Error.cshtml]

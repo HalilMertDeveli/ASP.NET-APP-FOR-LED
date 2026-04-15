@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Guc Saglayicilar (Power Supply)";
+    var powerSupplies = new[]
+    {
+        new { Model = "PS-40A", Amper = "40 Amper", Voltage = "5V DC", Usage = "Orta buyuklukte sistemler" },
+        new { Model = "PS-60A", Amper = "60 Amper", Voltage = "5V DC", Usage = "Yuksek yuk altindaki buyuk sistemler" }
+    };
+}
+
+<section class="receiver-section py-3">
+    <div class="section-head">
+        <h2 class="text-white">Guc Saglayicilar (Power Supply)</h2>
+        <p class="text-white-50">Sisteminize uygun amper secenegini secerek stabil enerji dagitimi saglayin.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body py-2 px-3 d-flex flex-wrap gap-2 align-items-center justify-content-between bg-dark">
+            <span class="fw-semibold text-white">Power Supply Secenekleri</span>
+            <span class="badge bg-info text-dark rounded-pill">@powerSupplies.Length Model</span>
+        </div>
+        <div class="table-responsive mainboard-table-wrap">
+            <table class="table table-sm table-hover table-striped table-bordered align-middle mb-0 mainboard-table">
+                <caption class="caption-top text-white-50 px-2 pt-2 mb-0">
+                    40A ve 60A guc saglayici secenekleri.
+                </caption>
+                <thead>
+                    <tr>
+                        <th class="text-nowrap">Model</th>
+                        <th class="text-nowrap">Amper</th>
+                        <th class="text-nowrap">Cikis Voltaji</th>
+                        <th class="text-nowrap">Kullanim Alani</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in powerSupplies)
+                    {
+                        <tr>
+                            <td><span class="badge text-bg-light border">@item.Model</span></td>
+                            <td class="fw-semibold">@item.Amper</td>
+                            <td>@item.Voltage</td>
+                            <td>@item.Usage</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

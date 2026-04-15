@@ -55,6 +55,7 @@ C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\wwwroot\lib\boo
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\wwwroot\lib\jquery-validation\dist\additional-methods.min.js
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\wwwroot\lib\jquery\dist\jquery.slim.min.js
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\wwwroot\js\dynamic-bg.js
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
@@ -66,6 +67,7 @@ wwwroot\css\auth.css
 wwwroot\css\chatbot.css
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\js\dynamic-bg.js
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\LICENSE
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css

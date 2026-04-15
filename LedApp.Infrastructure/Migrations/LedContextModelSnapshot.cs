@@ -135,14 +135,14 @@ namespace LedApp.Infrastructure.Migrations
 
                     b.Property<string>("ChipsetValue")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DecoderValue")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("FileContent")
                         .IsRequired()
@@ -158,11 +158,11 @@ namespace LedApp.Infrastructure.Migrations
 
                     b.Property<string>("FileType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PValue")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PanelType")
                         .IsRequired()
@@ -172,6 +172,11 @@ namespace LedApp.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PValue", "ChipsetValue", "DecoderValue");
+
+                    b.HasIndex("PValue", "ChipsetValue", "DecoderValue", "FileType")
+                        .IsUnique();
 
                     b.ToTable("PanelSupportFiles");
                 });

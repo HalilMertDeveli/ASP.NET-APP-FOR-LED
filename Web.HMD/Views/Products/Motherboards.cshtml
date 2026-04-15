@@ -1,0 +1,67 @@
+@model IEnumerable<Web.HMD.Models.MotherboardTypeViewModel>
+
+@{
+    ViewData["Title"] = "X Serisi Islemciler";
+}
+
+<section class="receiver-section py-3">
+    <div class="section-head">
+        <h2 class="text-white">Kontrol Kartlari - X Serisi Islemciler</h2>
+        <p class="text-white-50">X serisi, HDMI ve DP (DisplayPort) uzerinden goruntu cikisi verir; bu kartlarda dahili hafiza bulunmaz.</p>
+    </div>
+    <div class="alert alert-info border-0 shadow-sm">
+        <strong>Not:</strong> X serisi islemciler goruntuyu HDMI/DP girisinden anlik olarak isler ve receiver kartlara aktarir. Dahili depolama/hafiza yoktur.
+    </div>
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body py-2 px-3 d-flex flex-wrap gap-2 align-items-center justify-content-between bg-dark">
+            <span class="fw-semibold text-white">X Serisi Teknik Tablo</span>
+            <span class="badge bg-info text-dark rounded-pill">@Model.Count() Model</span>
+        </div>
+        <div class="table-responsive mainboard-table-wrap">
+        <table class="table table-sm table-hover table-striped table-bordered align-middle mb-0 mainboard-table">
+            <caption class="caption-top text-white-50 px-2 pt-2 mb-0">
+                X serisi islemci modelleri, cikis tipleri ve desteklenen maksimum cozumurluk bilgileri.
+            </caption>
+            <thead>
+                <tr>
+                    <th class="text-nowrap">Model</th>
+                    <th class="text-nowrap">Port / Cikis</th>
+                    <th class="text-nowrap">Maks. Piksel Kapasitesi</th>
+                    <th class="text-nowrap">Maks. Cozunurluk</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var board in Model)
+                {
+                    <tr>
+                        <td><span class="badge text-bg-light border">@board.Model</span></td>
+                        <td class="fw-semibold">@board.Port</td>
+                        <td>@board.Pixel</td>
+                        <td><span class="badge text-bg-info">@board.Resolution</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-2">
+        @foreach (var board in Model)
+        {
+            <div class="col-12 col-md-6 col-xl-4">
+                <a asp-controller="Products" asp-action="MotherboardDetail" asp-route-model="@board.Model" class="text-decoration-none">
+                    <article class="receiver-card h-100">
+                        <h5>
+                            <span class="receiver-badge">X Seri</span>
+                            @board.Model
+                        </h5>
+                        <p><strong>Port/Cikis:</strong> @board.Port</p>
+                        <p><strong>Maks. Piksel:</strong> @board.Pixel</p>
+                        <p><strong>Maks. Cozunurluk:</strong> @board.Resolution</p>
+                        <p class="mb-0 text-info small fw-semibold">Detaya git</p>
+                    </article>
+                </a>
+            </div>
+        }
+    </div>
+</section>

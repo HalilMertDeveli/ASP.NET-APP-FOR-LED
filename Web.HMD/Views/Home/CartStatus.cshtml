@@ -38,7 +38,7 @@
                         <tr>
                             <td>@item.Title</td>
                             <td>@item.EstimatedTime</td>
-                            <td>₺@item.Price</td>
+                            <td>$@item.Price</td>
                             <td class="text-end">
                                 <form asp-controller="Home" asp-action="RemoveFromCart" method="post">
                                     <input type="hidden" name="id" value="@item.Id" />
@@ -50,6 +50,6 @@
                 </tbody>
             </table>
         </div>
-        <div class="text-end fw-bold">Toplam: ₺@total</div>
+        <div class="text-end fw-bold">Toplam: $@total</div>
     }
 </section>

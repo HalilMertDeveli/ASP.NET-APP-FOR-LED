@@ -6,27 +6,7 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        document.addEventListener('mousemove', (e) => {
-            const orbs = document.querySelectorAll('.bg-orb');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            orbs.forEach((orb, index) => {
-                const speed = (index + 1) * 30;
-                const xOffset = (x - 0.5) * speed;
-                const yOffset = (y - 0.5) * speed;
-                orb.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-            });
-        });
-    </script>
 }
-
-<div class="dynamic-bg-container circuit-pattern">
-    <div class="bg-orb orb-1 neon-glow"></div>
-    <div class="bg-orb orb-2 neon-glow"></div>
-    <div class="bg-orb orb-3 neon-glow"></div>
-</div>
 
 <div class="row align-items-center auth-container vh-100 mt-negative flex-row-reverse">
     <div class="col-md-6 d-none d-md-block h-100 p-0 position-relative" style="background: url('https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&q=80') center/cover no-repeat;">
