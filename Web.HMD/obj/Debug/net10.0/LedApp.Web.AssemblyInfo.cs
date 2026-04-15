@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LedApp.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4a8adbc658e6c582853fcfa1dff2f1d21e871055")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6489e4f3f0698354c2388674514e35eb56fd8b47")]
 [assembly: System.Reflection.AssemblyProductAttribute("LedApp.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LedApp.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

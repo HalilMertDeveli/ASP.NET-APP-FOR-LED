@@ -1,5 +1,8 @@
+@using Web.HMD.Services
 @{
     ViewData["Title"] = "Tarama Dosyasi Yukleme";
+    var updateMappings = ViewBag.UpdateMappings as IReadOnlyList<UpdateHexMappingEntry> ?? new List<UpdateHexMappingEntry>();
+    var updateHexFiles = ViewBag.UpdateHexFiles as IReadOnlyList<UpdateHexFileEntry> ?? new List<UpdateHexFileEntry>();
 }
 
 <div class="container py-4 support-admin-page">
@@ -13,35 +16,174 @@
                 <div class="alert alert-info app-toast-center">@TempData["ScanUploadMessage"]</div>
             }
 
-            <form asp-controller="Support" asp-action="ScanUpload" method="post" enctype="multipart/form-data" class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label">P Degeri</label>
-                    <input name="pValue" class="form-control support-input" placeholder="p2.5" required />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Chipset Degeri</label>
-                    <input name="chipsetValue" class="form-control support-input" placeholder="1065s" required />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Decoder Degeri</label>
-                    <input name="decoderValue" class="form-control support-input" placeholder="2012" required />
+            <div class="alert alert-secondary mb-4">
+                Kayit bilgileri dosya adindan otomatik uretilir. Desteklenen ad formati:
+                <strong>p2.5-1065s-2012</strong>, <strong>p2.5_1065s_2012</strong> veya <strong>p2.5+1065s+2012</strong>.
+                Uymayan dosyalar atlanir.
+            </div>
+
+            <h5 class="mb-3">1) Tekli Sürükle-Bırak Yukleme</h5>
+            <form asp-controller="Support" asp-action="ScanUploadSingle" method="post" enctype="multipart/form-data" class="row g-3 mb-4">
+                <div class="col-12">
+                    <label class="form-label">Tek dosya sec (.rcvp, .hex veya uzantisiz)</label>
+                    <div class="support-dropzone" id="singleDropzone">
+                        <input type="file" name="file" id="singleFileInput" class="support-file-input" required />
+                        <div class="support-dropzone-content">
+                            <strong>Dosyayi buraya surukle-birak</strong>
+                            <span>veya tiklayarak sec</span>
+                            <small>Ornek ad: p2.5-1065s-2012</small>
+                        </div>
+                    </div>
+                    <div class="support-file-list mt-2" id="singleFileList"></div>
                 </div>
                 <div class="col-12">
-                    <label class="form-label">Tarama Dosyalari (.rcvp ve .hex)</label>
+                    <button type="submit" class="btn btn-primary support-btn">Tekli Yukle</button>
+                </div>
+            </form>
+
+            <hr />
+
+            <h5 class="mb-3 mt-4">2) Toplu Sürükle-Bırak Yukleme</h5>
+            <form asp-controller="Support" asp-action="ScanUpload" method="post" enctype="multipart/form-data" class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Tarama Dosyalari (toplu)</label>
                     <div class="support-dropzone" id="multiDropzone">
-                        <input type="file" name="files" id="multiFileInput" class="support-file-input" accept=".rcvp,.hex" multiple required />
+                        <input type="file" name="files" id="multiFileInput" class="support-file-input" multiple required />
                         <div class="support-dropzone-content">
                             <strong>Dosyalari buraya surukle-birak</strong>
                             <span>veya tiklayarak birden fazla sec</span>
-                            <small>Birden fazla dosya secilebilir. Sadece .rcvp ve .hex kabul edilir.</small>
+                            <small>Tekrar tekrar birakarak listeye ekleyebilirsin. Ornek ad: p2.5-1065s-2012</small>
                         </div>
                     </div>
                     <div class="support-file-list mt-2" id="multiFileList"></div>
                 </div>
                 <div class="col-12 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary support-btn">Yukle</button>
+                    <button type="submit" class="btn btn-primary support-btn">Toplu Yukle</button>
                 </div>
             </form>
+
+            <hr />
+
+            <h5 class="mb-3 mt-4">3) Guncelleme HEX Yukleme (.hex)</h5>
+            <form asp-controller="Support" asp-action="UploadUpdateHex" method="post" enctype="multipart/form-data" class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label">HEX Surumu</label>
+                    <input name="versionLabel" class="form-control support-input" placeholder="11.28 (bossa dosya adindan alinir)" />
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Guncelleme HEX Dosyasi</label>
+                    <div class="support-dropzone" id="updateHexDropzone">
+                        <input type="file" name="hexFile" id="updateHexInput" class="support-file-input" accept=".hex" required />
+                        <div class="support-dropzone-content">
+                            <strong>.hex dosyasini buraya surukle-birak</strong>
+                            <span>veya tiklayarak sec</span>
+                            <small>Ornek: 11.28.hex</small>
+                        </div>
+                    </div>
+                    <div class="support-file-list mt-2" id="updateHexFileList"></div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-warning support-btn">Guncelleme HEX Kaydet</button>
+                </div>
+            </form>
+
+            <h5 class="mb-3">4) Decoder/Chipset - HEX Eslestirme Tablosu</h5>
+            <form asp-controller="Support" asp-action="SaveUpdateHexMappings" method="post" class="row g-3 mb-4">
+                <div class="col-12">
+                    <label class="form-label">Eslestirme Giris Tablosu</label>
+                    <div class="table-responsive mainboard-table-wrap">
+                        <table class="table table-sm align-middle mb-0 mainboard-table" id="mappingInputTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 170px;">HEX Surumu</th>
+                                    <th>Decoder/Chipset Listesi</th>
+                                    <th style="width: 120px;">Islem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mappingInputBody">
+                                <tr>
+                                    <td><input class="form-control support-input mapping-version" placeholder="11.28" /></td>
+                                    <td><input class="form-control support-input mapping-keys" placeholder="1065s/16169sh/2012" /></td>
+                                    <td><button type="button" class="btn btn-outline-danger btn-sm remove-mapping-row">Sil</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex gap-2 mt-2">
+                        <button type="button" class="btn btn-outline-light btn-sm" id="addMappingRowBtn">Satir Ekle</button>
+                    </div>
+                    <input type="hidden" name="mappingTable" id="mappingTableInput" />
+                    <small class="text-muted">Ornek: HEX surumu `11.28`, liste `1065s/16169sh/2012`. Sistem bunlari bu surume baglar.</small>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-info support-btn">Tabloyu Kaydet</button>
+                </div>
+            </form>
+
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <div class="table-responsive mainboard-table-wrap">
+                        <table class="table table-sm table-hover align-middle mb-0 mainboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Lookup (decoder/chipset)</th>
+                                    <th>HEX Surumu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (updateMappings.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="2" class="text-white-50">Henuz eslestirme tablosu girilmedi.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var map in updateMappings)
+                                    {
+                                        <tr>
+                                            <td>@map.LookupKey</td>
+                                            <td>@map.VersionLabel</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="table-responsive mainboard-table-wrap">
+                        <table class="table table-sm table-hover align-middle mb-0 mainboard-table">
+                            <thead>
+                                <tr>
+                                    <th>HEX Surumu</th>
+                                    <th>Dosya</th>
+                                    <th>Guncelleme</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (updateHexFiles.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-white-50">Henuz guncelleme HEX dosyasi yuklenmedi.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var hex in updateHexFiles)
+                                    {
+                                        <tr>
+                                            <td>@hex.VersionLabel</td>
+                                            <td><a href="@hex.RelativePath" target="_blank" rel="noopener noreferrer">@hex.FileName</a></td>
+                                            <td>@hex.UpdatedAtUtc.ToString("yyyy-MM-dd HH:mm")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -49,41 +191,161 @@
 @section Scripts {
     <script>
         (function () {
-            const dropzone = document.getElementById("multiDropzone");
-            const fileInput = document.getElementById("multiFileInput");
-            const fileList = document.getElementById("multiFileList");
+            const singleDropzone = document.getElementById("singleDropzone");
+            const singleFileInput = document.getElementById("singleFileInput");
+            const singleFileList = document.getElementById("singleFileList");
+            const multiDropzone = document.getElementById("multiDropzone");
+            const multiFileInput = document.getElementById("multiFileInput");
+            const multiFileList = document.getElementById("multiFileList");
+            const updateHexDropzone = document.getElementById("updateHexDropzone");
+            const updateHexInput = document.getElementById("updateHexInput");
+            const updateHexFileList = document.getElementById("updateHexFileList");
+            const addMappingRowBtn = document.getElementById("addMappingRowBtn");
+            const mappingInputBody = document.getElementById("mappingInputBody");
+            const mappingTableInput = document.getElementById("mappingTableInput");
+            const mappingForm = mappingTableInput?.closest("form");
 
-            if (!dropzone || !fileInput || !fileList) return;
+            if (!singleDropzone || !singleFileInput || !singleFileList || !multiDropzone || !multiFileInput || !multiFileList || !updateHexDropzone || !updateHexInput || !updateHexFileList || !addMappingRowBtn || !mappingInputBody || !mappingTableInput || !mappingForm) return;
 
-            const render = () => {
-                if (!fileInput.files || fileInput.files.length === 0) {
-                    fileList.innerHTML = "";
+            const renderSingle = () => {
+                if (!singleFileInput.files || singleFileInput.files.length === 0) {
+                    singleFileList.innerHTML = "";
                     return;
                 }
 
-                const items = Array.from(fileInput.files)
-                    .map(f => `<div class="support-file-item">${f.name} <small>(${Math.round(f.size / 1024)} KB)</small></div>`)
-                    .join("");
-                fileList.innerHTML = items;
+                const file = singleFileInput.files[0];
+                singleFileList.innerHTML = `<div class="support-file-item">${file.name} <small>(${Math.round(file.size / 1024)} KB)</small></div>`;
             };
 
-            dropzone.addEventListener("dragover", (e) => {
-                e.preventDefault();
-                dropzone.classList.add("dragover");
+            const transferFilesToInput = (input, files) => {
+                const dataTransfer = new DataTransfer();
+                files.forEach(file => dataTransfer.items.add(file));
+                input.files = dataTransfer.files;
+            };
+
+            const bindDropzone = (dropzone, onDropFiles) => {
+                dropzone.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add("dragover");
+                });
+
+                dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+
+                dropzone.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove("dragover");
+                    const droppedFiles = Array.from(e.dataTransfer.files || []);
+                    if (droppedFiles.length > 0) {
+                        onDropFiles(droppedFiles);
+                    }
+                });
+            };
+
+            bindDropzone(singleDropzone, (droppedFiles) => {
+                transferFilesToInput(singleFileInput, [droppedFiles[0]]);
+                renderSingle();
             });
 
-            dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+            singleFileInput.addEventListener("change", renderSingle);
 
-            dropzone.addEventListener("drop", (e) => {
-                e.preventDefault();
-                dropzone.classList.remove("dragover");
-                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    fileInput.files = e.dataTransfer.files;
-                    render();
+            let selectedFiles = [];
+
+            const renderMulti = () => {
+                if (selectedFiles.length === 0) {
+                    multiFileList.innerHTML = "";
+                    return;
                 }
+
+                multiFileList.innerHTML = selectedFiles
+                    .map(f => `<div class="support-file-item">${f.name} <small>(${Math.round(f.size / 1024)} KB)</small></div>`)
+                    .join("");
+            };
+
+            const mergeFiles = (incomingFiles) => {
+                const fileMap = new Map(selectedFiles.map(f => [`${f.name}-${f.size}-${f.lastModified}`, f]));
+                incomingFiles.forEach(file => {
+                    const key = `${file.name}-${file.size}-${file.lastModified}`;
+                    if (!fileMap.has(key)) {
+                        fileMap.set(key, file);
+                    }
+                });
+                selectedFiles = Array.from(fileMap.values());
+                transferFilesToInput(multiFileInput, selectedFiles);
+                renderMulti();
+            };
+
+            bindDropzone(multiDropzone, (droppedFiles) => {
+                mergeFiles(droppedFiles);
             });
 
-            fileInput.addEventListener("change", render);
+            multiFileInput.addEventListener("change", () => {
+                mergeFiles(Array.from(multiFileInput.files || []));
+            });
+
+            const renderUpdateHex = () => {
+                if (!updateHexInput.files || updateHexInput.files.length === 0) {
+                    updateHexFileList.innerHTML = "";
+                    return;
+                }
+                const file = updateHexInput.files[0];
+                updateHexFileList.innerHTML = `<div class="support-file-item">${file.name} <small>(${Math.round(file.size / 1024)} KB)</small></div>`;
+            };
+
+            bindDropzone(updateHexDropzone, (droppedFiles) => {
+                transferFilesToInput(updateHexInput, [droppedFiles[0]]);
+                renderUpdateHex();
+            });
+
+            updateHexInput.addEventListener("change", renderUpdateHex);
+
+            const createMappingRow = () => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td><input class="form-control support-input mapping-version" placeholder="11.28" /></td>
+                    <td><input class="form-control support-input mapping-keys" placeholder="1065s/16169sh/2012" /></td>
+                    <td><button type="button" class="btn btn-outline-danger btn-sm remove-mapping-row">Sil</button></td>
+                `;
+                mappingInputBody.appendChild(row);
+            };
+
+            addMappingRowBtn.addEventListener("click", createMappingRow);
+
+            mappingInputBody.addEventListener("click", (e) => {
+                const target = e.target;
+                if (!(target instanceof HTMLElement)) return;
+                if (!target.classList.contains("remove-mapping-row")) return;
+
+                const row = target.closest("tr");
+                if (!row) return;
+
+                const rowCount = mappingInputBody.querySelectorAll("tr").length;
+                if (rowCount <= 1) {
+                    const versionInput = row.querySelector(".mapping-version");
+                    const keysInput = row.querySelector(".mapping-keys");
+                    if (versionInput instanceof HTMLInputElement) versionInput.value = "";
+                    if (keysInput instanceof HTMLInputElement) keysInput.value = "";
+                    return;
+                }
+
+                row.remove();
+            });
+
+            mappingForm.addEventListener("submit", () => {
+                const rows = Array.from(mappingInputBody.querySelectorAll("tr"));
+                const lines = rows
+                    .map((row) => {
+                        const version = row.querySelector(".mapping-version");
+                        const keys = row.querySelector(".mapping-keys");
+                        const versionValue = version instanceof HTMLInputElement ? version.value.trim() : "";
+                        const keysValue = keys instanceof HTMLInputElement ? keys.value.trim() : "";
+                        if (!versionValue || !keysValue) return "";
+                        return `${versionValue}\t${keysValue}`;
+                    })
+                    .filter(Boolean);
+
+                mappingTableInput.value = lines.join("\n");
+            });
+
         })();
     </script>
 }

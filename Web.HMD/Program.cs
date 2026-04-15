@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using LedApp.Application;
 using LedApp.Infrastructure;
+using Web.HMD.Services;
 
 namespace Web.HMD
 {
@@ -21,6 +22,7 @@ namespace Web.HMD
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+            builder.Services.AddScoped<IUpdateHexCatalogService, UpdateHexCatalogService>();
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
 

@@ -132,11 +132,17 @@ document.addEventListener("DOMContentLoaded", () => {
         msg.className = "msg bot";
 
         const fileType = (file.fileType || "").toUpperCase();
+        const fileRole = (file.fileRole || "scan").toLowerCase();
+        const versionLabel = file.versionLabel || "";
         const fileName = file.fileName || "Dosya";
         const fileUrl = file.fileUrl || "#";
 
         const prefix = document.createElement("span");
-        prefix.textContent = `${fileType} | `;
+        if (fileRole === "update") {
+            prefix.textContent = `GUNCELLEME HEX${versionLabel ? ` (${versionLabel})` : ""} | `;
+        } else {
+            prefix.textContent = `${fileType} | `;
+        }
 
         const link = document.createElement("a");
         link.href = fileUrl;
@@ -156,7 +162,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const shouldStartPanelFlow = (text) => {
         const normalized = normalizeText(text);
-        return normalized.includes("dosya") || normalized.includes("panel") || normalized.includes("chipset") || normalized.includes("decoder");
+        return normalized.includes("dosya") ||
+            normalized.includes("panel") ||
+            normalized.includes("chipset") ||
+            normalized.includes("decoder");
+    };
+
+    const tryParseDirectPanelQuery = (text) => {
+        const value = normalizeText(text);
+        const parts = value
+            .split(/[+\-_\s]+/)
+            .map((x) => x.trim())
+            .filter(Boolean);
+
+        if (parts.length !== 3) return null;
+        if (!parts[0].startsWith("p")) return null;
+
+        return {
+            pValue: parts[0],
+            chipsetValue: parts[1],
+            decoderValue: parts[2]
+        };
     };
 
     const resetPanelFlow = () => {
@@ -175,6 +201,49 @@ document.addEventListener("DOMContentLoaded", () => {
         appendMessage(panelFlow.steps[0].question, "bot");
     };
 
+    const fetchAndRenderPanelFiles = async (queryPayload) => {
+        try {
+            const query = new URLSearchParams({
+                chipsetValue: queryPayload.chipsetValue || "",
+                decoderValue: queryPayload.decoderValue || "",
+                pValue: queryPayload.pValue || ""
+            });
+
+            const response = await fetch(`/Support/GetPanelFiles?${query.toString()}`);
+            if (!response.ok) {
+                appendMessage("Dosya sorgusunda bir hata olustu. Lutfen tekrar deneyin.", "bot");
+                return;
+            }
+
+            const files = await response.json();
+            if (!Array.isArray(files) || files.length === 0) {
+                appendMessage("Su an eslesen bir tarama ve guncelleme dosyasi yok.", "bot");
+                return;
+            }
+
+            const scanFiles = files.filter((x) => (x.fileRole || "scan") !== "update");
+            const updateFiles = files.filter((x) => (x.fileRole || "scan") === "update");
+
+            if (scanFiles.length > 0) {
+                appendMessage(`Tarama dosyalari (${scanFiles.length}):`, "bot");
+                scanFiles.forEach((file) => {
+                    appendFileLinkMessage(file);
+                });
+            }
+
+            if (updateFiles.length > 0) {
+                appendMessage(`Guncelleme dosyalari (${updateFiles.length}):`, "bot");
+                updateFiles.forEach((file) => {
+                    appendFileLinkMessage(file);
+                });
+            } else {
+                appendMessage("Bu sorgu icin eslesen guncelleme HEX bulunamadi.", "bot");
+            }
+        } catch (error) {
+            appendMessage("Sistem hatasi olustu. Lutfen biraz sonra tekrar deneyin.", "bot");
+        }
+    };
+
     const completePanelFlow = async () => {
         const summary = [
             `P: ${panelFlow.data.pValue}`,
@@ -184,36 +253,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
         appendMessage(`Bilgileri aldim. Arama yapiyorum... (${summary})`, "bot");
 
-        try {
-            const query = new URLSearchParams({
-                chipsetValue: panelFlow.data.chipsetValue || "",
-                decoderValue: panelFlow.data.decoderValue || "",
-                pValue: panelFlow.data.pValue || ""
-            });
-
-            const response = await fetch(`/Support/GetPanelFiles?${query.toString()}`);
-            if (!response.ok) {
-                appendMessage("Dosya sorgusunda bir hata olustu. Lutfen tekrar deneyin.", "bot");
-                resetPanelFlow();
-                return;
-            }
-
-            const files = await response.json();
-            if (!Array.isArray(files) || files.length === 0) {
-                appendMessage("Bu bilgilere uygun dosya bulunamadi.", "bot");
-                resetPanelFlow();
-                return;
-            }
-
-            appendMessage(`Eslesen ${files.length} dosya bulundu (rcvp/hex):`, "bot");
-            files.forEach((file) => {
-                appendFileLinkMessage(file);
-            });
-        } catch (error) {
-            appendMessage("Sistem hatasi olustu. Lutfen biraz sonra tekrar deneyin.", "bot");
-        }
+        await fetchAndRenderPanelFiles({
+            pValue: panelFlow.data.pValue,
+            chipsetValue: panelFlow.data.chipsetValue,
+            decoderValue: panelFlow.data.decoderValue
+        });
 
         resetPanelFlow();
+    };
+
+    const botReply = (question) => {
+        if (panelFlow.isActive) {
+            setTimeout(() => handlePanelFlowInput(question), 300);
+            return;
+        }
+
+        const directQuery = tryParseDirectPanelQuery(question);
+        if (directQuery) {
+            appendMessage("Format algilandi. Tarama ve guncelleme dosyalari getiriliyor...", "bot");
+            setTimeout(() => {
+                fetchAndRenderPanelFiles(directQuery);
+            }, 200);
+            return;
+        }
+
+        if (shouldStartPanelFlow(question)) {
+            setTimeout(() => startPanelFlow(), 300);
+            return;
+        }
+
+        const key = normalizeText(question);
+        const response = botResponses[key] || botResponses.default;
+        setTimeout(() => appendMessage(response, "bot"), 500);
     };
 
     const handlePanelFlowInput = (value) => {
@@ -240,22 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const nextStep = panelFlow.steps[panelFlow.currentStepIndex];
         appendMessage(nextStep.question, "bot");
-    };
-
-    const botReply = (question) => {
-        if (panelFlow.isActive) {
-            setTimeout(() => handlePanelFlowInput(question), 300);
-            return;
-        }
-
-        if (shouldStartPanelFlow(question)) {
-            setTimeout(() => startPanelFlow(), 300);
-            return;
-        }
-
-        const key = normalizeText(question);
-        const response = botResponses[key] || botResponses.default;
-        setTimeout(() => appendMessage(response, "bot"), 500);
     };
 
     const openWidget = () => {

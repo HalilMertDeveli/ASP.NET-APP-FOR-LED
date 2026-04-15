@@ -129,3 +129,6 @@ wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
+wwwroot\update-hex\11.28.hex
+wwwroot\update-hex\12.35.hex
+wwwroot\update-hex\3.52.hex

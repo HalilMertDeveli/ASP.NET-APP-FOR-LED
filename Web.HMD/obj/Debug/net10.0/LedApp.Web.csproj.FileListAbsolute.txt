@@ -259,7 +259,7 @@ C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\aseries\Led
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\aseries\LedApp.Web.dll
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\_buildcheck\aseries\LedApp.Web.pdb
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
-C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\b5nnr3xb70-{0}-ic9k1mzpcu-ic9k1mzpcu.gz
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\ai1qurixn1-{0}-ycvirq16o3-ycvirq16o3.gz
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\2jblhlw6c0-{0}-h16yr439jk-h16yr439jk.gz
 C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\e02r51egau-{0}-77v355ma1w-77v355ma1w.gz
+C:\Users\LEDAJANS COLORLIGHT\Desktop\HMD-ASP-NET\Web.HMD\Web.HMD\obj\Debug\net10.0\compressed\b5nnr3xb70-{0}-fm68bcoara-fm68bcoara.gz

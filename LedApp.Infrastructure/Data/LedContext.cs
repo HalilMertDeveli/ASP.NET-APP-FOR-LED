@@ -20,6 +20,8 @@ namespace Entity.HMD.Context
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<PanelSupportFile> PanelSupportFiles { get; set; }
+        public DbSet<UpdateHexFile> UpdateHexFiles { get; set; }
+        public DbSet<UpdateHexMapping> UpdateHexMappings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PanelSupportFile>()
@@ -28,6 +30,14 @@ namespace Entity.HMD.Context
 
             modelBuilder.Entity<PanelSupportFile>()
                 .HasIndex(x => new { x.PValue, x.ChipsetValue, x.DecoderValue });
+
+            modelBuilder.Entity<UpdateHexFile>()
+                .HasIndex(x => x.VersionLabel)
+                .IsUnique();
+
+            modelBuilder.Entity<UpdateHexMapping>()
+                .HasIndex(x => x.LookupKey)
+                .IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }
