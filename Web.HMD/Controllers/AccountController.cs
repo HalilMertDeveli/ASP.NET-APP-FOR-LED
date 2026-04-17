@@ -3,6 +3,7 @@ using Web.HMD.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LedApp.Application.Services;
@@ -11,6 +12,7 @@ using System;
 using System.Linq;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Web.HMD.Controllers
 {
@@ -91,24 +93,41 @@ namespace Web.HMD.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
-        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExternalLogin(string provider, string? returnUrl = null)
         {
+            if (string.IsNullOrWhiteSpace(provider) || !string.Equals(provider, GoogleDefaults.AuthenticationScheme, StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError(string.Empty, "Sadece Google ile giriş destekleniyor.");
+                return View("Login");
+            }
+
+            var schemeProvider = HttpContext.RequestServices.GetRequiredService<IAuthenticationSchemeProvider>();
+            var providers = await schemeProvider.GetAllSchemesAsync();
+            var selectedProvider = providers.FirstOrDefault(p => string.Equals(p.Name, GoogleDefaults.AuthenticationScheme, StringComparison.OrdinalIgnoreCase));
+            if (selectedProvider == null)
+            {
+                ModelState.AddModelError(string.Empty, "Google giriş sağlayıcısı aktif değil.");
+                return View("Login");
+            }
+
             var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { provider, returnUrl }) ?? "/Account/Login";
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
-            return Challenge(properties, provider);
+            return Challenge(properties, selectedProvider.Name);
         }
 
         [HttpGet]
         public async Task<IActionResult> ExternalLoginCallback(string provider, string? returnUrl = null, string? remoteError = null)
         {
             returnUrl ??= Url.Action("Index", "Home") ?? "/";
-            var providerLabel = string.IsNullOrWhiteSpace(provider) ? "Harici Sağlayıcı" : provider;
+            var providerLabel = "Google";
 
             if (!string.IsNullOrWhiteSpace(remoteError))
             {
@@ -132,7 +151,8 @@ namespace Web.HMD.Controllers
 
             if (string.IsNullOrWhiteSpace(email))
             {
-                email = $"{providerLabel.ToLowerInvariant()}_{providerUserId}@external.local";
+                ModelState.AddModelError(string.Empty, "Google hesabında e-posta bilgisi bulunamadı.");
+                return View("Login");
             }
 
             var fullName = externalResult.Principal.FindFirstValue(ClaimTypes.Name);
@@ -149,7 +169,7 @@ namespace Web.HMD.Controllers
                 {
                     FullName = fullName,
                     Email = email,
-                    Phone = providerLabel,
+                    Phone = "Google",
                     Password = generatedPassword
                 });
             }

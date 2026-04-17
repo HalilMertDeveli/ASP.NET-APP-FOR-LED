@@ -36,12 +36,19 @@ namespace Web.HMD
 
             var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
             var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+            var googleCallbackPath = builder.Configuration["Authentication:Google:CallbackPath"];
             if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret))
             {
                 authenticationBuilder.AddGoogle(options =>
                 {
                     options.ClientId = googleClientId;
                     options.ClientSecret = googleClientSecret;
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.SaveTokens = true;
+                    if (!string.IsNullOrWhiteSpace(googleCallbackPath))
+                    {
+                        options.CallbackPath = googleCallbackPath;
+                    }
                 });
             }
 
@@ -53,6 +60,7 @@ namespace Web.HMD
                 {
                     options.AppId = facebookAppId;
                     options.AppSecret = facebookAppSecret;
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.Fields.Add("name");
                     options.Fields.Add("email");
                 });

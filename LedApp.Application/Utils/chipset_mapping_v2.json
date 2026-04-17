@@ -1,0 +1,334 @@
+{
+  "MBI5051B/515S": {
+    "mapped": "5051B/515S",
+    "hex_value": "11,28"
+  },
+  "MBI5152": {
+    "mapped": "5152",
+    "hex_value": "11,28"
+  },
+  "MBI5153/SM16519": {
+    "mapped": "5153/16519",
+    "hex_value": "11,28"
+  },
+  "MBI5353B": {
+    "mapped": "5353B",
+    "hex_value": "11,28"
+  },
+  "MBI5252": {
+    "mapped": "5252",
+    "hex_value": "11,28"
+  },
+  "MBI5252B": {
+    "mapped": "5252B",
+    "hex_value": "11,28"
+  },
+  "MBI5253": {
+    "mapped": "5253",
+    "hex_value": "11,28"
+  },
+  "MBI5253B": {
+    "mapped": "5253B",
+    "hex_value": "11,28"
+  },
+  "MBI5254": {
+    "mapped": "5254",
+    "hex_value": "11,28"
+  },
+  "FM6153/FM6253": {
+    "mapped": "6153/6253",
+    "hex_value": "11,28"
+  },
+  "FM6353": {
+    "mapped": "6353",
+    "hex_value": "11,28"
+  },
+  "FM6373/ICND2165": {
+    "mapped": "6373/2165",
+    "hex_value": "11,28"
+  },
+  "FM6565CE": {
+    "mapped": "6565CE",
+    "hex_value": "11,28"
+  },
+  "FM6565/FM6569": {
+    "mapped": "6565/6569",
+    "hex_value": "11,28"
+  },
+  "SM16169S": {
+    "mapped": "16169S",
+    "hex_value": "11,28"
+  },
+  "SM16259": {
+    "mapped": "16259",
+    "hex_value": "11,28"
+  },
+  "SM16359": {
+    "mapped": "16359",
+    "hex_value": "11,28"
+  },
+  "SM16369S": {
+    "mapped": "16369S",
+    "hex_value": "11,28"
+  },
+  "SM16380S": {
+    "mapped": "16380S",
+    "hex_value": "11,28"
+  },
+  "SM16380SH": {
+    "mapped": "16380SH",
+    "hex_value": "11,28"
+  },
+  "SM16380SF": {
+    "mapped": "16380SF",
+    "hex_value": "11,28"
+  },
+  "SM16389S": {
+    "mapped": "16389S",
+    "hex_value": "11,28"
+  },
+  "SM16395": {
+    "mapped": "16395",
+    "hex_value": "11,28"
+  },
+  "SM16389SF": {
+    "mapped": "16389SF",
+    "hex_value": "11,28"
+  },
+  "ICN2050/2053/2058/2153": {
+    "mapped": "2050/2053/2058/2153",
+    "hex_value": "11,28"
+  },
+  "ICN2055": {
+    "mapped": "2055",
+    "hex_value": "11,28"
+  },
+  "ICN2065": {
+    "mapped": "2065",
+    "hex_value": "11,28"
+  },
+  "ICND2163": {
+    "mapped": "2163",
+    "hex_value": "11,28"
+  },
+  "ICND2165": {
+    "mapped": "2165",
+    "hex_value": "11,28"
+  },
+  "ICND2169": {
+    "mapped": "2169",
+    "hex_value": "11,28"
+  },
+  "ICND2153S": {
+    "mapped": "2153S",
+    "hex_value": "11,28"
+  },
+  "ICND1065S": {
+    "mapped": "1065S",
+    "hex_value": "11,28"
+  },
+  "DP3264/DP3265/DP3265S": {
+    "mapped": "3264/3265/3265S",
+    "hex_value": "11,28"
+  },
+  "DP5525": {
+    "mapped": "5525",
+    "hex_value": "11,28"
+  },
+  "DP3365S": {
+    "mapped": "3365S",
+    "hex_value": ""
+  },
+  "DP3269": {
+    "mapped": "3269",
+    "hex_value": "11,28"
+  },
+  "DP3254/DP3153/DP3357": {
+    "mapped": "3254/3153/3357",
+    "hex_value": "11,28"
+  },
+  "DP3364S": {
+    "mapped": "3364S",
+    "hex_value": "11,28"
+  },
+  "HX8055": {
+    "mapped": "8055",
+    "hex_value": "11,28"
+  },
+  "HX8864": {
+    "mapped": "8864",
+    "hex_value": "11,28"
+  },
+  "CFD455": {
+    "mapped": "455",
+    "hex_value": "11,28"
+  },
+  "CFD465A": {
+    "mapped": "465A",
+    "hex_value": "11,28"
+  },
+  "CFD455C": {
+    "mapped": "455C",
+    "hex_value": "11,28"
+  },
+  "CFD325A": {
+    "mapped": "325A",
+    "hex_value": "11,28"
+  },
+  "FM6363": {
+    "mapped": "6363",
+    "hex_value": "10,92"
+  },
+  "ICND1063/ICND2263": {
+    "mapped": "1063/2263",
+    "hex_value": ""
+  },
+  "ICND2152": {
+    "mapped": "2152",
+    "hex_value": "3,52"
+  },
+  "ICND1065": {
+    "mapped": "1065",
+    "hex_value": ""
+  },
+  "ICND1065L": {
+    "mapped": "1065L",
+    "hex_value": "12,35"
+  },
+  "ICN1068": {
+    "mapped": "1068",
+    "hex_value": ""
+  },
+  "DP3254/DP3153": {
+    "mapped": "3254/3153",
+    "hex_value": "15,37"
+  },
+  "DP3369S": {
+    "mapped": "3369S",
+    "hex_value": ""
+  },
+  "SM16380SH/SA": {
+    "mapped": "16380SH/SA",
+    "hex_value": "16,55"
+  },
+  "Normal chip/MBI5020/ICN2026/SUM2016/SM20167": {
+    "mapped": "Normal chip/5020/2026/2016/20167",
+    "hex_value": "13,80"
+  },
+  "MBI5124": {
+    "mapped": "5124",
+    "hex_value": "13,80"
+  },
+  "MBI5124N": {
+    "mapped": "5124N",
+    "hex_value": "13,80"
+  },
+  "MBI5166": {
+    "mapped": "5166",
+    "hex_value": "13,80"
+  },
+  "MBI5266": {
+    "mapped": "5266",
+    "hex_value": "13,80"
+  },
+  "FM6047": {
+    "mapped": "6047",
+    "hex_value": "13,80"
+  },
+  "FM6124": {
+    "mapped": "6124",
+    "hex_value": "13,80"
+  },
+  "FM6126": {
+    "mapped": "6126",
+    "hex_value": "13,80"
+  },
+  "FM6127": {
+    "mapped": "6127",
+    "hex_value": "13,80"
+  },
+  "FM6182": {
+    "mapped": "6182",
+    "hex_value": "13,80"
+  },
+  "MY9862": {
+    "mapped": "9862",
+    "hex_value": "13,80"
+  },
+  "MY9866": {
+    "mapped": "9866",
+    "hex_value": "13,80"
+  },
+  "MY9868": {
+    "mapped": "9868",
+    "hex_value": "13,80"
+  },
+  "SM16207/SM16208/SM16280SF": {
+    "mapped": "16207/16208/16280SF",
+    "hex_value": "13,80"
+  },
+  "SM16237": {
+    "mapped": "16237",
+    "hex_value": "13,80"
+  },
+  "SM16237S": {
+    "mapped": "16237S",
+    "hex_value": "13,80"
+  },
+  "SM16237DS": {
+    "mapped": "16237DS",
+    "hex_value": "13,80"
+  },
+  "SUM2017": {
+    "mapped": "2017",
+    "hex_value": "13,80"
+  },
+  "SUM2017TD": {
+    "mapped": "2017TD",
+    "hex_value": "13,80"
+  },
+  "ICND2038/2037": {
+    "mapped": "2038/2037",
+    "hex_value": "13,80"
+  },
+  "ICN2038S/ICN2045/ICN2088": {
+    "mapped": "2038S/2045/2088",
+    "hex_value": "13,80"
+  },
+  "ICND2046/ICND2049": {
+    "mapped": "2046/2049",
+    "hex_value": "13,80"
+  },
+  "ICND2047": {
+    "mapped": "2047",
+    "hex_value": "13,80"
+  },
+  "DP3246": {
+    "mapped": "3246",
+    "hex_value": "13,80"
+  },
+  "LS9929": {
+    "mapped": "9929",
+    "hex_value": "7,52"
+  },
+  "LS9930": {
+    "mapped": "9930",
+    "hex_value": "7,52"
+  },
+  "LS9935B": {
+    "mapped": "9935B",
+    "hex_value": "7,52"
+  },
+  "LS9936": {
+    "mapped": "9936",
+    "hex_value": "7,52"
+  },
+  "LS9932": {
+    "mapped": "9932",
+    "hex_value": "7,30"
+  },
+  "LS9937": {
+    "mapped": "9937",
+    "hex_value": "19,10"
+  }
+}

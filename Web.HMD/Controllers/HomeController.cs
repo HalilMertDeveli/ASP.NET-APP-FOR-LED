@@ -127,16 +127,6 @@ namespace Web.HMD.Controllers
                 },
                 new LedRepairViewModel
                 {
-                    Id = 5,
-                    Title = "LED Kalibrasyon ve Renk Ayari",
-                    Description = "Parlaklik, gamma ve renk dengesini profesyonel ekipmanlarla optimize eder.",
-                    Price = 14,
-                    ImageUrl = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500&q=80",
-                    Details = "Tum panellerde renk farkliliklari giderilir, goruntu butunlugu ve canliligi iyilestirilir.",
-                    EstimatedTime = "3-6 saat"
-                },
-                new LedRepairViewModel
-                {
                     Id = 6,
                     Title = "Modul Degisimi ve Lehim Onarimi",
                     Description = "Hasarli modul, soket ve lehim noktalarini hassas onarimla yeniler.",

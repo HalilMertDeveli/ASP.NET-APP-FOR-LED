@@ -112,8 +112,10 @@
                     <div class="d-flex gap-2 mt-2">
                         <button type="button" class="btn btn-outline-light btn-sm" id="addMappingRowBtn">Satir Ekle</button>
                     </div>
+                    <label class="form-label mt-3">JSON (opsiyonel)</label>
+                    <textarea class="form-control support-input" id="mappingJsonInput" rows="5" placeholder='Ornek JSON: [{"chipset":"1065s","hex":"11.28.hex"}]'></textarea>
                     <input type="hidden" name="mappingTable" id="mappingTableInput" />
-                    <small class="text-muted">Ornek: HEX surumu `11.28`, liste `1065s/16169sh/2012`. Sistem bunlari bu surume baglar.</small>
+                    <small class="text-muted">Ornek satir: HEX surumu `11.28`, liste `1065s/16169sh/2012`. JSON verilirse tablo yerine JSON kaydedilir.</small>
                 </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-info support-btn">Tabloyu Kaydet</button>
@@ -203,9 +205,10 @@
             const addMappingRowBtn = document.getElementById("addMappingRowBtn");
             const mappingInputBody = document.getElementById("mappingInputBody");
             const mappingTableInput = document.getElementById("mappingTableInput");
+            const mappingJsonInput = document.getElementById("mappingJsonInput");
             const mappingForm = mappingTableInput?.closest("form");
 
-            if (!singleDropzone || !singleFileInput || !singleFileList || !multiDropzone || !multiFileInput || !multiFileList || !updateHexDropzone || !updateHexInput || !updateHexFileList || !addMappingRowBtn || !mappingInputBody || !mappingTableInput || !mappingForm) return;
+            if (!singleDropzone || !singleFileInput || !singleFileList || !multiDropzone || !multiFileInput || !multiFileList || !updateHexDropzone || !updateHexInput || !updateHexFileList || !addMappingRowBtn || !mappingInputBody || !mappingTableInput || !mappingJsonInput || !mappingForm) return;
 
             const renderSingle = () => {
                 if (!singleFileInput.files || singleFileInput.files.length === 0) {
@@ -331,6 +334,12 @@
             });
 
             mappingForm.addEventListener("submit", () => {
+                const jsonValue = mappingJsonInput.value.trim();
+                if (jsonValue) {
+                    mappingTableInput.value = jsonValue;
+                    return;
+                }
+
                 const rows = Array.from(mappingInputBody.querySelectorAll("tr"));
                 const lines = rows
                     .map((row) => {

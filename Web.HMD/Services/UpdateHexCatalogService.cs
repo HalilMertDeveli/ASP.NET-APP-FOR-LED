@@ -4,6 +4,7 @@ using Entity.HMD.Entity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Web.HMD.Services
 {
@@ -11,11 +12,13 @@ namespace Web.HMD.Services
     {
         private readonly LedContext _context;
         private readonly string _publicHexDirectory;
+        private readonly string _chipsetMappingJsonPath;
 
         public UpdateHexCatalogService(IWebHostEnvironment env, LedContext context)
         {
             _context = context;
             _publicHexDirectory = Path.Combine(env.WebRootPath, "update-hex");
+            _chipsetMappingJsonPath = Path.GetFullPath(Path.Combine(env.ContentRootPath, "..", "LedApp.Application", "Utils", "chipset_mapping_v2.json"));
         }
 
         public async Task<UpdateHexUploadResult> UploadHexAsync(string versionLabel, IFormFile file)
@@ -78,7 +81,18 @@ namespace Web.HMD.Services
 
         public async Task<UpdateHexMappingImportResult> ImportMappingsAsync(string tableText)
         {
-            var lines = (tableText ?? string.Empty)
+            var rawText = (tableText ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(rawText))
+            {
+                return new UpdateHexMappingImportResult();
+            }
+
+            if (LooksLikeJson(rawText))
+            {
+                return await ImportMappingsFromJsonAsync(rawText);
+            }
+
+            var lines = rawText
                 .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => x.Trim())
                 .Where(x => !string.IsNullOrWhiteSpace(x))
@@ -128,35 +142,246 @@ namespace Web.HMD.Services
             };
         }
 
+        private async Task<UpdateHexMappingImportResult> ImportMappingsFromJsonAsync(string jsonText)
+        {
+            var normalizedEntries = new List<(string versionLabel, List<string> lookupKeys)>();
+            var skipped = 0;
+
+            try
+            {
+                using var doc = JsonDocument.Parse(jsonText);
+                var root = doc.RootElement;
+
+                if (root.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in root.EnumerateArray())
+                    {
+                        if (!TryExtractJsonMappingEntry(item, out var versionLabel, out var lookupKeys))
+                        {
+                            skipped++;
+                            continue;
+                        }
+
+                        normalizedEntries.Add((versionLabel, lookupKeys));
+                    }
+                }
+                else if (root.ValueKind == JsonValueKind.Object)
+                {
+                    // Supports key-value style:
+                    // {
+                    //   "11.28": ["1065s", "16169s"],
+                    //   "13.80.hex": "5124/5166"
+                    // }
+                    foreach (var property in root.EnumerateObject())
+                    {
+                        var versionLabel = NormalizeVersionLabel(property.Name);
+                        if (string.IsNullOrWhiteSpace(versionLabel))
+                        {
+                            skipped++;
+                            continue;
+                        }
+
+                        var keys = ParseLookupKeysFromJsonElement(property.Value);
+                        if (keys.Count == 0)
+                        {
+                            skipped++;
+                            continue;
+                        }
+
+                        normalizedEntries.Add((versionLabel, keys));
+                    }
+                }
+                else
+                {
+                    return new UpdateHexMappingImportResult { SkippedCount = 1 };
+                }
+            }
+            catch (JsonException)
+            {
+                return new UpdateHexMappingImportResult { SkippedCount = 1 };
+            }
+
+            var addedOrUpdated = 0;
+            foreach (var entry in normalizedEntries)
+            {
+                foreach (var lookupKey in entry.lookupKeys)
+                {
+                    var existing = await _context.UpdateHexMappings.FirstOrDefaultAsync(x => x.LookupKey == lookupKey);
+                    if (existing == null)
+                    {
+                        _context.UpdateHexMappings.Add(new UpdateHexMapping
+                        {
+                            LookupKey = lookupKey,
+                            VersionLabel = entry.versionLabel
+                        });
+                    }
+                    else
+                    {
+                        existing.VersionLabel = entry.versionLabel;
+                    }
+
+                    addedOrUpdated++;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return new UpdateHexMappingImportResult
+            {
+                AddedOrUpdatedCount = addedOrUpdated,
+                SkippedCount = skipped
+            };
+        }
+
         public async Task<UpdateHexMatchResult?> FindMatchAsync(string chipsetValue, string decoderValue)
         {
             var normalizedChipset = NormalizeLookup(chipsetValue);
+
+            // Priority rule for chatbot: read chipset->hex mapping from application JSON file.
+            if (!string.IsNullOrWhiteSpace(normalizedChipset))
+            {
+                var jsonVersion = await FindVersionFromChipsetJsonAsync(normalizedChipset);
+                if (!string.IsNullOrWhiteSpace(jsonVersion))
+                {
+                    var jsonResult = await BuildMatchResultAsync(normalizedChipset, jsonVersion);
+                    if (jsonResult != null)
+                    {
+                        return jsonResult;
+                    }
+                }
+            }
+
+            // Backward compatibility: if JSON has no match, fallback to DB mapping.
             UpdateHexMapping? mapping = null;
             if (!string.IsNullOrWhiteSpace(normalizedChipset))
             {
-                // Business rule: update HEX is selected only by chipset.
                 mapping = await FindBestChipsetMappingAsync(normalizedChipset);
             }
 
-            if (mapping == null)
+            if (mapping == null || string.IsNullOrWhiteSpace(mapping.VersionLabel))
             {
                 return null;
             }
 
-            var versionLabel = mapping.VersionLabel;
-            var hexFile = await _context.UpdateHexFiles.FirstOrDefaultAsync(x => x.VersionLabel == versionLabel);
-            if (hexFile == null)
+            return await BuildMatchResultAsync(mapping.LookupKey, mapping.VersionLabel);
+        }
+
+        private async Task<UpdateHexMatchResult?> BuildMatchResultAsync(string lookupKey, string versionLabel)
+        {
+            var normalizedVersion = NormalizeVersionLabel(versionLabel);
+            if (string.IsNullOrWhiteSpace(normalizedVersion))
             {
                 return null;
+            }
+
+            var hexFile = await _context.UpdateHexFiles.FirstOrDefaultAsync(x => x.VersionLabel == normalizedVersion);
+            if (hexFile == null)
+            {
+                var fallbackFileName = $"{normalizedVersion}.hex";
+                var fallbackAbsolutePath = Path.Combine(_publicHexDirectory, fallbackFileName);
+                if (!File.Exists(fallbackAbsolutePath))
+                {
+                    return null;
+                }
+
+                return new UpdateHexMatchResult
+                {
+                    LookupKey = lookupKey,
+                    VersionLabel = normalizedVersion,
+                    FileName = fallbackFileName,
+                    FileUrl = $"/update-hex/{fallbackFileName}"
+                };
             }
 
             return new UpdateHexMatchResult
             {
-                LookupKey = mapping.LookupKey,
-                VersionLabel = versionLabel,
+                LookupKey = lookupKey,
+                VersionLabel = normalizedVersion,
                 FileName = hexFile.FileName,
                 FileUrl = hexFile.RelativePath
             };
+        }
+
+        private async Task<string?> FindVersionFromChipsetJsonAsync(string chipset)
+        {
+            if (string.IsNullOrWhiteSpace(chipset) || !File.Exists(_chipsetMappingJsonPath))
+            {
+                return null;
+            }
+
+            try
+            {
+                var json = await File.ReadAllTextAsync(_chipsetMappingJsonPath);
+                using var doc = JsonDocument.Parse(json);
+                if (doc.RootElement.ValueKind != JsonValueKind.Object)
+                {
+                    return null;
+                }
+
+                var chipsetAlnum = NormalizeLookupForCompare(chipset);
+                var chipsetWithoutPrefix = RemoveLeadingLetters(chipsetAlnum);
+
+                foreach (var property in doc.RootElement.EnumerateObject())
+                {
+                    if (property.Value.ValueKind != JsonValueKind.Object)
+                    {
+                        continue;
+                    }
+
+                    if (!TryGetPropertyIgnoreCase(property.Value, "mapped", out var mappedElement) ||
+                        mappedElement.ValueKind != JsonValueKind.String)
+                    {
+                        continue;
+                    }
+
+                    var mapped = mappedElement.GetString() ?? string.Empty;
+                    var mappedTokens = mapped
+                        .Split(new[] { '/', '\\', '+', ' ', ',', ';', '|', '\t' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(x => x.Trim())
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .ToList();
+
+                    var hasChipsetMatch = mappedTokens.Any(token =>
+                    {
+                        var tokenAlnum = NormalizeLookupForCompare(token);
+                        if (string.Equals(tokenAlnum, chipsetAlnum, StringComparison.Ordinal))
+                        {
+                            return true;
+                        }
+
+                        var tokenWithoutPrefix = RemoveLeadingLetters(tokenAlnum);
+                        return !string.IsNullOrWhiteSpace(tokenWithoutPrefix) &&
+                               !string.IsNullOrWhiteSpace(chipsetWithoutPrefix) &&
+                               string.Equals(tokenWithoutPrefix, chipsetWithoutPrefix, StringComparison.Ordinal);
+                    });
+
+                    if (!hasChipsetMatch)
+                    {
+                        continue;
+                    }
+
+                    if (!TryGetPropertyIgnoreCase(property.Value, "hex_value", out var hexValueElement) ||
+                        hexValueElement.ValueKind != JsonValueKind.String)
+                    {
+                        return null;
+                    }
+
+                    var version = NormalizeVersionLabel(hexValueElement.GetString() ?? string.Empty);
+                    if (!string.IsNullOrWhiteSpace(version))
+                    {
+                        return version;
+                    }
+                }
+            }
+            catch (IOException)
+            {
+                return null;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+
+            return null;
         }
 
         private async Task<UpdateHexMapping?> FindBestChipsetMappingAsync(string chipset)
@@ -296,6 +521,126 @@ namespace Web.HMD.Services
             return true;
         }
 
+        private static bool TryExtractJsonMappingEntry(JsonElement item, out string versionLabel, out List<string> lookupKeys)
+        {
+            versionLabel = string.Empty;
+            lookupKeys = new List<string>();
+
+            if (item.ValueKind != JsonValueKind.Object)
+            {
+                return false;
+            }
+
+            var versionCandidates = new[]
+            {
+                GetStringProperty(item, "versionLabel"),
+                GetStringProperty(item, "version"),
+                GetStringProperty(item, "hex"),
+                GetStringProperty(item, "hexFile"),
+                GetStringProperty(item, "hexDegeri"),
+                GetStringProperty(item, "HEX Degeri"),
+                GetStringProperty(item, "hex_degeri")
+            };
+
+            versionLabel = versionCandidates
+                .Select(NormalizeVersionLabel)
+                .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)) ?? string.Empty;
+
+            var keyElements = new List<JsonElement>();
+            TryAddProperty(item, "lookupKeys", keyElements);
+            TryAddProperty(item, "lookupKey", keyElements);
+            TryAddProperty(item, "chipset", keyElements);
+            TryAddProperty(item, "chipsets", keyElements);
+            TryAddProperty(item, "decoder", keyElements);
+            TryAddProperty(item, "decoders", keyElements);
+            TryAddProperty(item, "donusturulmusDeger", keyElements);
+            TryAddProperty(item, "Dönüştürülmüş Değer", keyElements);
+            TryAddProperty(item, "donusturulmus_deger", keyElements);
+
+            foreach (var keyElement in keyElements)
+            {
+                lookupKeys.AddRange(ParseLookupKeysFromJsonElement(keyElement));
+            }
+
+            lookupKeys = lookupKeys
+                .Select(NormalizeLookup)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .ToList();
+
+            return !string.IsNullOrWhiteSpace(versionLabel) && lookupKeys.Count > 0;
+        }
+
+        private static List<string> ParseLookupKeysFromJsonElement(JsonElement element)
+        {
+            var values = new List<string>();
+
+            switch (element.ValueKind)
+            {
+                case JsonValueKind.Array:
+                    foreach (var item in element.EnumerateArray())
+                    {
+                        values.AddRange(ParseLookupKeysFromJsonElement(item));
+                    }
+                    break;
+
+                case JsonValueKind.String:
+                    var text = element.GetString() ?? string.Empty;
+                    values.AddRange(
+                        text.Split(new[] { '/', '\\', '+', ' ', ',', ';', '|', '\t' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(x => x.Trim())
+                    );
+                    break;
+            }
+
+            return values;
+        }
+
+        private static string GetStringProperty(JsonElement item, string propertyName)
+        {
+            if (!TryGetPropertyIgnoreCase(item, propertyName, out var element))
+            {
+                return string.Empty;
+            }
+
+            return element.ValueKind == JsonValueKind.String ? element.GetString() ?? string.Empty : string.Empty;
+        }
+
+        private static void TryAddProperty(JsonElement item, string propertyName, List<JsonElement> target)
+        {
+            if (TryGetPropertyIgnoreCase(item, propertyName, out var element))
+            {
+                target.Add(element);
+            }
+        }
+
+        private static bool TryGetPropertyIgnoreCase(JsonElement item, string propertyName, out JsonElement element)
+        {
+            foreach (var property in item.EnumerateObject())
+            {
+                if (string.Equals(property.Name, propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    element = property.Value;
+                    return true;
+                }
+            }
+
+            element = default;
+            return false;
+        }
+
+        private static bool LooksLikeJson(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return false;
+            }
+
+            var trimmed = text.TrimStart();
+            return trimmed.StartsWith("{", StringComparison.Ordinal) ||
+                   trimmed.StartsWith("[", StringComparison.Ordinal);
+        }
+
         private static bool IsPureVersionToken(string token)
         {
             return !string.IsNullOrWhiteSpace(NormalizeVersionLabel(token)) &&
@@ -321,6 +666,10 @@ namespace Web.HMD.Services
         private static string NormalizeVersionLabel(string value)
         {
             var normalized = (value ?? string.Empty).Trim().Replace(',', '.');
+            if (normalized.EndsWith(".hex", StringComparison.OrdinalIgnoreCase))
+            {
+                normalized = normalized[..^4];
+            }
             normalized = Regex.Replace(normalized, @"\s+", string.Empty);
             normalized = Regex.Replace(normalized, @"[^0-9.]", string.Empty);
             return normalized;

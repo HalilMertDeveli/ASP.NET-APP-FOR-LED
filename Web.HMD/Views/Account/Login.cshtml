@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Giriş Yap";
+    var returnUrl = ViewData["ReturnUrl"] as string;
 }
 
 <section class="container py-4 login-interactive-page">
@@ -24,7 +25,7 @@
                 <ul class="mb-0">
                     <li>Hafif arayüz ve daha az animasyon</li>
                     <li>Daha düşük istemci render maliyeti</li>
-                    <li>Google/Facebook ile hızlı giriş</li>
+                    <li>Google ile hızlı giriş</li>
                 </ul>
             </div>
         </div>
@@ -60,14 +61,12 @@
 
                     <div class="d-grid gap-2">
                         <form asp-action="ExternalLogin" method="post">
+                            @Html.AntiForgeryToken()
                             <input type="hidden" name="provider" value="Google" />
+                            <input type="hidden" name="returnUrl" value="@returnUrl" />
                             <button type="submit" class="btn btn-outline-dark w-100">Google ile Devam Et</button>
                         </form>
 
-                        <form asp-action="ExternalLogin" method="post">
-                            <input type="hidden" name="provider" value="Facebook" />
-                            <button type="submit" class="btn btn-outline-primary w-100">Facebook ile Devam Et</button>
-                        </form>
                     </div>
                 </div>
             </div>
