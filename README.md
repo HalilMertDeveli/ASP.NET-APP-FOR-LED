@@ -63,7 +63,6 @@ Web.HMD/
 - `ConnectionStrings:LedAppDb`
 - `PanelLibrary:RootPath`
 - `Authentication:Google:*`
-- `Authentication:Facebook:*`
 
 > Canli ortamda bu degerleri `appsettings.Production.json` veya environment variable ile yonetin.
 
