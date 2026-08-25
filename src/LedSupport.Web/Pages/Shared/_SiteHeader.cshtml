@@ -1,0 +1,30 @@
+@using LedSupport.Web.Options
+@using Microsoft.Extensions.Options
+@inject IOptions<SiteSettings> SiteOptions
+@model string
+@{
+    var site = SiteOptions.Value;
+    var page = Model ?? "/Index";
+}
+<header class="site-header" data-header>
+    <div class="container header-inner">
+        <a class="brand" asp-page="/Index" aria-label="@site.CompanyName ana sayfa">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-text">
+                <strong>@site.CompanyName</strong>
+                <span>@site.Tagline</span>
+            </span>
+        </a>
+
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menüyü aç">
+            <span></span><span></span>
+        </button>
+
+        <nav id="site-nav" class="site-nav" data-nav aria-label="Ana menü">
+            <a class="nav-link @(page == "/Index" ? "is-active" : null)" asp-page="/Index">Ana Sayfa</a>
+            <a class="nav-link @(page == "/Services" ? "is-active" : null)" asp-page="/Services">Hizmetler</a>
+            <a class="nav-link @(page == "/Contact" ? "is-active" : null)" asp-page="/Contact">İletişim</a>
+            <a class="btn btn-led btn-sm nav-cta" asp-page="/Contact">Teknik Destek Al</a>
+        </nav>
+    </div>
+</header>

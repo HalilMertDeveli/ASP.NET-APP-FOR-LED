@@ -1,0 +1,32 @@
+@using LedSupport.Web.Options
+@using Microsoft.Extensions.Options
+@inject IOptions<SiteSettings> SiteOptions
+@{
+    var site = SiteOptions.Value;
+}
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <div>
+            <p class="footer-brand">@site.CompanyName</p>
+            <p class="footer-copy">
+                Colorlight, NovaStar ve Huidu sistemlerinin tümü için LED ekran teknik destek,
+                kurulum ve AnyDesk ile uzaktan arıza çözümü.
+            </p>
+        </div>
+        <div>
+            <p class="footer-label">Sayfalar</p>
+            <a asp-page="/Index">Ana Sayfa</a>
+            <a asp-page="/Services">Hizmetler / Teknik Destek</a>
+            <a asp-page="/Contact">İletişim / Destek Talebi</a>
+        </div>
+        <div>
+            <p class="footer-label">İletişim</p>
+            <a href="mailto:@site.Email">@site.Email</a>
+            <a href="@site.PhoneHref">@site.Phone</a>
+            <a href="@site.WhatsAppUrl" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+    </div>
+    <div class="container footer-bottom">
+        <span>&copy; @DateTime.UtcNow.Year @site.CompanyName. Tüm hakları saklıdır.</span>
+    </div>
+</footer>

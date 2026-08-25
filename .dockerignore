@@ -1,0 +1,12 @@
+.git
+.vs
+**/bin
+**/obj
+legacy
+**/.DS_Store
+**/Thumbs.db
+*.user
+*.md
+!README.md
+.env
+.env.*

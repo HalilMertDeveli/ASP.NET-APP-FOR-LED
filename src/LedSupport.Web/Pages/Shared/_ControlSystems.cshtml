@@ -1,0 +1,79 @@
+@{
+    var systems = new[]
+    {
+        new {
+            Name = "Colorlight",
+            Slug = "Colorlight",
+            Image = "/images/brands/controller-a.webp",
+            Alt = "Colorlight teknik destek için temsili kontrol ve elektronik ekipman görseli",
+            Lead = "Colorlight teknik destek: yazılım, gönderici/alıcı ve LED ekran arıza çözümü."
+        },
+        new {
+            Name = "NovaStar",
+            Slug = "NovaStar",
+            Image = "/images/brands/controller-b.webp",
+            Alt = "NovaStar teknik destek için temsili laboratuvar ve kontrol ekipmanı görseli",
+            Lead = "NovaStar teknik destek: mapping, kalibrasyon ve uzaktan yapılandırma."
+        },
+        new {
+            Name = "Huidu",
+            Slug = "Huidu",
+            Image = "/images/brands/controller-c.webp",
+            Alt = "Huidu teknik destek için temsili sunucu ve ağ ekipmanı görseli",
+            Lead = "Huidu teknik destek: kontrol kartı ayarları ve görüntü sorunları."
+        }
+    };
+
+    var bullets = new[]
+    {
+        "Yazılım kurulumu ve ayarları",
+        "Gönderici/alıcı kart yapılandırması",
+        "Ekran çözünürlüğü ve mapping",
+        "Renk, parlaklık ve kalibrasyon ayarları",
+        "Bağlantı ve görüntü sorunlarının çözümü",
+        "Uzaktan teknik destek"
+    };
+}
+
+<section class="section section-alt" aria-labelledby="control-systems-heading">
+    <div class="container">
+        <header class="section-head" data-reveal>
+            <h2 id="control-systems-heading">Kontrol sistemleri</h2>
+            <p>
+                Colorlight, NovaStar ve Huidu — üç sistem için de LED ekran teknik destek sunulur.
+                Marka adları yalnızca destek verilen sistemleri belirtir; resmi ortaklık veya temsilcilik anlamına gelmez.
+            </p>
+        </header>
+
+        <div class="row g-4">
+            @foreach (var sys in systems)
+            {
+                <div class="col-lg-4" data-reveal>
+                    <article class="control-card">
+                        <div class="control-media">
+                            <img
+                                src="@sys.Image"
+                                alt="@sys.Alt"
+                                width="900"
+                                height="600"
+                                loading="lazy"
+                                decoding="async" />
+                            <span class="control-badge">@sys.Name</span>
+                        </div>
+                        <div class="control-body">
+                            <h3>@sys.Name teknik destek</h3>
+                            <p>@sys.Lead</p>
+                            <ul class="check-list compact">
+                                @foreach (var b in bullets)
+                                {
+                                    <li>@b</li>
+                                }
+                            </ul>
+                            <a class="btn btn-led btn-sm" asp-page="/Contact" asp-route-system="@sys.Slug">Destek Talep Et</a>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    </div>
+</section>

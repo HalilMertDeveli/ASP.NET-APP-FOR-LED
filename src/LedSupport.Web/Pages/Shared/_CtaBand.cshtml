@@ -1,0 +1,35 @@
+@using LedSupport.Web.Options
+@using Microsoft.Extensions.Options
+@inject IOptions<SiteSettings> SiteOptions
+@{
+    var site = SiteOptions.Value;
+    var title = ViewData["CtaTitle"] as string ?? "LED ekranınızda sorun mu var?";
+    var text = ViewData["CtaText"] as string
+        ?? "Colorlight, NovaStar ve Huidu sistemleri için teknik destek talebinizi hemen iletin.";
+}
+<section class="section cta-band" aria-labelledby="cta-heading">
+    <div class="container cta-panel cta-panel-rich" data-reveal>
+        <div>
+            <h2 id="cta-heading">@title</h2>
+            <p>@text</p>
+            <ul class="cta-contacts">
+                <li>
+                    <span>E-posta</span>
+                    <a href="mailto:@site.Email">@site.Email</a>
+                </li>
+                <li>
+                    <span>Telefon</span>
+                    <a href="@site.PhoneHref">@site.Phone</a>
+                </li>
+                <li>
+                    <span>WhatsApp</span>
+                    <a href="@site.WhatsAppUrl" target="_blank" rel="noopener">Mesaj gönder</a>
+                </li>
+            </ul>
+        </div>
+        <div class="cta-actions">
+            <a class="btn btn-led" asp-page="/Contact">Teknik Destek Talep Et</a>
+            <a class="btn btn-ghost" href="mailto:@site.Email">E-posta Gönder</a>
+        </div>
+    </div>
+</section>

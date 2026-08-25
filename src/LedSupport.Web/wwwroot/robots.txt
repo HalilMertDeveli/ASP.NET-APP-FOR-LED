@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://localhost:5052/sitemap.xml

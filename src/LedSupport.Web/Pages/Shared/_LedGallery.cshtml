@@ -1,0 +1,39 @@
+@{
+    var items = new[]
+    {
+        new { Src = "/images/led/indoor-led.webp", Title = "İç mekân LED ekran", Text = "Salon, sahne ve lobiler için LED ekran teknik destek.", Alt = "İç mekân LED ekran kurulumu ve sahne görüntüsü" },
+        new { Src = "/images/led/outdoor-led.webp", Title = "Dış mekân LED ekran", Text = "Açık alan LED ekran arıza çözümü ve ayar desteği.", Alt = "Dış mekân LED ekran ve etkinlik görüntüsü" },
+        new { Src = "/images/led/video-wall.webp", Title = "LED video wall", Text = "Video wall mapping, kalibrasyon ve yapılandırma.", Alt = "LED video wall ekran sistemi" },
+        new { Src = "/images/led/panel-module.webp", Title = "LED panel / cabinet", Text = "Panel modülü ve cabinet detayında teşhis desteği.", Alt = "LED panel modülü ve teknik ekipman detayı" }
+    };
+}
+
+<section class="section" aria-labelledby="gallery-heading">
+    <div class="container">
+        <header class="section-head" data-reveal>
+            <h2 id="gallery-heading">LED ekran çözümleri</h2>
+            <p>İç mekân, dış mekân ve video wall sistemlerinde LED ekran teknik destek.</p>
+        </header>
+
+        <div class="led-gallery">
+            @foreach (var item in items)
+            {
+                <article class="gallery-card" data-reveal>
+                    <div class="gallery-media">
+                        <img
+                            src="@item.Src"
+                            alt="@item.Alt"
+                            width="1000"
+                            height="700"
+                            loading="lazy"
+                            decoding="async" />
+                    </div>
+                    <div class="gallery-caption">
+                        <h3>@item.Title</h3>
+                        <p>@item.Text</p>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>

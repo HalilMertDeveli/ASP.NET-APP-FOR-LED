@@ -1,0 +1,100 @@
+﻿@page
+@model LedSupport.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "LED Ekran Teknik Destek Hizmeti";
+    ViewData["MetaDescription"] = "LED ekran teknik destek: Colorlight, NovaStar ve Huidu için kurulum, arıza çözümü ve AnyDesk ile uzaktan destek.";
+    ViewData["CanonicalPath"] = "/";
+}
+
+<partial name="_HeroHome" />
+
+<section class="section" aria-labelledby="services-heading">
+    <div class="container">
+        <header class="section-head" data-reveal>
+            <h2 id="services-heading">Hizmetler</h2>
+            <p>Kurulumdan LED ekran arıza çözümüne kadar uçtan uca teknik destek.</p>
+        </header>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" data-reveal>
+                <article class="service-card">
+                    <span class="service-dot service-dot-r" aria-hidden="true"></span>
+                    <h3>LED ekran kurulum ve devreye alma</h3>
+                    <p>Panel dizilimi, güç / sinyal hatları ve ilk açılış kontrolü.</p>
+                </article>
+            </div>
+            <div class="col-md-6 col-lg-4" data-reveal>
+                <article class="service-card">
+                    <span class="service-dot service-dot-b" aria-hidden="true"></span>
+                    <h3>NovaStar teknik destek</h3>
+                    <p>Gönderici / alıcı ayarları, çözünürlük ve yazılım yapılandırması.</p>
+                </article>
+            </div>
+            <div class="col-md-6 col-lg-4" data-reveal>
+                <article class="service-card">
+                    <span class="service-dot service-dot-g" aria-hidden="true"></span>
+                    <h3>Colorlight teknik destek</h3>
+                    <p>Kart ayarları, bağlantı ve görüntü sorunlarının çözümü.</p>
+                </article>
+            </div>
+            <div class="col-md-6 col-lg-4" data-reveal>
+                <article class="service-card">
+                    <span class="service-dot service-dot-p" aria-hidden="true"></span>
+                    <h3>Huidu teknik destek</h3>
+                    <p>Kontrol kartı kurulumu, parametre ayarları ve uzaktan hata giderme.</p>
+                </article>
+            </div>
+            <div class="col-md-6 col-lg-4" data-reveal>
+                <article class="service-card">
+                    <span class="service-dot service-dot-c" aria-hidden="true"></span>
+                    <h3>AnyDesk ile uzaktan destek</h3>
+                    <p>Onayınızla hızlı teşhis ve LED ekran arıza çözümü.</p>
+                </article>
+            </div>
+            <div class="col-md-6 col-lg-4" data-reveal>
+                <article class="service-card">
+                    <span class="service-dot service-dot-m" aria-hidden="true"></span>
+                    <h3>Mapping ve kalibrasyon</h3>
+                    <p>Ekran ayarları, renk / parlaklık ve görüntü bütünlüğü.</p>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<partial name="_LedGallery" />
+<partial name="_ControlSystems" />
+<partial name="_AnyDeskSupport" />
+
+<section class="section section-alt" aria-labelledby="why-heading">
+    <div class="container">
+        <header class="section-head" data-reveal>
+            <h2 id="why-heading">Neden beni tercih etmelisiniz?</h2>
+            <p>Net iletişim, hızlı çözüm ve anlaşılır teknik yönlendirme.</p>
+        </header>
+        <div class="why-grid">
+            <article data-reveal>
+                <h3>Hızlı iletişim</h3>
+                <p>Destek taleplerinize kısa sürede dönüş.</p>
+            </article>
+            <article data-reveal>
+                <h3>Uzaktan çözüm</h3>
+                <p>AnyDesk ile uzaktan destek; yerinizden ayrılmadan müdahale.</p>
+            </article>
+            <article data-reveal>
+                <h3>Uzman destek</h3>
+                <p>Colorlight, NovaStar ve Huidu sistemlerinde pratik deneyim.</p>
+            </article>
+            <article data-reveal>
+                <h3>Anlaşılır yönlendirme</h3>
+                <p>Saha ekibinizin uygulayabileceği net adımlar.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+@{
+    ViewData["CtaTitle"] = "LED ekranınızda sorun mu var?";
+    ViewData["CtaText"] = "Colorlight, NovaStar ve Huidu sistemleri için teknik destek talebinizi hemen iletin.";
+}
+<partial name="_CtaBand" />

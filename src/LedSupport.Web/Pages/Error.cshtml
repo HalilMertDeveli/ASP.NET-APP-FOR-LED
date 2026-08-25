@@ -1,0 +1,20 @@
+﻿@page
+@model LedSupport.Web.Pages.ErrorModel
+@{
+    ViewData["Title"] = "Hata";
+    ViewData["MetaDescription"] = "Bir hata oluştu.";
+    ViewData["CanonicalPath"] = "/Error";
+}
+
+<section class="page-hero">
+    <div class="container" data-reveal>
+        <p class="eyebrow">Hata</p>
+        <h1>Bir şeyler ters gitti</h1>
+        <p class="page-lead">İstek işlenirken bir sorun oluştu. Ana sayfaya dönüp tekrar deneyebilirsiniz.</p>
+        @if (Model.ShowRequestId)
+        {
+            <p class="form-note"><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
+        }
+        <a class="btn btn-led" asp-page="/Index">Ana Sayfa</a>
+    </div>
+</section>

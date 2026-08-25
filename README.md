@@ -1,120 +1,68 @@
-# Web.HMD - LED Servis ve Operasyon Platformu
+# LED Teknik Destek
 
-Bu proje, LED ekran servis operasyonlarini yonetmek, destek dosyalarini saklamak ve kullanici/admin akislarini tek panelde toplamak icin gelistirilmis bir ASP.NET Core MVC uygulamasidir.
+Colorlight, NovaStar ve Huidu LED ekran kontrol sistemleri için teknik destek, AnyDesk ile uzaktan bağlantı ve destek talep formu sunan web sitesi.
 
-## Neler Var?
+![Ana Sayfa](docs/screenshots/home.png)
+![Hizmetler](docs/screenshots/services.png)
+![İletişim Formu](docs/screenshots/contact.png)
 
-- Kullanici kayit/giris (Cookie Authentication)
-- Google ve Facebook ile sosyal giris
-- LED servis kartlari, detay sayfasi ve sepet akis
-- Admin tarafinda panel dosyasi yukleme/import
-- SQL Server uzerinde dosya icerigi (binary) saklama
-- Katmanli ve genisletilebilir Onion Architecture
+## Özellikler
 
-## Mimari (Onion Architecture)
-
-Proje katmanlari su sekilde ayrilmistir:
-
-- `Web.HMD`  
-  Sunum katmani (MVC Controller, View, UI)
-
-- `LedApp.Application`  
-  Is kurallari ve uygulama servisleri (`AuthService`, `PanelSupportService` vb.)
-
-- `LedApp.Domain`  
-  Cekirdek model, entity ve interface tanimlari
-
-- `LedApp.Infrastructure`  
-  Veri erisimi, EF Core `DbContext`, repository implementasyonlari, DI altyapisi
-
-> Temel kural: `Web` katmani dogrudan veritabani yerine `Application` servisleri ile konusur.
+- Responsive LED/neon tasarım
+- Colorlight, NovaStar ve Huidu desteği
+- AnyDesk ile uzaktan teknik destek
+- Firebase Firestore ile destek talebi kaydı
+- Firebase Functions ve Resend ile e-posta bildirimi
+- SEO uyumlu ASP.NET Core Razor Pages yapısı
 
 ## Teknolojiler
 
-- .NET 10 / ASP.NET Core MVC
-- Entity Framework Core + SQL Server
-- Cookie Authentication
-- Google/Facebook Authentication
-- BCrypt (sifre hashleme)
+- ASP.NET Core 8 Razor Pages
+- Firebase Firestore
+- Firebase Cloud Functions
+- Resend
+- HTML, CSS ve JavaScript
 
-## Proje Yapisi
+## Proje yapısı
 
 ```text
-Web.HMD/
-  Web.HMD/                 # MVC app
-  LedApp.Application/      # Application services + DTO
-  LedApp.Domain/           # Domain entities + interfaces
-  LedApp.Infrastructure/   # EF Core + Repository + DI
-  LedApp.API/              # API projesi (opsiyonel/gelistirilebilir)
-  Entity.HMD/              # Ek entity/config kalintilari
+src/LedSupport.Web/          # Razor Pages uygulaması
+  wwwroot/images/            # LED / panel / kontrol görselleri (WebP)
+functions/                   # Cloud Functions (TypeScript + Resend)
+firestore.rules              # İstemci okuma/yazma kapalı
+docs/                        # Kurulum ve ekran görüntüleri
+legacy/                      # Eski MVC uygulama (referans)
 ```
 
-## Kurulum
+## Yerel çalıştırma
 
-### 1) Gereksinimler
-
-- .NET SDK 10
-- SQL Server (LocalDB veya SQL Server Instance)
-
-### 2) Ayarlar
-
-`Web.HMD/appsettings.json` icinde:
-
-- `ConnectionStrings:LedAppDb`
-- `PanelLibrary:RootPath`
-- `Authentication:Google:*`
-
-> Canli ortamda bu degerleri `appsettings.Production.json` veya environment variable ile yonetin.
-
-### 3) Migration / Database
-
-Ornek komutlar:
+Gereksinim: .NET SDK 8+
 
 ```bash
-dotnet ef database update --project LedApp.Infrastructure --startup-project Web.HMD
+dotnet restore src/LedSupport.Web/LedSupport.Web.csproj
+dotnet run --project src/LedSupport.Web --launch-profile http
 ```
 
-### 4) Calistirma
+Adres: http://localhost:5052
 
-```bash
-dotnet run --project Web.HMD
+## Firebase / e-posta ayarları
+
+Destek formu, Firestore kaydı ve Resend e-posta kurulumu için:
+
+**[docs/FIREBASE_SUPPORT_SETUP.md](docs/FIREBASE_SUPPORT_SETUP.md)**
+
+Hızlı secret yapılandırması:
+
+```powershell
+cd scripts
+powershell -ExecutionPolicy Bypass -File .\configure-support-secrets.ps1
 ```
 
-## Admin Dosya Yukleme Akisi
+## Güvenlik notu
 
-Admin panelde 3 ana yol vardir:
-
-1. **Tekli Yukleme** (`Upload`)  
-   `pValue + chipset + decoder + dosya` ile kayit/guncelleme
-
-2. **Coklu Yukleme** (`ScanUpload`)  
-   Ayni kombinasyon icin birden fazla dosya
-
-3. **Toplu Import** (`ImportFromLibrary`)  
-   Klasor kutuphanesinden SQL Server'a aktarim
-
-### Desteklenen klasor pattern'leri
-
-- `p2.5+1065s+2012`
-- `p2.5-1065s-2012`
-- `p2.5_1065s_2012`
-- `p2.5/1065s-2012` (p bilgisi ust klasorden alinabilir)
-
-Desteklenen dosyalar: `.rcvp`, `.hex`  
-Dosya icerigi `PanelSupportFiles.FileContent` alaninda binary olarak saklanir.
-
-## Guvenlik Notlari
-
-- Sifreler hashli saklanir (BCrypt)
-- Plain text sifre tutulmaz
-- Sosyal giriste provider sifresi alinmaz, sistem tarafinda guvenli random parola uretilip hashlenir
-
-## Gelistirme Notlari
-
-- UI tarafi `wwwroot/css/site.css` icinde merkezi yonetilir.
-- Yeni admin/servis modulleri icin once `Application` servisleri olusturup controller'i ince tutmaniz onerilir.
-- Onion yapisini korumak icin `Web` katmaninda dogrudan EF Core kullanmayin.
+Gerçek API anahtarları, Resend / Firebase secret’ları, servis hesabı JSON dosyaları ve SMTP parolaları **bu repoya eklenmez**.  
+Yalnızca `.env.example` ve dokümantasyondaki placeholder örnekleri commit edilir. Gizli değerleri `dotnet user-secrets`, ortam değişkenleri veya Firebase Secret Manager ile yönetin.
 
 ## Lisans
 
-Bu proje ekip ici/ozel kullanim amacli gelistirilmistir.
+Özel / ticari kullanım — ekip içi proje.

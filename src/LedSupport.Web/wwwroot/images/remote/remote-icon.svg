@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Uzaktan masaüstü balant1s1 simgesi">
+  <rect width="120" height="120" rx="28" fill="#0b1220"/>
+  <rect x="18" y="28" width="84" height="52" rx="8" fill="none" stroke="#22d3ee" stroke-width="3"/>
+  <rect x="34" y="86" width="52" height="6" rx="3" fill="#a855f7"/>
+  <circle cx="60" cy="54" r="10" fill="none" stroke="#22d3ee" stroke-width="3"/>
+  <path d="M60 44v-6M60 70v-6M50 54h-6M76 54h-6" stroke="#22d3ee" stroke-width="3" stroke-linecap="round"/>
+</svg>

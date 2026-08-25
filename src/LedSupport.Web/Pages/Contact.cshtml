@@ -1,0 +1,130 @@
+@page
+@model LedSupport.Web.Pages.ContactModel
+@{
+    ViewData["Title"] = "İletişim ve Destek Talep Formu";
+    ViewData["MetaDescription"] = "LED ekran teknik destek talep formu. Colorlight, NovaStar ve Huidu için AnyDesk ile uzaktan destek talebi oluşturun.";
+    ViewData["CanonicalPath"] = "/Contact";
+}
+
+<section class="page-hero" aria-labelledby="contact-title">
+    <div class="container" data-reveal>
+        <p class="eyebrow">İletişim</p>
+        <h1 id="contact-title">Destek talep formu</h1>
+        <p class="page-lead">
+            Colorlight, NovaStar ve Huidu sistemlerinin tümü için teknik destek verilir.
+            Form gönderildiğinde talep güvenli şekilde kaydedilir ve e-posta ile iletilir.
+            Veriler bu sitede herkese açık listelenmez.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="row g-4 g-lg-5">
+            <div class="col-lg-7" data-reveal>
+                @if (Model.Status == LedSupport.Web.Pages.ContactModel.FormStatus.Success)
+                {
+                    <div class="alert alert-success form-alert" role="status">
+                        Talebiniz başarıyla iletildi. En kısa sürede size dönüş yapacağız.
+                        @if (!string.IsNullOrWhiteSpace(Model.SuccessRequestId))
+                        {
+                            <br /><span class="form-note">Referans: <code>@Model.SuccessRequestId</code></span>
+                        }
+                    </div>
+                }
+                else if (Model.Status == LedSupport.Web.Pages.ContactModel.FormStatus.Failed)
+                {
+                    <div class="alert alert-danger form-alert" role="alert">
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <form method="post" class="contact-form" id="support-form" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="hp-field" aria-hidden="true">
+                        <label asp-for="Input.Website">Website</label>
+                        <input asp-for="Input.Website" tabindex="-1" autocomplete="off" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Name" class="form-label"></label>
+                        <input asp-for="Input.Name" class="form-control" autocomplete="name" required minlength="2" maxlength="120" />
+                        <span asp-validation-for="Input.Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Company" class="form-label"></label>
+                        <input asp-for="Input.Company" class="form-control" autocomplete="organization" maxlength="160" />
+                        <span asp-validation-for="Input.Company" class="text-danger"></span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Email" class="form-label"></label>
+                            <input asp-for="Input.Email" class="form-control" autocomplete="email" required />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Input.Phone" class="form-label"></label>
+                            <input asp-for="Input.Phone" class="form-control" autocomplete="tel" inputmode="tel" maxlength="40" />
+                            <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.System" class="form-label"></label>
+                        <select asp-for="Input.System" class="form-select" asp-items="Model.SystemOptions" required></select>
+                        <span asp-validation-for="Input.System" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Subject" class="form-label"></label>
+                        <input asp-for="Input.Subject" class="form-control" required minlength="3" maxlength="200" />
+                        <span asp-validation-for="Input.Subject" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Message" class="form-label"></label>
+                        <textarea asp-for="Input.Message" class="form-control" rows="6" required minlength="20" maxlength="4000"></textarea>
+                        <span asp-validation-for="Input.Message" class="text-danger"></span>
+                    </div>
+
+                    <p class="form-note">
+                        Gönderim sonrası kayıt Firestore’da saklanır ve e-posta ile iletilir.
+                        Ziyaretçiler kayıtları görüntüleyemez veya değiştiremez.
+                    </p>
+
+                    <button type="submit" class="btn btn-led" data-submit-btn>Talebi Gönder</button>
+                </form>
+            </div>
+
+            <aside class="col-lg-5" data-reveal>
+                <div class="contact-aside">
+                    <h2>Doğrudan iletişim</h2>
+                    <p>
+                        <strong>E-posta:</strong>
+                        <a href="mailto:@Model.SiteEmail">@Model.SiteEmail</a>
+                    </p>
+                    <p>
+                        <strong>Telefon:</strong>
+                        <a href="@Model.SitePhoneHref">@Model.SitePhone</a>
+                    </p>
+                    <p>
+                        <strong>WhatsApp:</strong>
+                        <a href="@Model.SiteWhatsApp" target="_blank" rel="noopener">Mesaj gönder</a>
+                    </p>
+                    <hr class="aside-rule" />
+                    <p class="form-note mb-0">
+                        AnyDesk ile uzaktan destek için önce bu formu doldurmanız gerekir.
+                        Colorlight, NovaStar ve Huidu sistemlerinin tamamı için teknik destek sağlanır.
+                    </p>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/contact.js" asp-append-version="true"></script>
+}

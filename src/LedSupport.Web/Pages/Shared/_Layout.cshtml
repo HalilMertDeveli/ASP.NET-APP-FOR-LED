@@ -1,0 +1,70 @@
+﻿@using LedSupport.Web.Options
+@using Microsoft.Extensions.Options
+@inject IOptions<SiteSettings> SiteOptions
+@{
+    var site = SiteOptions.Value;
+    var title = ViewData["Title"] as string;
+    var description = ViewData["MetaDescription"] as string
+        ?? "Colorlight, NovaStar ve Huidu LED ekran sistemleri için hızlı, güvenilir uzaktan teknik destek ve kurulum hizmeti.";
+    var pageTitle = string.IsNullOrWhiteSpace(title)
+        ? $"{site.CompanyName} · {site.Tagline}"
+        : $"{title} · {site.CompanyName}";
+    var canonicalPath = ViewData["CanonicalPath"] as string ?? Context.Request.Path.Value ?? "/";
+    var canonical = site.BaseUrl.TrimEnd('/') + (canonicalPath.StartsWith('/') ? canonicalPath : "/" + canonicalPath);
+    var ogImage = site.BaseUrl.TrimEnd('/') + site.DefaultOgImage;
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "/Index";
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@pageTitle</title>
+    <meta name="description" content="@description" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="@canonical" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:site_name" content="@site.CompanyName" />
+    <meta property="og:title" content="@pageTitle" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:url" content="@canonical" />
+    <meta property="og:image" content="@ogImage" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@pageTitle" />
+    <meta name="twitter:description" content="@description" />
+    <meta name="twitter:image" content="@ogImage" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="led-stage" aria-hidden="true">
+        <div class="led-grid"></div>
+        <div class="led-flow"></div>
+        <div class="led-scan"></div>
+        <div class="led-glow led-glow-a"></div>
+        <div class="led-glow led-glow-b"></div>
+        <div class="led-glow led-glow-c"></div>
+    </div>
+
+    <a class="skip-link" href="#main">İçeriğe geç</a>
+
+    <partial name="_SiteHeader" model="currentPage" />
+
+    <main id="main">
+        @RenderBody()
+    </main>
+
+    <partial name="_SiteFooter" />
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

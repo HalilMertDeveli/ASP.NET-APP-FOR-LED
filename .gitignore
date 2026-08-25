@@ -1,6 +1,45 @@
-.vs
+# Build / IDE
+.vs/
 **/bin/
 **/obj/
 *.user
 *.suo
 *.pdb
+*.DotSettings.user
+publish/
+artifacts/
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+appsettings.*.local.json
+appsettings.Production.json
+appsettings.Secrets.json
+**/appsettings.Secrets.json
+secrets.json
+**/secrets.json
+**/secrets/
+*.pem
+*.p12
+credentials*.json
+**/serviceAccount*.json
+**/firebase-adminsdk*.json
+**/google-services.json
+**/GoogleService-Info.plist
+.secret.local
+
+# Node / Firebase
+node_modules/
+**/node_modules/
+functions/lib/
+functions/.runtimeconfig.json
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+ui-debug.log
+*-debug.log
+
+# OS
+.DS_Store
+Thumbs.db

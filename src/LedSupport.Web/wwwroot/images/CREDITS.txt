@@ -1,0 +1,11 @@
+Unsplash License (https://unsplash.com/license) — commercial use allowed; no hotlinking.
+
+- led/hero-led-wall.webp — concert / LED stage (photo-1470229722913-7c0e2dbbafd3)
+- led/indoor-led.webp — stage LED screen (photo-1492684223066-81342ee5ff30)
+- led/outdoor-led.webp — event LED display (photo-1514525253161-7a46d19cd819)
+- led/video-wall.webp — crowd / screen wall (photo-1501281668745-f7f57925c3b4)
+- led/panel-module.webp — tech / electronics detail (photo-1550751827-4bd374c3f58b)
+- brands/controller-*.webp — circuit / lab equipment (illustrative, not OEM product shots)
+- remote/remote-support.webp — laptop workspace (photo-1486312338219-ce68d2c6f44d)
+
+Brand names Colorlight, NovaStar, Huidu and AnyDesk are used only to indicate supported tools/systems; no partnership implied.
