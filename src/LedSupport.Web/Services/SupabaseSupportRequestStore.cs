@@ -16,6 +16,17 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         PropertyNameCaseInsensitive = true
     };
 
+    /// <summary>
+    /// PostgREST matches RPC overloads by present JSON keys. Nulls must be serialized
+    /// (not omitted) so p_secret and optional args still appear in the payload.
+    /// </summary>
+    private static readonly JsonSerializerOptions RpcJsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+        PropertyNameCaseInsensitive = true
+    };
+
     private readonly HttpClient _http;
     private readonly SupabaseSettings _settings;
     private readonly SupportSettings _support;
@@ -55,11 +66,10 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
     private bool UseIngestRpc => HasIngestAuth;
 
     /// <summary>
-    /// Do not send Support:IngestSecret to RPCs. Production often has a stale/mismatched
-    /// Vercel secret that causes 'unauthorized' while empty secret is allowed by the RPCs.
-    /// Re-enable only after Vercel and private.app_secrets are proven in sync.
+    /// Empty string (not null): JsonSerializer WhenWritingNull would omit null and
+    /// PostgREST would fail to match submit_support_message overload requiring p_secret.
     /// </summary>
-    private static string? IngestSecretOrNull => null;
+    private static string IngestSecretOrEmpty => string.Empty;
 
     public async Task<SupportMessageSaveResult> SaveAsync(
         SupportRequestDto request,
@@ -156,11 +166,11 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
             {
                 Content = JsonContent.Create(new
                 {
-                    p_secret = IngestSecretOrNull,
+                    p_secret = IngestSecretOrEmpty,
                     p_id = id,
                     p_email_sent = emailSent,
                     p_email_error = Truncate(emailError, 500)
-                }, options: JsonOptions)
+                }, options: RpcJsonOptions)
             };
             ApplyHeaders(rpc);
             using var rpcResponse = await _http.SendAsync(rpc, cancellationToken);
@@ -222,9 +232,9 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
             {
                 Content = JsonContent.Create(new
                 {
-                    p_secret = IngestSecretOrNull,
+                    p_secret = IngestSecretOrEmpty,
                     p_id = id
-                }, options: JsonOptions)
+                }, options: RpcJsonOptions)
             };
             ApplyHeaders(rpc);
             using var rpcResponse = await _http.SendAsync(rpc, cancellationToken);
@@ -291,7 +301,7 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         {
             Content = JsonContent.Create(new
             {
-                p_secret = IngestSecretOrNull,
+                p_secret = IngestSecretOrEmpty,
                 p_idempotency_key = request.IdempotencyKey == Guid.Empty ? (Guid?)null : request.IdempotencyKey,
                 p_name = request.Name,
                 p_email = request.Email,
@@ -302,7 +312,7 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
                 p_message = request.Message,
                 p_client_ip = Truncate(request.ClientIp, 64),
                 p_user_agent = Truncate(request.UserAgent, 512)
-            }, options: JsonOptions)
+            }, options: RpcJsonOptions)
         };
         ApplyHeaders(message);
 
@@ -345,9 +355,9 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
             {
                 Content = JsonContent.Create(new
                 {
-                    p_secret = IngestSecretOrNull,
+                    p_secret = IngestSecretOrEmpty,
                     p_idempotency_key = key
-                }, options: JsonOptions)
+                }, options: RpcJsonOptions)
             };
             ApplyHeaders(rpc);
             using var rpcResponse = await _http.SendAsync(rpc, cancellationToken);
