@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using LedSupport.Web.Options;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -5,11 +6,12 @@ using Microsoft.Extensions.Options;
 namespace LedSupport.Web.Services;
 
 /// <summary>
-/// Direct path: ASP.NET → Supabase (support_messages) → Resend email.
-/// Message is persisted before email; email failure still keeps the DB row.
+/// Persist to Supabase first, then send Resend. Duplicate posts reuse the row and skip a second mail if already sent.
 /// </summary>
 public sealed class DirectSupportRequestService : ISupportRequestService
 {
+    private static readonly ConcurrentDictionary<Guid, SemaphoreSlim> SendLocks = new();
+
     private readonly SupabaseSupportRequestStore _store;
     private readonly IResendEmailService _email;
     private readonly SupportSettings _support;
@@ -37,16 +39,6 @@ public sealed class DirectSupportRequestService : ISupportRequestService
         SupportRequestDto request,
         CancellationToken cancellationToken = default)
     {
-        if (!IsResendConfigured())
-        {
-            _logger.LogError(
-                "Support submit blocked: Resend:ApiKey missing or placeholder. " +
-                "Set via env Resend__ApiKey or user-secrets.");
-            return SupportSubmitResult.Fail(
-                SupportSubmitResultKind.ConfigurationMissing,
-                "Talebiniz şu an iletilemedi. Lütfen doğrudan e-posta veya telefon ile ulaşın.");
-        }
-
         if (!string.IsNullOrWhiteSpace(request.ClientIp) && IsRateLimited(request.ClientIp))
         {
             return SupportSubmitResult.Fail(
@@ -54,13 +46,29 @@ public sealed class DirectSupportRequestService : ISupportRequestService
                 "Çok fazla talep gönderildi. Lütfen bir süre sonra tekrar deneyin.");
         }
 
-        string? requestId = null;
-        var stored = false;
+        var sendLock = request.IdempotencyKey == Guid.Empty
+            ? new SemaphoreSlim(1, 1)
+            : SendLocks.GetOrAdd(request.IdempotencyKey, _ => new SemaphoreSlim(1, 1));
 
+        await sendLock.WaitAsync(cancellationToken);
         try
         {
-            requestId = await _store.SaveAsync(request, cancellationToken);
-            stored = true;
+            return await SubmitCoreAsync(request, cancellationToken);
+        }
+        finally
+        {
+            sendLock.Release();
+        }
+    }
+
+    private async Task<SupportSubmitResult> SubmitCoreAsync(
+        SupportRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        SupportMessageSaveResult saved;
+        try
+        {
+            saved = await _store.SaveAsync(request, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -70,51 +78,77 @@ public sealed class DirectSupportRequestService : ISupportRequestService
                 _store.IsConfigured,
                 _support.RequireStore);
 
-            if (_support.RequireStore || _store.IsConfigured)
+            return SupportSubmitResult.Fail(
+                SupportSubmitResultKind.UpstreamError,
+                "Talebiniz gönderilemedi. Lütfen daha sonra tekrar deneyin veya doğrudan iletişime geçin.");
+        }
+
+        if (saved.EmailAlreadySent)
+        {
+            if (!string.IsNullOrWhiteSpace(request.ClientIp))
             {
-                // If store is configured (or required), do not pretend success without persistence.
-                return SupportSubmitResult.Fail(
-                    SupportSubmitResultKind.UpstreamError,
-                    "Talebiniz gönderilemedi. Lütfen daha sonra tekrar deneyin veya doğrudan iletişime geçin.");
+                RegisterRateLimitHit(request.ClientIp);
             }
 
-            requestId = $"mail-{Guid.NewGuid():N}";
-            _logger.LogWarning("Continuing without Supabase using id {Id}", requestId);
+            return SupportSubmitResult.Ok(saved.Id);
+        }
+
+        if (!IsResendConfigured())
+        {
+            await _store.MarkEmailResultAsync(
+                saved.Id,
+                emailSent: false,
+                emailError: "Resend:ApiKey missing",
+                cancellationToken);
+
+            _logger.LogError("Support email skipped: Resend:ApiKey missing after persisting {Id}", saved.Id);
+            return SupportSubmitResult.Fail(
+                SupportSubmitResultKind.ConfigurationMissing,
+                "Talebiniz kaydedildi ancak e-posta şu an iletilemedi. Lütfen doğrudan e-posta veya telefon ile ulaşın.");
+        }
+
+        var claimed = await _store.TryClaimEmailSendAsync(saved.Id, cancellationToken);
+        if (claimed == EmailSendClaimResult.AlreadyHandled)
+        {
+            _logger.LogInformation("Skipped duplicate mail for already claimed/sent request {Id}", saved.Id);
+            if (!string.IsNullOrWhiteSpace(request.ClientIp))
+            {
+                RegisterRateLimitHit(request.ClientIp);
+            }
+
+            return SupportSubmitResult.Ok(saved.Id);
+        }
+
+        if (claimed != EmailSendClaimResult.Claimed)
+        {
+            return SupportSubmitResult.Fail(
+                SupportSubmitResultKind.UpstreamError,
+                "Mesajınız kaydedildi ancak e-posta iletilemedi. Lütfen kısa süre sonra tekrar deneyin veya doğrudan iletişime geçin.");
         }
 
         try
         {
             await _email.SendSupportRequestEmailAsync(
                 request,
-                requestId!,
+                saved.Id,
                 DateTimeOffset.UtcNow,
                 cancellationToken);
 
-            if (stored)
-            {
-                await _store.MarkEmailResultAsync(requestId!, emailSent: true, emailError: null, cancellationToken);
-            }
+            await _store.MarkEmailResultAsync(saved.Id, emailSent: true, emailError: null, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Resend email failed for request {Id}", requestId);
+            _logger.LogError(ex, "Resend email failed for request {Id}", saved.Id);
 
-            if (stored)
-            {
-                await _store.MarkEmailResultAsync(
-                    requestId!,
-                    emailSent: false,
-                    emailError: Truncate(ex.Message, 500),
-                    cancellationToken);
-
-                return SupportSubmitResult.Fail(
-                    SupportSubmitResultKind.UpstreamError,
-                    "Mesajınız kaydedildi ancak e-posta iletilemedi. Lütfen kısa süre sonra tekrar deneyin veya doğrudan iletişime geçin.");
-            }
+            await _store.MarkEmailResultAsync(
+                saved.Id,
+                emailSent: false,
+                emailError: Truncate(ex.Message, 500),
+                cancellationToken);
 
             return SupportSubmitResult.Fail(
                 SupportSubmitResultKind.UpstreamError,
-                "Talebiniz gönderilemedi. Lütfen daha sonra tekrar deneyin veya doğrudan iletişime geçin.");
+                "Mesajınız kaydedildi ancak e-posta iletilemedi. Lütfen kısa süre sonra tekrar deneyin veya doğrudan iletişime geçin.");
         }
 
         if (!string.IsNullOrWhiteSpace(request.ClientIp))
@@ -122,7 +156,7 @@ public sealed class DirectSupportRequestService : ISupportRequestService
             RegisterRateLimitHit(request.ClientIp);
         }
 
-        return SupportSubmitResult.Ok(requestId);
+        return SupportSubmitResult.Ok(saved.Id);
     }
 
     private bool IsResendConfigured() =>

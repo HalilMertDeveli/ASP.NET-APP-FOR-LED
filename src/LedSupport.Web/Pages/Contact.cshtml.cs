@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace LedSupport.Web.Pages;
 
+[IgnoreAntiforgeryToken]
 public class ContactModel : PageModel
 {
     private readonly ISupportRequestService _supportRequests;
@@ -46,6 +47,7 @@ public class ContactModel : PageModel
 
     public void OnGet([FromQuery] string? system)
     {
+        EnsureIdempotencyKey();
         if (!string.IsNullOrWhiteSpace(system) &&
             SystemOptions.Any(x => string.Equals(x.Value, system, StringComparison.OrdinalIgnoreCase)))
         {
@@ -55,12 +57,14 @@ public class ContactModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
+        EnsureIdempotencyKey();
+
         if (!string.IsNullOrWhiteSpace(Input.Website))
         {
             _logger.LogWarning("Contact honeypot triggered");
             Status = FormStatus.Success;
             ModelState.Clear();
-            Input = new ContactInput();
+            Input = new ContactInput { IdempotencyKey = Guid.NewGuid() };
             return Page();
         }
 
@@ -80,7 +84,8 @@ public class ContactModel : PageModel
             Message = Input.Message.Trim(),
             Website = Input.Website,
             ClientIp = HttpContext.Connection.RemoteIpAddress?.ToString(),
-            UserAgent = Request.Headers.UserAgent.ToString()
+            UserAgent = Request.Headers.UserAgent.ToString(),
+            IdempotencyKey = Input.IdempotencyKey
         }, cancellationToken);
 
         if (result.Kind == SupportSubmitResultKind.Success)
@@ -88,7 +93,7 @@ public class ContactModel : PageModel
             Status = FormStatus.Success;
             SuccessRequestId = result.RequestId;
             ModelState.Clear();
-            Input = new ContactInput();
+            Input = new ContactInput { IdempotencyKey = Guid.NewGuid() };
             return Page();
         }
 
@@ -96,6 +101,14 @@ public class ContactModel : PageModel
         ErrorMessage = result.UserMessage
             ?? "Talebiniz gönderilemedi. Lütfen daha sonra tekrar deneyin.";
         return Page();
+    }
+
+    private void EnsureIdempotencyKey()
+    {
+        if (Input.IdempotencyKey == Guid.Empty)
+        {
+            Input.IdempotencyKey = Guid.NewGuid();
+        }
     }
 
     public enum FormStatus
@@ -107,6 +120,8 @@ public class ContactModel : PageModel
 
     public sealed class ContactInput
     {
+        public Guid IdempotencyKey { get; set; }
+
         [Required(ErrorMessage = "Ad soyad gerekli")]
         [StringLength(120, MinimumLength = 2, ErrorMessage = "Ad soyad en az 2 karakter olmalı")]
         [Display(Name = "Ad Soyad")]
@@ -124,6 +139,7 @@ public class ContactModel : PageModel
         [Required(ErrorMessage = "Telefon numarası gerekli")]
         [StringLength(40, MinimumLength = 7, ErrorMessage = "Geçerli bir telefon numarası girin")]
         [Phone(ErrorMessage = "Geçerli bir telefon numarası girin")]
+        [RegularExpression(@"^[+\d][\d\s().-]{6,38}$", ErrorMessage = "Geçerli bir telefon numarası girin")]
         [Display(Name = "Telefon")]
         public string Phone { get; set; } = string.Empty;
 
@@ -137,7 +153,7 @@ public class ContactModel : PageModel
         public string Subject { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Sorun açıklaması gerekli")]
-        [StringLength(4000, MinimumLength = 20, ErrorMessage = "Açıklama en az 20 karakter olmalı")]
+        [StringLength(4000, MinimumLength = 20, ErrorMessage = "Açıklama 20 ile 4000 karakter arasında olmalı")]
         [Display(Name = "Sorun açıklaması")]
         public string Message { get; set; } = string.Empty;
 

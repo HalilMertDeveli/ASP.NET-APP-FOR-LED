@@ -12,6 +12,7 @@ public sealed class SupportRequestDto
     public string? Website { get; init; }
     public string? ClientIp { get; init; }
     public string? UserAgent { get; init; }
+    public Guid IdempotencyKey { get; init; }
 }
 
 public enum SupportSubmitResultKind

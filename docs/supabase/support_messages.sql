@@ -1,22 +1,21 @@
--- LED Support: support_messages (run in Supabase SQL Editor)
+-- LED Support: support_messages
 -- Backend uses service_role key; no public anon insert.
-
-create extension if not exists pgcrypto;
 
 create table if not exists public.support_messages (
   id uuid primary key default gen_random_uuid(),
-  name text not null,
-  email text not null,
-  phone text,
-  company text,
-  system text not null,
-  subject text not null,
-  message text not null,
-  client_ip text,
-  user_agent text,
-  status text not null default 'new',
-  email_sent boolean not null default false,
-  email_error text,
+  idempotency_key uuid unique,
+  name text not null check (char_length(name) between 2 and 120),
+  email text not null check (char_length(email) between 3 and 254),
+  phone text check (phone is null or char_length(phone) between 7 and 40),
+  company text check (company is null or char_length(company) <= 160),
+  system text not null check (char_length(system) between 1 and 40),
+  subject text not null check (char_length(subject) between 3 and 200),
+  message text not null check (char_length(message) between 20 and 4000),
+  client_ip text check (client_ip is null or char_length(client_ip) <= 64),
+  user_agent text check (user_agent is null or char_length(user_agent) <= 512),
+  email_status text not null default 'pending' check (email_status in ('pending', 'sending', 'sent', 'failed')),
+  email_sent_at timestamptz,
+  error_message text,
   created_at timestamptz not null default now()
 );
 
@@ -25,6 +24,5 @@ create index if not exists support_messages_created_at_idx
 
 alter table public.support_messages enable row level security;
 
--- Intentionally no anon/authenticated policies: only service_role from ASP.NET.
 revoke all on table public.support_messages from anon, authenticated;
 grant select, insert, update, delete on table public.support_messages to service_role;
