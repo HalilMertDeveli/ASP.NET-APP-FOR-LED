@@ -1,0 +1,54 @@
+@page
+@model LedSupport.Web.Pages.Admin.MusterilerModel
+@{
+    ViewData["Title"] = "Müşteriler";
+    ViewData["Robots"] = "noindex, nofollow";
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Admin</p>
+        <h1>Müşteriler</h1>
+        <p><a asp-page="/Admin/Index">Panele dön</a> · <a asp-page="/Admin/Talepler">Talepler</a></p>
+    </div>
+</section>
+
+<section class="section section-auth">
+    <div class="container">
+        <div class="table-responsive admin-table">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Ad</th>
+                        <th>E-posta</th>
+                        <th>Telefon</th>
+                        <th>Firma</th>
+                        <th>Kayıt</th>
+                        <th>Son giriş</th>
+                        <th>Son mesaj</th>
+                        <th>Talep</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (Model.Customers.Count == 0)
+                {
+                    <tr><td colspan="8">Henüz müşteri yok.</td></tr>
+                }
+                @foreach (var row in Model.Customers)
+                {
+                    <tr>
+                        <td><a asp-page="/Admin/Musteri" asp-route-id="@row.Id">@row.FullName</a></td>
+                        <td>@row.Email</td>
+                        <td>@(row.Phone ?? "—")</td>
+                        <td>@(row.Company ?? "—")</td>
+                        <td>@row.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                        <td>@(row.LastLoginAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "—")</td>
+                        <td>@(row.LastMessageAt?.ToLocalTime().ToString("dd.MM HH:mm") ?? "—")</td>
+                        <td>@row.RequestCount</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

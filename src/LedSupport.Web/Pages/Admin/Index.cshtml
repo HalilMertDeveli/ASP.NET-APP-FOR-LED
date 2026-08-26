@@ -1,0 +1,63 @@
+@page
+@model LedSupport.Web.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Müşteriler";
+    ViewData["Robots"] = "noindex, nofollow";
+    ViewData["CanonicalPath"] = "/Admin";
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Admin</p>
+        <h1>Müşteri konuşmaları</h1>
+        <p class="page-lead">Müşterilerin destek mesajlarını buradan yanıtlayın.</p>
+    </div>
+</section>
+
+<section class="section section-auth">
+    <div class="container">
+        @if (Model.Conversations.Count == 0)
+        {
+            <p class="form-note">Henüz konuşma yok.</p>
+        }
+        else
+        {
+            <div class="table-responsive admin-table">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Ad</th>
+                            <th>E-posta</th>
+                            <th>Son mesaj</th>
+                            <th>Zaman</th>
+                            <th>Okunmamış</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var row in Model.Conversations)
+                    {
+                        <tr>
+                            <td><a asp-page="/Admin/Konusma" asp-route-id="@row.Id">@row.CustomerName</a></td>
+                            <td>@row.CustomerEmail</td>
+                            <td>@(row.LastMessage ?? "—")</td>
+                            <td>@(row.LastMessageAt?.ToLocalTime().ToString("dd.MM HH:mm") ?? "—")</td>
+                            <td>
+                                @if (row.UnreadCount > 0)
+                                {
+                                    <span class="unread-pill">@row.UnreadCount yeni</span>
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
+                            </td>
+                            <td>@row.Status</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>

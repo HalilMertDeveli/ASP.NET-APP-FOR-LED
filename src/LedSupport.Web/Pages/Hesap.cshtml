@@ -1,0 +1,72 @@
+@page
+@model LedSupport.Web.Pages.HesapModel
+@{
+    ViewData["Title"] = "Hesabım";
+    ViewData["Robots"] = "noindex, nofollow";
+    ViewData["CanonicalPath"] = "/Hesap";
+    var profile = Model.Profile;
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Müşteri paneli</p>
+        <h1>Hesabım</h1>
+        <p class="page-lead">Profil bilgileriniz ve canlı destek sohbeti.</p>
+    </div>
+</section>
+
+<section class="section section-auth">
+    <div class="container">
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger form-alert">@Model.ErrorMessage</div>
+        }
+
+        <div class="profile-card">
+            @if (profile is null)
+            {
+                <p class="form-note">Profil yüklenemedi. Tekrar giriş yapmayı deneyin.</p>
+            }
+            else
+            {
+                <div class="profile-head">
+                    @if (!string.IsNullOrWhiteSpace(profile.AvatarUrl))
+                    {
+                        <img class="profile-avatar" src="@profile.AvatarUrl" alt="" width="72" height="72" />
+                    }
+                    <div>
+                        <h2>@profile.FullName</h2>
+                        <p>@profile.Email</p>
+                    </div>
+                </div>
+                <dl class="profile-meta">
+                    <div>
+                        <dt>Rol</dt>
+                        <dd>@(profile.Role == "admin" ? "Yönetici" : "Müşteri")</dd>
+                    </div>
+                    <div>
+                        <dt>Hesap oluşturma</dt>
+                        <dd>@profile.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
+                    </div>
+                </dl>
+            }
+        </div>
+
+        <div class="account-actions">
+            <a class="btn btn-led" asp-page="/Destek">Destek mesajı gönder</a>
+            @if (User.IsInRole("admin"))
+            {
+                <a class="btn btn-ghost" asp-page="/Admin/Index">Admin paneli</a>
+            }
+            <form method="post" asp-page-handler="Logout">
+                <button type="submit" class="btn btn-ghost">Çıkış yap</button>
+            </form>
+        </div>
+
+        <form method="post" asp-page-handler="Delete" class="danger-box" onsubmit="return confirm('Hesabınız, konuşmalarınız ve mesajlarınız silinecek. Emin misiniz?');">
+            <h3>Hesabı sil</h3>
+            <p class="form-note">Bu işlem Google oturumunuzu, profilinizi ve destek geçmişinizi kalıcı olarak siler.</p>
+            <button type="submit" class="btn btn-danger-outline">Hesabımı sil</button>
+        </form>
+    </div>
+</section>

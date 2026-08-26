@@ -1,0 +1,62 @@
+@page "/Hesap/Destek"
+@model LedSupport.Web.Pages.DestekModel
+@{
+    ViewData["Title"] = "Destek";
+    ViewData["Robots"] = "noindex, nofollow";
+    ViewData["CanonicalPath"] = "/Hesap/Destek";
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Destek</p>
+        <h1>Canlı destek</h1>
+        <p class="page-lead">
+            Merhaba, size nasıl yardımcı olabilirim?
+            @if (Model.UnreadCount > 0)
+            {
+                <span class="unread-pill">Yeni mesaj · @Model.UnreadCount</span>
+            }
+        </p>
+    </div>
+</section>
+
+<section class="section section-auth">
+    <div class="container">
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger form-alert">@Model.ErrorMessage</div>
+        }
+        <div class="chat-shell" data-chat
+             data-conversation="@Model.ConversationId"
+             data-role="customer"
+             data-url="@Model.SupabaseUrl"
+             data-key="@Model.PublishableKey"
+             data-token="@Model.AccessToken">
+            <div class="chat-log" data-chat-log>
+                @if (Model.Messages.Count == 0)
+                {
+                    <p class="chat-empty">Henüz mesaj yok. Sorununuzu yazarak konuşmayı başlatın.</p>
+                }
+                @foreach (var msg in Model.Messages)
+                {
+                    var mine = msg.SenderRole == "customer";
+                    <article class="chat-bubble @(mine ? "is-mine" : "is-theirs")" data-id="@msg.Id">
+                        <p>@msg.Body</p>
+                        <time>@msg.CreatedAt.ToLocalTime().ToString("dd.MM HH:mm")</time>
+                    </article>
+                }
+            </div>
+            <form method="post" class="chat-compose" data-chat-form>
+                <label class="visually-hidden" asp-for="Input.Body">Mesaj</label>
+                <textarea asp-for="Input.Body" rows="2" placeholder="Mesaj yaz..." required maxlength="4000"></textarea>
+                <button type="submit" class="btn btn-led">Gönder</button>
+            </form>
+        </div>
+        <p class="form-note mt-3"><a asp-page="/Hesap">Panele dön</a></p>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@supabase/supabase-js@2"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+}

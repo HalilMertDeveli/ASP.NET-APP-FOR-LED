@@ -1,0 +1,76 @@
+@page
+@model LedSupport.Web.Pages.Admin.TaleplerModel
+@{
+    ViewData["Title"] = "Talepler";
+    ViewData["Robots"] = "noindex, nofollow";
+    string[] statuses = ["open", "in_progress", "waiting_customer", "resolved", "closed"];
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Admin</p>
+        <h1>Talepler</h1>
+        <p>
+            <a asp-page="/Admin/Talepler">Tümü</a>
+            @foreach (var status in statuses)
+            {
+                <text> · </text>
+                <a asp-page="/Admin/Talepler" asp-route-status="@status">@LedSupport.Web.Services.RequestLabels.Status(status)</a>
+            }
+        </p>
+    </div>
+</section>
+
+<section class="section section-auth">
+    <div class="container">
+        <div class="table-responsive admin-table">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Müşteri</th>
+                        <th>E-posta</th>
+                        <th>Konu</th>
+                        <th>Durum</th>
+                        <th>Okunmamış</th>
+                        <th>Tarih</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (Model.Requests.Count == 0)
+                {
+                    <tr><td colspan="6">Kayıt yok.</td></tr>
+                }
+                @foreach (var row in Model.Requests)
+                {
+                    <tr>
+                        <td>@row.CustomerName</td>
+                        <td>@row.CustomerEmail</td>
+                        <td>
+                            @if (row.ConversationId is Guid cid)
+                            {
+                                <a asp-page="/Admin/Konusma" asp-route-id="@cid">@row.Subject</a>
+                            }
+                            else
+                            {
+                                @row.Subject
+                            }
+                        </td>
+                        <td>@LedSupport.Web.Services.RequestLabels.Status(row.Status)</td>
+                        <td>
+                            @if (row.UnreadCount > 0)
+                            {
+                                <span class="unread-pill">@row.UnreadCount</span>
+                            }
+                            else
+                            {
+                                <text>—</text>
+                            }
+                        </td>
+                        <td>@row.CreatedAt.ToLocalTime().ToString("dd.MM HH:mm")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,23 @@
+@page "/Giris/Callback"
+@model LedSupport.Web.Pages.GirisCallbackModel
+@{
+    ViewData["Title"] = "Giriş tamamlanıyor";
+    ViewData["Robots"] = "noindex, nofollow";
+    ViewData["CanonicalPath"] = "/Giris/Callback";
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Hesap</p>
+        <h1>Google girişi tamamlanıyor</h1>
+        <p class="page-lead"
+           data-callback-status
+           data-url="@Model.SupabaseUrl"
+           data-key="@Model.PublishableKey">Oturumunuz doğrulanıyor…</p>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@supabase/supabase-js@2"></script>
+    <script src="~/js/auth-callback.js" asp-append-version="true"></script>
+}

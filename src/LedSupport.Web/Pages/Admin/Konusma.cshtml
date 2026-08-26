@@ -1,0 +1,68 @@
+@page "{id}"
+@model LedSupport.Web.Pages.Admin.KonusmaModel
+@{
+    ViewData["Title"] = "Konuşma";
+    ViewData["Robots"] = "noindex, nofollow";
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Admin</p>
+        <h1>@(Model.Customer?.FullName ?? "Müşteri")</h1>
+        <p class="page-lead">
+            @Model.Customer?.Email
+            @if (Model.RequestItem is not null)
+            {
+                <br /><span>Talep: @Model.RequestItem.Subject</span>
+            }
+        </p>
+        <p><a asp-page="/Admin/Talepler">Talepler</a> · <a asp-page="/Admin/Musteriler">Müşteriler</a></p>
+    </div>
+</section>
+
+<section class="section section-auth">
+    <div class="container">
+        @if (Model.RequestItem is not null)
+        {
+            <form method="post" asp-page-handler="Status" class="account-actions">
+                <input type="hidden" asp-for="Id" />
+                <select asp-for="StatusValue" class="form-select" style="max-width:16rem">
+                    <option value="open">Açık</option>
+                    <option value="in_progress">İşlemde</option>
+                    <option value="waiting_customer">Müşteri bekleniyor</option>
+                    <option value="resolved">Çözüldü</option>
+                    <option value="closed">Kapalı</option>
+                </select>
+                <button type="submit" class="btn btn-ghost">Durumu kaydet</button>
+            </form>
+            <p class="form-note">@Model.RequestItem.Description</p>
+        }
+
+        <div class="chat-shell" data-chat
+             data-conversation="@Model.Id"
+             data-role="admin"
+             data-url="@Model.SupabaseUrl"
+             data-key="@Model.PublishableKey"
+             data-token="@Model.AccessToken">
+            <div class="chat-log" data-chat-log>
+                @foreach (var msg in Model.Messages)
+                {
+                    var mine = msg.SenderRole == "admin";
+                    <article class="chat-bubble @(mine ? "is-mine" : "is-theirs")" data-id="@msg.Id">
+                        <p>@msg.Body</p>
+                        <time>@msg.CreatedAt.ToLocalTime().ToString("dd.MM HH:mm") @(msg.ReadAt is null ? "· iletildi" : "· okundu")</time>
+                    </article>
+                }
+            </div>
+            <form method="post" class="chat-compose" data-chat-form>
+                <textarea asp-for="Input.Body" rows="2" placeholder="Cevap yaz..." required maxlength="4000"></textarea>
+                <button type="submit" class="btn btn-led">Gönder</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@supabase/supabase-js@2"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+}

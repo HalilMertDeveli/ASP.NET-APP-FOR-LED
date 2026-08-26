@@ -1,0 +1,71 @@
+@page "{id}"
+@model LedSupport.Web.Pages.Admin.MusteriModel
+@{
+    ViewData["Title"] = "Müşteri";
+    ViewData["Robots"] = "noindex, nofollow";
+    var customer = Model.Customer;
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Admin</p>
+        <h1>@(customer?.FullName ?? "Müşteri")</h1>
+        <p class="page-lead">@customer?.Email</p>
+        <p><a asp-page="/Admin/Musteriler">Müşteri listesi</a></p>
+    </div>
+</section>
+
+<section class="section section-auth">
+    <div class="container">
+        @if (customer is not null)
+        {
+            <div class="profile-card" style="max-width:none">
+                <div class="profile-head">
+                    @if (!string.IsNullOrWhiteSpace(customer.AvatarUrl))
+                    {
+                        <img class="profile-avatar" src="@customer.AvatarUrl" alt="" width="72" height="72" />
+                    }
+                    <div>
+                        <h2>@customer.FullName</h2>
+                        <p>@customer.Email</p>
+                    </div>
+                </div>
+                <dl class="profile-meta">
+                    <div><dt>Telefon</dt><dd>@(customer.Phone ?? "—")</dd></div>
+                    <div><dt>Firma</dt><dd>@(customer.Company ?? "—")</dd></div>
+                    <div><dt>Kayıt</dt><dd>@customer.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd></div>
+                    <div><dt>Son giriş</dt><dd>@(customer.LastLoginAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "—")</dd></div>
+                </dl>
+            </div>
+        }
+
+        <div class="admin-table mt-4">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Talep</th>
+                        <th>Durum</th>
+                        <th>Tarih</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Requests)
+                {
+                    <tr>
+                        <td>@item.Subject</td>
+                        <td>@LedSupport.Web.Services.RequestLabels.Status(item.Status)</td>
+                        <td>@item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                        <td>
+                            @if (item.ConversationId is Guid cid)
+                            {
+                                <a asp-page="/Admin/Konusma" asp-route-id="@cid">Konuşma</a>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,103 @@
+@page "/Hesap/Talepler"
+@model LedSupport.Web.Pages.TaleplerModel
+@{
+    ViewData["Title"] = "Taleplerim";
+    ViewData["Robots"] = "noindex, nofollow";
+    ViewData["CanonicalPath"] = "/Hesap/Talepler";
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Müşteri paneli</p>
+        <h1>Taleplerim</h1>
+        <p class="page-lead">Yeni destek talebi oluşturun veya mevcut konuşmayı açın.</p>
+    </div>
+</section>
+
+<section class="section section-auth">
+    <div class="container portal-grid">
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger form-alert">@Model.ErrorMessage</div>
+        }
+        @if (Model.Status == LedSupport.Web.Pages.TaleplerModel.FormStatus.Success)
+        {
+            <div class="alert alert-success form-alert">Talep oluşturuldu. Konuşma ekranına yönlendiriliyorsunuz.</div>
+        }
+
+        <div class="profile-card" style="max-width:none">
+            <h2>Yeni talep</h2>
+            <form method="post" class="contact-form">
+                <div class="mb-3">
+                    <label asp-for="Input.Subject" class="form-label"></label>
+                    <input asp-for="Input.Subject" class="form-control" required maxlength="200" />
+                    <span asp-validation-for="Input.Subject" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.Category" class="form-label"></label>
+                    <select asp-for="Input.Category" class="form-select">
+                        <option value="ariza">Arıza</option>
+                        <option value="kurulum">Kurulum</option>
+                        <option value="yazilim">Yazılım</option>
+                        <option value="genel">Genel</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.System" class="form-label"></label>
+                    <select asp-for="Input.System" class="form-select">
+                        <option value="Colorlight">Colorlight</option>
+                        <option value="NovaStar">NovaStar</option>
+                        <option value="Huidu">Huidu</option>
+                        <option value="Diğer">Diğer</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.Phone" class="form-label"></label>
+                    <input asp-for="Input.Phone" class="form-control" />
+                    <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.Company" class="form-label"></label>
+                    <input asp-for="Input.Company" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Input.Description" class="form-label"></label>
+                    <textarea asp-for="Input.Description" class="form-control" rows="5" required minlength="20" maxlength="4000"></textarea>
+                    <span asp-validation-for="Input.Description" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-led">Talebi oluştur</button>
+            </form>
+        </div>
+
+        <div class="admin-table" style="max-width:none">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Konu</th>
+                        <th>Kategori</th>
+                        <th>Durum</th>
+                        <th>Tarih</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (Model.Requests.Count == 0)
+                {
+                    <tr><td colspan="5">Henüz talebiniz yok.</td></tr>
+                }
+                @foreach (var item in Model.Requests)
+                {
+                    <tr>
+                        <td>@item.Subject</td>
+                        <td>@LedSupport.Web.Services.RequestLabels.Category(item.Category)</td>
+                        <td>@LedSupport.Web.Services.RequestLabels.Status(item.Status)</td>
+                        <td>@item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td><a asp-page="/Destek" asp-route-requestId="@item.Id">Mesajlar</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <p class="form-note"><a asp-page="/Hesap">Profilime dön</a></p>
+    </div>
+</section>

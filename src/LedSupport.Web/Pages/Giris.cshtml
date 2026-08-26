@@ -1,0 +1,44 @@
+@page
+@model LedSupport.Web.Pages.GirisModel
+@{
+    ViewData["Title"] = "Giriş";
+    ViewData["Robots"] = "noindex, nofollow";
+    ViewData["CanonicalPath"] = "/Giris";
+}
+
+<section class="page-hero page-hero-auth">
+    <div class="container">
+        <p class="eyebrow">Hesap</p>
+        <h1>Google ile giriş</h1>
+        <p class="page-lead">
+            Müşteri paneline ve canlı desteğe ulaşmak için Google hesabınızla giriş yapın.
+            E-posta/şifre ile kayıt yoktur.
+        </p>
+    </div>
+</section>
+
+<section class="section section-auth">
+    <div class="container">
+        <div class="auth-card">
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger form-alert">@Model.ErrorMessage</div>
+            }
+            <p class="form-note" data-auth-status></p>
+            <button type="button"
+                    class="btn btn-google"
+                    data-google-login
+                    data-url="@Model.SupabaseUrl"
+                    data-key="@Model.PublishableKey"
+                    @(Model.IsConfigured ? null : "disabled")>
+                Google ile devam et
+            </button>
+            <p class="form-note mt-3">Giriş yaptıktan sonra profilinize ve destek sohbetine yönlendirilirsiniz.</p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@supabase/supabase-js@2"></script>
+    <script src="~/js/auth-google.js" asp-append-version="true"></script>
+}

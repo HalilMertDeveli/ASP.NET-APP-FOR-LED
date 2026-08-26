@@ -1,5 +1,6 @@
 using LedSupport.Web.Options;
 using LedSupport.Web.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 
@@ -7,6 +8,8 @@ using Microsoft.Extensions.Options;
 MapEnvAlias("SUPABASE_URL", "Supabase__Url");
 MapEnvAlias("SUPABASE_SERVICE_ROLE_KEY", "Supabase__ServiceRoleKey");
 MapEnvAlias("SUPABASE_KEY", "Supabase__ServiceRoleKey");
+MapEnvAlias("SUPABASE_ANON_KEY", "Supabase__PublishableKey");
+MapEnvAlias("SUPABASE_PUBLISHABLE_KEY", "Supabase__PublishableKey");
 MapEnvAlias("RESEND_API_KEY", "Resend__ApiKey");
 
 // Vercel/dashboard sometimes sets empty env placeholders (""). That breaks bool/int binding.
@@ -17,7 +20,11 @@ foreach (var key in new[]
     "Support__RateLimitPerWindow",
     "Support__RateLimitWindowMinutes",
     "Smtp__Port",
-    "Smtp__EnableSsl"
+    "Smtp__EnableSsl",
+    "Supabase__Url",
+    "Supabase__PublishableKey",
+    "Supabase__ServiceRoleKey",
+    "Supabase__AnonKey"
 })
 {
     var value = Environment.GetEnvironmentVariable(key);
@@ -42,7 +49,32 @@ builder.Services.Configure<SupportSettings>(builder.Configuration.GetSection(Sup
 builder.Services.Configure<ResendSettings>(builder.Configuration.GetSection(ResendSettings.SectionName));
 builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection(SupabaseSettings.SectionName));
 
-builder.Services.AddRazorPages();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "led.auth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(14);
+        options.LoginPath = "/Giris";
+        options.AccessDeniedPath = "/Giris";
+    });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
+});
+
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizePage("/Hesap");
+    options.Conventions.AuthorizePage("/Destek");
+    options.Conventions.AuthorizeFolder("/Admin", "AdminOnly");
+    options.Conventions.AllowAnonymousToPage("/Giris");
+    options.Conventions.AllowAnonymousToPage("/GirisCallback");
+});
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<IGitHubStatsService, GitHubStatsService>();
 builder.Services.AddHttpClient<IResendEmailService, ResendEmailService>(client =>
@@ -50,6 +82,14 @@ builder.Services.AddHttpClient<IResendEmailService, ResendEmailService>(client =
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddHttpClient<SupabaseSupportRequestStore>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHttpClient<ISupabaseAccountService, SupabaseAccountService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHttpClient<IChatStore, SupabaseChatStore>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(30);
 });
@@ -79,6 +119,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
