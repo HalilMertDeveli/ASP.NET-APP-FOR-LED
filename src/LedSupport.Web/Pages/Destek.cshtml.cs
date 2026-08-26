@@ -14,6 +14,7 @@ namespace LedSupport.Web.Pages;
 public class DestekModel : PageModel
 {
     private readonly IChatStore _chat;
+    private readonly ICustomerRequestStore _requests;
     private readonly ISupabaseAccountService _accounts;
     private readonly IResendEmailService _email;
     private readonly ILogger<DestekModel> _logger;
@@ -21,18 +22,24 @@ public class DestekModel : PageModel
 
     public DestekModel(
         IChatStore chat,
+        ICustomerRequestStore requests,
         ISupabaseAccountService accounts,
         IResendEmailService email,
         IOptions<SupabaseSettings> supabase,
         ILogger<DestekModel> logger)
     {
         _chat = chat;
+        _requests = requests;
         _accounts = accounts;
         _email = email;
         _supabase = supabase.Value;
         _logger = logger;
     }
 
+    [BindProperty(SupportsGet = true)]
+    public Guid RequestId { get; set; }
+
+    public CustomerRequestRecord? RequestItem { get; private set; }
     public Guid ConversationId { get; private set; }
     public IReadOnlyList<ChatMessage> Messages { get; private set; } = [];
     public int UnreadCount { get; private set; }
@@ -46,15 +53,13 @@ public class DestekModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(CancellationToken cancellationToken)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
+        if (RequestId == Guid.Empty)
         {
-            return RedirectToPage("/Giris");
+            return RedirectToPage("/Talepler");
         }
 
-        if (!await TryOpenConversationAsync(userId, cancellationToken))
+        if (!await TryOpenAsync(cancellationToken))
         {
-            AccessToken = await ReadAccessTokenAsync();
             return Page();
         }
 
@@ -67,15 +72,8 @@ public class DestekModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
+        if (!await TryOpenAsync(cancellationToken))
         {
-            return RedirectToPage("/Giris");
-        }
-
-        if (!await TryOpenConversationAsync(userId, cancellationToken))
-        {
-            AccessToken = await ReadAccessTokenAsync();
             return Page();
         }
 
@@ -86,6 +84,7 @@ public class DestekModel : PageModel
             return Page();
         }
 
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var sent = await _chat.SendAsync(ConversationId, userId, "customer", Input.Body.Trim(), cancellationToken);
 
         try
@@ -94,7 +93,7 @@ public class DestekModel : PageModel
             await _email.SendChatNotificationEmailAsync(
                 profile?.FullName ?? User.Identity?.Name ?? "Müşteri",
                 profile?.Email ?? User.FindFirstValue(ClaimTypes.Email) ?? "",
-                sent.Body,
+                $"{RequestItem?.Subject}\n\n{sent.Body}",
                 ConversationId.ToString(),
                 sent.CreatedAt,
                 cancellationToken);
@@ -104,15 +103,35 @@ public class DestekModel : PageModel
             _logger.LogWarning(ex, "Chat notification email failed for {Conversation}", ConversationId);
         }
 
-        return RedirectToPage();
+        return RedirectToPage(new { requestId = RequestId });
     }
 
-    private async Task<bool> TryOpenConversationAsync(string userId, CancellationToken cancellationToken)
+    private async Task<bool> TryOpenAsync(CancellationToken cancellationToken)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return false;
+        }
+
         try
         {
-            var conversation = await _chat.GetOrCreateForCustomerAsync(userId, cancellationToken);
+            RequestItem = await _requests.GetAsync(RequestId, cancellationToken);
+            if (RequestItem is null || !string.Equals(RequestItem.CustomerId, userId, StringComparison.Ordinal))
+            {
+                ErrorMessage = "Bu talebe erişemezsiniz.";
+                return false;
+            }
+
+            var conversation = await _chat.GetByRequestAsync(RequestId, cancellationToken);
+            if (conversation is null)
+            {
+                ErrorMessage = "Konuşma bulunamadı.";
+                return false;
+            }
+
             ConversationId = conversation.Id;
+            AccessToken = await ReadAccessTokenAsync();
             return true;
         }
         catch (Exception ex)

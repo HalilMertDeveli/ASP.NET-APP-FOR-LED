@@ -11,7 +11,7 @@
     <div class="container">
         <p class="eyebrow">Müşteri paneli</p>
         <h1>Hesabım</h1>
-        <p class="page-lead">Profil bilgileriniz ve canlı destek sohbeti.</p>
+        <p class="page-lead">Profil, talepler ve mesajlar.</p>
     </div>
 </section>
 
@@ -21,8 +21,12 @@
         {
             <div class="alert alert-danger form-alert">@Model.ErrorMessage</div>
         }
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="alert alert-success form-alert">@Model.SuccessMessage</div>
+        }
 
-        <div class="profile-card">
+        <div class="profile-card" style="max-width:none">
             @if (profile is null)
             {
                 <p class="form-note">Profil yüklenemedi. Tekrar giriş yapmayı deneyin.</p>
@@ -45,15 +49,30 @@
                         <dd>@(profile.Role == "admin" ? "Yönetici" : "Müşteri")</dd>
                     </div>
                     <div>
-                        <dt>Hesap oluşturma</dt>
+                        <dt>Kayıt</dt>
                         <dd>@profile.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
                     </div>
+                    <div>
+                        <dt>Son giriş</dt>
+                        <dd>@(profile.LastLoginAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "—")</dd>
+                    </div>
                 </dl>
+                <form method="post" asp-page-handler="Profile" class="mt-3">
+                    <div class="mb-3">
+                        <label asp-for="Input.Phone" class="form-label"></label>
+                        <input asp-for="Input.Phone" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.Company" class="form-label"></label>
+                        <input asp-for="Input.Company" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-led">Profili kaydet</button>
+                </form>
             }
         </div>
 
         <div class="account-actions">
-            <a class="btn btn-led" asp-page="/Destek">Destek mesajı gönder</a>
+            <a class="btn btn-led" asp-page="/Talepler">Taleplerim</a>
             @if (User.IsInRole("admin"))
             {
                 <a class="btn btn-ghost" asp-page="/Admin/Index">Admin paneli</a>
@@ -63,7 +82,27 @@
             </form>
         </div>
 
-        <form method="post" asp-page-handler="Delete" class="danger-box" onsubmit="return confirm('Hesabınız, konuşmalarınız ve mesajlarınız silinecek. Emin misiniz?');">
+        <div class="admin-table" style="max-width:none">
+            <h2 class="h5 px-3 pt-3">Son talepler</h2>
+            <table class="table table-dark align-middle mb-0">
+                <tbody>
+                @if (Model.Requests.Count == 0)
+                {
+                    <tr><td>Henüz talep yok. <a asp-page="/Talepler">Yeni talep oluştur</a></td></tr>
+                }
+                @foreach (var item in Model.Requests.Take(5))
+                {
+                    <tr>
+                        <td>@item.Subject</td>
+                        <td>@LedSupport.Web.Services.RequestLabels.Status(item.Status)</td>
+                        <td><a asp-page="/Destek" asp-route-requestId="@item.Id">Mesajlar</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+
+        <form method="post" asp-page-handler="Delete" class="danger-box mt-4" onsubmit="return confirm('Hesabınız, konuşmalarınız ve mesajlarınız silinecek. Emin misiniz?');">
             <h3>Hesabı sil</h3>
             <p class="form-note">Bu işlem Google oturumunuzu, profilinizi ve destek geçmişinizi kalıcı olarak siler.</p>
             <button type="submit" class="btn btn-danger-outline">Hesabımı sil</button>
