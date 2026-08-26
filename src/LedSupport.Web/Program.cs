@@ -1,8 +1,16 @@
 using LedSupport.Web.Options;
 using LedSupport.Web.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Vercel / PaaS: listen on $PORT; local defaults stay from launchSettings / --urls
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrWhiteSpace(port))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
 
 builder.Services.Configure<SiteSettings>(builder.Configuration.GetSection(SiteSettings.SectionName));
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection(SmtpSettings.SectionName));
@@ -39,20 +47,27 @@ builder.Services.AddScoped<ISupportRequestService>(sp =>
     return sp.GetRequiredService<DirectSupportRequestService>();
 });
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var app = builder.Build();
 
 LogSupportConfiguration(app);
 
+app.UseForwardedHeaders();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    // Reverse proxy (Vercel) terminates TLS — do not force HTTPS redirect here.
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
@@ -85,7 +100,7 @@ static void LogSupportConfiguration(WebApplication app)
     if (string.Equals(support.Mode, "Direct", StringComparison.OrdinalIgnoreCase) && !resendOk)
     {
         logger.LogError(
-            "Contact form will fail until Resend:ApiKey is set via user-secrets. " +
+            "Contact form will fail until Resend:ApiKey is set via user-secrets / env. " +
             "Example: dotnet user-secrets set \"Resend:ApiKey\" \"re_xxx\"");
     }
 }

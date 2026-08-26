@@ -9,8 +9,11 @@ RUN dotnet publish src/LedSupport.Web/LedSupport.Web.csproj -c Release -o /app/p
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:8080
-ENV ASPNETCORE_ENVIRONMENT=Production
-EXPOSE 8080
 COPY --from=build /app/publish .
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV DOTNET_EnableDiagnostics=0
+ENV PORT=8080
+ENV ASPNETCORE_HTTP_PORTS=8080
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "LedSupport.Web.dll"]

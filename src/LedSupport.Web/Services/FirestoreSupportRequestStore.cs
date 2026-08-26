@@ -63,16 +63,28 @@ public sealed class FirestoreSupportRequestStore : ISupportRequestStore
 
         try
         {
-            if (!string.IsNullOrWhiteSpace(_firebase.CredentialsPath) &&
-                !_firebase.CredentialsPath.Contains("YOUR_", StringComparison.Ordinal) &&
-                File.Exists(_firebase.CredentialsPath))
+            var path = _firebase.CredentialsPath?.Trim();
+            var hasExplicitFile = !string.IsNullOrWhiteSpace(path) &&
+                                  !path.Contains("YOUR_", StringComparison.Ordinal) &&
+                                  File.Exists(path);
+
+            if (hasExplicitFile)
             {
-                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", _firebase.CredentialsPath);
+                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
                 return FirestoreDb.Create(_firebase.ProjectId);
             }
 
-            // Application Default Credentials (if configured on the machine)
-            return FirestoreDb.Create(_firebase.ProjectId);
+            // Only use ADC when explicitly opted in (e.g. GCP / workload identity).
+            // Avoid probing ADC on Vercel when CredentialsPath is still a placeholder.
+            var adc = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS");
+            if (!string.IsNullOrWhiteSpace(adc) && File.Exists(adc))
+            {
+                return FirestoreDb.Create(_firebase.ProjectId);
+            }
+
+            _logger.LogWarning(
+                "Firestore skipped: set Firebase:CredentialsPath (or GOOGLE_APPLICATION_CREDENTIALS) to a service account JSON.");
+            return null;
         }
         catch (Exception ex)
         {
