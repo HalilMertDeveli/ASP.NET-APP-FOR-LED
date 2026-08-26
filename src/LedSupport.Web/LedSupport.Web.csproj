@@ -7,8 +7,4 @@
     <UserSecretsId>LedTeknikDestek-9b3c641b-4b58-4c44-a2ca-ef4ce5e4b456</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Google.Cloud.Firestore" Version="3.10.0" />
-  </ItemGroup>
-
 </Project>

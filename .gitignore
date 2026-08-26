@@ -29,14 +29,9 @@ credentials*.json
 **/GoogleService-Info.plist
 .secret.local
 
-# Node / Firebase
+# Node
 node_modules/
 **/node_modules/
-functions/lib/
-functions/.runtimeconfig.json
-.firebase/
-firebase-debug.log
-firebase-debug.*.log
 ui-debug.log
 *-debug.log
 

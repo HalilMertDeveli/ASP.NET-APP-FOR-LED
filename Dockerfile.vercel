@@ -23,6 +23,6 @@ ENV Site__BaseUrl=https://asp-net-app-for-led.vercel.app
 ENV Resend__FromEmail="LED Teknik Destek <onboarding@resend.dev>"
 ENV Resend__ToEmail=halilmertdeveliii@gmail.com
 ENV Support__Mode=Direct
-ENV Support__RequireFirestore=false
+ENV Support__RequireStore=true
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "LedSupport.Web.dll"]

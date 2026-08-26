@@ -18,17 +18,18 @@ dotnet user-secrets set "Resend:ApiKey" $resend
 dotnet user-secrets set "Resend:ToEmail" "halilmertdeveliii@gmail.com"
 dotnet user-secrets set "Resend:FromEmail" "LED Teknik Destek <onboarding@resend.dev>"
 dotnet user-secrets set "Support:Mode" "Direct"
+dotnet user-secrets set "Support:RequireStore" "true"
 
-$cred = Read-Host "Firebase service account JSON tam yolu (boş bırakılabilir; Development'ta RequireFirestore=false)"
-if (-not [string]::IsNullOrWhiteSpace($cred)) {
-  if (-not (Test-Path $cred)) { throw "Dosya bulunamadı: $cred" }
-  dotnet user-secrets set "Firebase:CredentialsPath" $cred
-  dotnet user-secrets set "Support:RequireFirestore" "true"
-} else {
-  dotnet user-secrets set "Support:RequireFirestore" "false"
-  Write-Host "Uyarı: Firestore kapalı. Sadece e-posta gönderilir (Development)." -ForegroundColor Yellow
+$supabaseUrl = Read-Host "Supabase project URL (https://xxxx.supabase.co)"
+$supabaseKey = Read-Host "Supabase service_role key (server-only)"
+if ([string]::IsNullOrWhiteSpace($supabaseUrl) -or [string]::IsNullOrWhiteSpace($supabaseKey)) {
+  throw "Supabase URL ve service_role key gerekli"
 }
+
+dotnet user-secrets set "Supabase:Url" $supabaseUrl
+dotnet user-secrets set "Supabase:ServiceRoleKey" $supabaseKey
 
 Write-Host "`nMevcut secrets:" -ForegroundColor Green
 dotnet user-secrets list
-Write-Host "`nVisual Studio'da uygulamayı yeniden başlatın (F5)." -ForegroundColor Cyan
+Write-Host "`nSupabase SQL Editor'de docs/supabase/support_messages.sql dosyasını çalıştırın." -ForegroundColor Yellow
+Write-Host "Visual Studio'da uygulamayı yeniden başlatın (F5)." -ForegroundColor Cyan

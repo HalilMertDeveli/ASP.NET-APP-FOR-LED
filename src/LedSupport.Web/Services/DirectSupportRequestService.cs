@@ -5,25 +5,23 @@ using Microsoft.Extensions.Options;
 namespace LedSupport.Web.Services;
 
 /// <summary>
-/// Direct path: ASP.NET → Firestore (Admin) + Resend email.
-/// Does not depend on Cloud Functions / Blaze for the happy path.
+/// Direct path: ASP.NET → Supabase (support_messages) → Resend email.
+/// Message is persisted before email; email failure still keeps the DB row.
 /// </summary>
 public sealed class DirectSupportRequestService : ISupportRequestService
 {
-    private readonly ISupportRequestStore _store;
+    private readonly SupabaseSupportRequestStore _store;
     private readonly IResendEmailService _email;
     private readonly SupportSettings _support;
     private readonly ResendSettings _resend;
-    private readonly FirebaseSettings _firebase;
     private readonly IMemoryCache _cache;
     private readonly ILogger<DirectSupportRequestService> _logger;
 
     public DirectSupportRequestService(
-        ISupportRequestStore store,
+        SupabaseSupportRequestStore store,
         IResendEmailService email,
         IOptions<SupportSettings> support,
         IOptions<ResendSettings> resend,
-        IOptions<FirebaseSettings> firebase,
         IMemoryCache cache,
         ILogger<DirectSupportRequestService> logger)
     {
@@ -31,7 +29,6 @@ public sealed class DirectSupportRequestService : ISupportRequestService
         _email = email;
         _support = support.Value;
         _resend = resend.Value;
-        _firebase = firebase.Value;
         _cache = cache;
         _logger = logger;
     }
@@ -44,7 +41,7 @@ public sealed class DirectSupportRequestService : ISupportRequestService
         {
             _logger.LogError(
                 "Support submit blocked: Resend:ApiKey missing or placeholder. " +
-                "Set via: dotnet user-secrets set \"Resend:ApiKey\" \"re_...\" ");
+                "Set via env Resend__ApiKey or user-secrets.");
             return SupportSubmitResult.Fail(
                 SupportSubmitResultKind.ConfigurationMissing,
                 "Talebiniz şu an iletilemedi. Lütfen doğrudan e-posta veya telefon ile ulaşın.");
@@ -57,51 +54,64 @@ public sealed class DirectSupportRequestService : ISupportRequestService
                 "Çok fazla talep gönderildi. Lütfen bir süre sonra tekrar deneyin.");
         }
 
-        // Email delivery is the customer-critical path. Firestore is optional unless
-        // credentials exist AND RequireFirestore is enabled.
-        var firestoreConfigured =
-            !string.IsNullOrWhiteSpace(_firebase.CredentialsPath) &&
-            !_firebase.CredentialsPath.Contains("YOUR_", StringComparison.Ordinal);
+        string? requestId = null;
+        var stored = false;
 
-        string requestId;
         try
         {
             requestId = await _store.SaveAsync(request, cancellationToken);
+            stored = true;
         }
         catch (Exception ex)
         {
             _logger.LogError(
                 ex,
-                "Firestore save failed. ProjectId={ProjectId}, CredentialsConfigured={HasCreds}, RequireFirestore={Require}",
-                _firebase.ProjectId,
-                firestoreConfigured,
-                _support.RequireFirestore);
+                "Supabase save failed. Configured={Configured}, RequireStore={Require}",
+                _store.IsConfigured,
+                _support.RequireStore);
 
-            if (_support.RequireFirestore && firestoreConfigured)
+            if (_support.RequireStore || _store.IsConfigured)
             {
+                // If store is configured (or required), do not pretend success without persistence.
                 return SupportSubmitResult.Fail(
                     SupportSubmitResultKind.UpstreamError,
                     "Talebiniz gönderilemedi. Lütfen daha sonra tekrar deneyin veya doğrudan iletişime geçin.");
             }
 
             requestId = $"mail-{Guid.NewGuid():N}";
-            _logger.LogWarning(
-                "Continuing without Firestore using id {Id} (configured={Configured})",
-                requestId,
-                firestoreConfigured);
+            _logger.LogWarning("Continuing without Supabase using id {Id}", requestId);
         }
 
         try
         {
             await _email.SendSupportRequestEmailAsync(
                 request,
-                requestId,
+                requestId!,
                 DateTimeOffset.UtcNow,
                 cancellationToken);
+
+            if (stored)
+            {
+                await _store.MarkEmailResultAsync(requestId!, emailSent: true, emailError: null, cancellationToken);
+            }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Resend email failed for request {Id}", requestId);
+
+            if (stored)
+            {
+                await _store.MarkEmailResultAsync(
+                    requestId!,
+                    emailSent: false,
+                    emailError: Truncate(ex.Message, 500),
+                    cancellationToken);
+
+                return SupportSubmitResult.Fail(
+                    SupportSubmitResultKind.UpstreamError,
+                    "Mesajınız kaydedildi ancak e-posta iletilemedi. Lütfen kısa süre sonra tekrar deneyin veya doğrudan iletişime geçin.");
+            }
+
             return SupportSubmitResult.Fail(
                 SupportSubmitResultKind.UpstreamError,
                 "Talebiniz gönderilemedi. Lütfen daha sonra tekrar deneyin veya doğrudan iletişime geçin.");
@@ -147,4 +157,7 @@ public sealed class DirectSupportRequestService : ISupportRequestService
     }
 
     private static string CacheKey(string ip) => $"support-rl:{ip}";
+
+    private static string Truncate(string value, int max)
+        => value.Length <= max ? value : value[..max];
 }

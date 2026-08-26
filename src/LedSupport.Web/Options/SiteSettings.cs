@@ -15,18 +15,23 @@ public sealed class SiteSettings
 }
 
 /// <summary>
-/// Direct = ASP.NET writes Firestore (optional) + sends Resend email.
-/// Function = ASP.NET posts to Cloud Function (requires Blaze + deployed function).
+/// Direct = ASP.NET writes Supabase support_messages + sends Resend email.
 /// </summary>
 public sealed class SupportSettings
 {
     public const string SectionName = "Support";
 
-    /// <summary>Direct | Function</summary>
     public string Mode { get; set; } = "Direct";
 
-    /// <summary>When true, Firestore write failure fails the whole request.</summary>
-    public bool RequireFirestore { get; set; } = true;
+    /// <summary>When true, Supabase write failure fails the whole request.</summary>
+    public bool RequireStore { get; set; } = true;
+
+    /// <summary>Legacy env alias Support__RequireFirestore.</summary>
+    public bool RequireFirestore
+    {
+        get => RequireStore;
+        set => RequireStore = value;
+    }
 
     public int RateLimitPerWindow { get; set; } = 3;
     public int RateLimitWindowMinutes { get; set; } = 15;
@@ -39,34 +44,6 @@ public sealed class ResendSettings
     public string ApiKey { get; set; } = string.Empty;
     public string FromEmail { get; set; } = "LED Teknik Destek <onboarding@resend.dev>";
     public string ToEmail { get; set; } = "halilmertdeveliii@gmail.com";
-}
-
-public sealed class FirebaseSettings
-{
-    public const string SectionName = "Firebase";
-
-    public string ProjectId { get; set; } = "ledteknikdestek-1e74e";
-
-    /// <summary>Public web API key (safe to expose).</summary>
-    public string WebApiKey { get; set; } = string.Empty;
-
-    public string AuthDomain { get; set; } = string.Empty;
-    public string AppId { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Absolute path to service account JSON (user-secrets / env). Never commit this file.
-    /// </summary>
-    public string CredentialsPath { get; set; } = string.Empty;
-}
-
-public sealed class FirebaseSupportSettings
-{
-    public const string SectionName = "FirebaseSupport";
-
-    public string SubmitUrl { get; set; } = string.Empty;
-    public string IngestSecret { get; set; } = string.Empty;
-    public int RateLimitPerWindow { get; set; } = 3;
-    public int RateLimitWindowMinutes { get; set; } = 15;
 }
 
 public sealed class SmtpSettings
