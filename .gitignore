@@ -32,7 +32,6 @@ credentials*.json
 # Node
 node_modules/
 **/node_modules/
-/functions/
 ui-debug.log
 *-debug.log
 

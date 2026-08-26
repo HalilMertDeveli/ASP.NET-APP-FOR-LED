@@ -11,7 +11,7 @@
         <p class="eyebrow">Admin</p>
         <h1>@(customer?.FullName ?? "Müşteri")</h1>
         <p class="page-lead">@customer?.Email</p>
-        <p><a asp-page="/Admin/Musteriler">Müşteri listesi</a></p>
+        <partial name="_AdminNav" />
     </div>
 </section>
 

@@ -29,6 +29,11 @@ if ([string]::IsNullOrWhiteSpace($supabaseUrl) -or [string]::IsNullOrWhiteSpace(
 dotnet user-secrets set "Supabase:Url" $supabaseUrl
 dotnet user-secrets set "Supabase:ServiceRoleKey" $supabaseKey
 
+$anon = Read-Host "Supabase anon / publishable key (browser-safe)"
+if (-not [string]::IsNullOrWhiteSpace($anon)) {
+  dotnet user-secrets set "Supabase:PublishableKey" $anon
+}
+
 Write-Host "`nMevcut secrets:" -ForegroundColor Green
 dotnet user-secrets list
 Write-Host "`nSupabase SQL Editor'de docs/supabase/support_messages.sql dosyasını çalıştırın." -ForegroundColor Yellow

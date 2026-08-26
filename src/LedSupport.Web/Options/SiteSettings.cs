@@ -26,13 +26,6 @@ public sealed class SupportSettings
     /// <summary>When true, Supabase write failure fails the whole request.</summary>
     public bool RequireStore { get; set; } = true;
 
-    /// <summary>Legacy env alias Support__RequireFirestore.</summary>
-    public bool RequireFirestore
-    {
-        get => RequireStore;
-        set => RequireStore = value;
-    }
-
     public int RateLimitPerWindow { get; set; } = 3;
     public int RateLimitWindowMinutes { get; set; } = 15;
 }

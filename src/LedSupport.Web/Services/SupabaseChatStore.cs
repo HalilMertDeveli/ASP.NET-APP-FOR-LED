@@ -41,6 +41,7 @@ public interface IChatStore
     Task<ConversationRecord> GetOrCreateForCustomerAsync(string customerId, CancellationToken cancellationToken = default);
     Task<ConversationRecord?> GetByRequestAsync(Guid requestId, CancellationToken cancellationToken = default);
     Task<ConversationRecord?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default);
+    Task<ChatMessage?> GetMessageAsync(Guid messageId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ChatMessage>> ListMessagesAsync(Guid conversationId, CancellationToken cancellationToken = default);
     Task<int> CountUnreadAsync(Guid conversationId, string viewerRole, CancellationToken cancellationToken = default);
     Task MarkReadAsync(Guid conversationId, string viewerRole, CancellationToken cancellationToken = default);
@@ -113,18 +114,10 @@ public sealed class SupabaseChatStore : IChatStore
         Guid requestId,
         CancellationToken cancellationToken = default)
     {
-        // Production schema is one conversation per customer; request_id is not used.
-        _ = requestId;
-        _ = cancellationToken;
-        return await Task.FromResult<ConversationRecord?>(null);
-    }
-
-    public async Task<ConversationRecord?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
-    {
         EnsureConfigured();
         using var request = new HttpRequestMessage(
             HttpMethod.Get,
-            $"rest/v1/conversations?id=eq.{conversationId:D}&select=id,customer_id,status,last_message,last_message_at&limit=1");
+            $"rest/v1/conversations?request_id=eq.{requestId:D}&select=id,customer_id,request_id,status,last_message,last_message_at&limit=1");
         ApplyServiceRole(request);
         using var response = await _http.SendAsync(request, cancellationToken);
         if (!response.IsSuccessStatusCode)
@@ -134,6 +127,40 @@ public sealed class SupabaseChatStore : IChatStore
 
         var body = await response.Content.ReadAsStringAsync(cancellationToken);
         return ParseOne<ConversationRow>(body)?.ToRecord();
+    }
+
+    public async Task<ConversationRecord?> GetAsync(Guid conversationId, CancellationToken cancellationToken = default)
+    {
+        EnsureConfigured();
+        using var request = new HttpRequestMessage(
+            HttpMethod.Get,
+            $"rest/v1/conversations?id=eq.{conversationId:D}&select=id,customer_id,request_id,status,last_message,last_message_at&limit=1");
+        ApplyServiceRole(request);
+        using var response = await _http.SendAsync(request, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        return ParseOne<ConversationRow>(body)?.ToRecord();
+    }
+
+    public async Task<ChatMessage?> GetMessageAsync(Guid messageId, CancellationToken cancellationToken = default)
+    {
+        EnsureConfigured();
+        using var request = new HttpRequestMessage(
+            HttpMethod.Get,
+            $"rest/v1/messages?id=eq.{messageId:D}&select=id,conversation_id,sender_id,sender_role,body,created_at,read_at&limit=1");
+        ApplyServiceRole(request);
+        using var response = await _http.SendAsync(request, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        return ParseOne<MessageRow>(body)?.ToRecord();
     }
 
     public async Task<IReadOnlyList<ChatMessage>> ListMessagesAsync(
@@ -264,7 +291,7 @@ public sealed class SupabaseChatStore : IChatStore
         EnsureConfigured();
         using var request = new HttpRequestMessage(
             HttpMethod.Get,
-            "rest/v1/conversations?select=id,customer_id,status,last_message,last_message_at,updated_at,profiles!conversations_customer_id_fkey(full_name,email)&order=updated_at.desc");
+            "rest/v1/conversations?select=id,customer_id,request_id,status,last_message,last_message_at,updated_at,profiles!conversations_customer_id_fkey(full_name,email),customer_requests!conversations_request_id_fkey(subject)&order=updated_at.desc");
         ApplyServiceRole(request);
         using var response = await _http.SendAsync(request, cancellationToken);
         var body = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -317,7 +344,7 @@ public sealed class SupabaseChatStore : IChatStore
         EnsureConfigured();
         using var request = new HttpRequestMessage(
             HttpMethod.Get,
-            $"rest/v1/conversations?customer_id=eq.{Uri.EscapeDataString(customerId)}&select=id,customer_id,status,last_message,last_message_at&limit=1");
+            $"rest/v1/conversations?customer_id=eq.{Uri.EscapeDataString(customerId)}&select=id,customer_id,request_id,status,last_message,last_message_at&order=updated_at.desc&limit=1");
         ApplyServiceRole(request);
         using var response = await _http.SendAsync(request, cancellationToken);
         if (!response.IsSuccessStatusCode)

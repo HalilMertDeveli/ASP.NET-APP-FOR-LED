@@ -1,21 +1,16 @@
-# Firebase → Supabase migration status
+# Stack: ASP.NET Core + Supabase + Vercel
 
-## Firebase usage (historical)
+Firebase is not used. Auth, data, and realtime all go through Supabase.
 
-| Area | Purpose | Action |
-|------|---------|--------|
-| Firestore `supportRequests` | Persist contact/support form | Replaced by Supabase `support_messages` |
-| Cloud Functions (`functions/`) | Optional Function-mode submit + Resend | Removed; Direct path only |
-| Firebase Admin / Web config | Project + credentials | Removed from ASP.NET app |
-| Auth / Storage | Not used by the live site | N/A |
+| Area | Store |
+|------|--------|
+| Contact form | `public.support_messages` (service_role, server-only) |
+| Customer accounts | Supabase Auth (Google) + `public.profiles` |
+| Support chat | `public.conversations`, `public.messages` |
+| Live updates | Supabase Realtime on `messages` |
+| Mail | Resend API from ASP.NET |
 
-## Data migration
+SQL:
 
-- This environment has **no** Firebase service-account credentials.
-- Existing Firestore documents were **not** deleted and **not** auto-migrated.
-- If historical tickets are needed, export from Firebase Console and import into Supabase separately.
-
-## New store of record
-
-- Table: `public.support_messages` (see `support_messages.sql`)
-- Writer: ASP.NET `SupabaseSupportRequestStore` using **service_role** key (server-only)
+- `docs/supabase/support_messages.sql`
+- `docs/supabase/account_messaging.sql`

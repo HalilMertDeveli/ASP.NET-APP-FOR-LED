@@ -1,3 +1,4 @@
+using LedSupport.Web.Api;
 using LedSupport.Web.Options;
 using LedSupport.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,7 +17,6 @@ MapEnvAlias("RESEND_API_KEY", "Resend__ApiKey");
 foreach (var key in new[]
 {
     "Support__RequireStore",
-    "Support__RequireFirestore",
     "Support__RateLimitPerWindow",
     "Support__RateLimitWindowMinutes",
     "Smtp__Port",
@@ -60,7 +60,32 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
         options.ExpireTimeSpan = TimeSpan.FromDays(14);
         options.LoginPath = "/Giris";
-        options.AccessDeniedPath = "/Giris";
+        options.AccessDeniedPath = "/ErisimEngellendi";
+        options.Events = new CookieAuthenticationEvents
+        {
+            OnRedirectToLogin = context =>
+            {
+                if (context.Request.Path.StartsWithSegments("/api"))
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                }
+
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            },
+            OnRedirectToAccessDenied = context =>
+            {
+                if (context.Request.Path.StartsWithSegments("/api"))
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    return Task.CompletedTask;
+                }
+
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            }
+        };
     });
 builder.Services.AddAuthorization(options =>
 {
@@ -71,9 +96,11 @@ builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizePage("/Hesap");
     options.Conventions.AuthorizePage("/Destek");
+    options.Conventions.AuthorizePage("/Talepler");
     options.Conventions.AuthorizeFolder("/Admin", "AdminOnly");
     options.Conventions.AllowAnonymousToPage("/Giris");
     options.Conventions.AllowAnonymousToPage("/GirisCallback");
+    options.Conventions.AllowAnonymousToPage("/ErisimEngellendi");
 });
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<IGitHubStatsService, GitHubStatsService>();
@@ -90,6 +117,10 @@ builder.Services.AddHttpClient<ISupabaseAccountService, SupabaseAccountService>(
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddHttpClient<IChatStore, SupabaseChatStore>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHttpClient<ICustomerRequestStore, CustomerRequestStore>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(30);
 });
@@ -122,6 +153,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
+app.MapSupportApi();
 
 app.Run();
 

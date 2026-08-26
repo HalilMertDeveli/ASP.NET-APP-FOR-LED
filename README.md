@@ -13,14 +13,16 @@ Canlı: [asp-net-app-for-led.vercel.app](https://asp-net-app-for-led.vercel.app)
 | **Tasarım** | Responsive LED/neon arayüz |
 | **Markalar** | Colorlight, NovaStar ve Huidu desteği |
 | **Uzaktan** | AnyDesk ile uzaktan teknik destek |
-| **Kayıt** | Supabase PostgreSQL (`support_messages`) |
+| **Kayıt** | Supabase PostgreSQL |
+| **Hesap** | Supabase Auth (yalnızca Google) |
+| **Mesaj** | Supabase Realtime sohbet |
 | **E-posta** | Resend → `halilmertdeveliii@gmail.com` (Reply-To = müşteri) |
 | **SEO** | ASP.NET Core Razor Pages, meta / sitemap |
 
 ## Teknolojiler
 
 - ASP.NET Core 8 Razor Pages  
-- Supabase (PostgREST + PostgreSQL)  
+- Supabase (Auth, PostgreSQL, Realtime)  
 - Resend  
 - Vercel Container Runtime  
 

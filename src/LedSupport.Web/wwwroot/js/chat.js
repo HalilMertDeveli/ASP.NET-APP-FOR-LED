@@ -64,18 +64,45 @@
   if (form) {
     let sending = false;
     form.addEventListener("submit", async (event) => {
-      if (sending) {
-        event.preventDefault();
-        return;
-      }
+      event.preventDefault();
+      if (sending) return;
       const textarea = form.querySelector("textarea");
       const button = form.querySelector("button[type=submit]");
-      if (textarea && !textarea.value.trim()) {
-        event.preventDefault();
-        return;
-      }
+      const text = textarea ? textarea.value.trim() : "";
+      if (!text) return;
       sending = true;
       if (button) button.disabled = true;
+      try {
+        const response = await fetch("/api/conversations/" + conversationId + "/messages", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({ body: text })
+        });
+        if (response.status === 401) {
+          window.location.href = "/Giris";
+          return;
+        }
+        if (!response.ok) {
+          throw new Error("send-failed");
+        }
+        const sent = await response.json();
+        addBubble({
+          id: sent.id,
+          body: sent.body,
+          sender_role: sent.senderRole,
+          created_at: sent.createdAt
+        });
+        if (textarea) textarea.value = "";
+      } catch {
+        form.dataset.sendError = "1";
+      } finally {
+        sending = false;
+        if (button) button.disabled = false;
+      }
     });
   }
 

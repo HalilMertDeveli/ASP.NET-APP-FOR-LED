@@ -1,0 +1,9 @@
+<nav class="portal-nav" aria-label="Müşteri menü">
+    <a asp-page="/Hesap">Hesabım</a>
+    <a asp-page="/Talepler">Taleplerim</a>
+    <a asp-page="/Talepler">Mesajlarım</a>
+    <a asp-page="/Hesap">Profilim</a>
+    <form method="post" asp-page="/Hesap" asp-page-handler="Logout">
+        <button type="submit" class="btn btn-ghost btn-sm">Çıkış</button>
+    </form>
+</nav>
