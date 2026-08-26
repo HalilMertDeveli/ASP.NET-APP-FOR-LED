@@ -221,18 +221,19 @@ static void LogSupportConfiguration(WebApplication app)
     var ingestOk = !string.IsNullOrWhiteSpace(supabase.Url) &&
                    !supabase.Url.Contains("YOUR_", StringComparison.Ordinal) &&
                    !string.IsNullOrWhiteSpace(supabase.PublishableKey) &&
-                   !supabase.PublishableKey.Contains("YOUR_", StringComparison.Ordinal) &&
-                   !string.IsNullOrWhiteSpace(support.IngestSecret) &&
-                   !support.IngestSecret.Contains("YOUR_", StringComparison.Ordinal);
+                   !supabase.PublishableKey.Contains("YOUR_", StringComparison.Ordinal);
+    var ingestSecretOk = !string.IsNullOrWhiteSpace(support.IngestSecret) &&
+                         !support.IngestSecret.Contains("YOUR_", StringComparison.Ordinal);
     var supabaseOk = serviceRoleOk || ingestOk;
 
     logger.LogInformation(
-        "Support mode={Mode}, ResendConfigured={Resend}, SupabaseConfigured={Supabase}, ServiceRole={ServiceRole}, IngestRpc={Ingest}, RequireStore={Req}, ToEmail={To}",
+        "Support mode={Mode}, ResendConfigured={Resend}, SupabaseConfigured={Supabase}, ServiceRole={ServiceRole}, IngestRpc={Ingest}, IngestSecret={IngestSecret}, RequireStore={Req}, ToEmail={To}",
         support.Mode,
         resendOk,
         supabaseOk,
         serviceRoleOk,
         ingestOk,
+        ingestSecretOk,
         support.RequireStore,
         resend.ToEmail);
 
@@ -246,6 +247,6 @@ static void LogSupportConfiguration(WebApplication app)
     if (!supabaseOk)
     {
         logger.LogError(
-            "Contact form persistence will fail until Supabase:Url is set with either ServiceRoleKey or PublishableKey + Support:IngestSecret.");
+            "Contact form persistence will fail until Supabase:Url is set with either ServiceRoleKey or PublishableKey (ingest RPC).");
     }
 }

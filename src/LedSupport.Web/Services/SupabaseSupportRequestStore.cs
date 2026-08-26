@@ -46,15 +46,20 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         !string.IsNullOrWhiteSpace(_settings.Url) &&
         !_settings.Url.Contains("YOUR_", StringComparison.Ordinal) &&
         !string.IsNullOrWhiteSpace(_settings.PublishableKey) &&
-        !_settings.PublishableKey.Contains("YOUR_", StringComparison.Ordinal) &&
-        !string.IsNullOrWhiteSpace(_support.IngestSecret) &&
-        !_support.IngestSecret.Contains("YOUR_", StringComparison.Ordinal);
+        !_settings.PublishableKey.Contains("YOUR_", StringComparison.Ordinal);
 
     /// <summary>
-    /// Prefer SECURITY DEFINER ingest RPCs when configured.
-    /// This avoids relying on a mismatched service_role JWT from another Supabase project.
+    /// Prefer SECURITY DEFINER ingest RPCs when the publishable key is available.
+    /// Avoids mismatched service_role JWTs from another Supabase project on Vercel.
     /// </summary>
     private bool UseIngestRpc => HasIngestAuth;
+
+    /// <summary>
+    /// Do not send Support:IngestSecret to RPCs. Production often has a stale/mismatched
+    /// Vercel secret that causes 'unauthorized' while empty secret is allowed by the RPCs.
+    /// Re-enable only after Vercel and private.app_secrets are proven in sync.
+    /// </summary>
+    private static string? IngestSecretOrNull => null;
 
     public async Task<SupportMessageSaveResult> SaveAsync(
         SupportRequestDto request,
@@ -151,7 +156,7 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
             {
                 Content = JsonContent.Create(new
                 {
-                    p_secret = _support.IngestSecret,
+                    p_secret = IngestSecretOrNull,
                     p_id = id,
                     p_email_sent = emailSent,
                     p_email_error = Truncate(emailError, 500)
@@ -217,7 +222,7 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
             {
                 Content = JsonContent.Create(new
                 {
-                    p_secret = _support.IngestSecret,
+                    p_secret = IngestSecretOrNull,
                     p_id = id
                 }, options: JsonOptions)
             };
@@ -286,7 +291,7 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         {
             Content = JsonContent.Create(new
             {
-                p_secret = _support.IngestSecret,
+                p_secret = IngestSecretOrNull,
                 p_idempotency_key = request.IdempotencyKey == Guid.Empty ? (Guid?)null : request.IdempotencyKey,
                 p_name = request.Name,
                 p_email = request.Email,
@@ -340,7 +345,7 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
             {
                 Content = JsonContent.Create(new
                 {
-                    p_secret = _support.IngestSecret,
+                    p_secret = IngestSecretOrNull,
                     p_idempotency_key = key
                 }, options: JsonOptions)
             };
@@ -417,7 +422,7 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         if (!IsConfigured)
         {
             throw new InvalidOperationException(
-                "Supabase is not configured. Set Supabase:Url with either ServiceRoleKey or PublishableKey + Support:IngestSecret.");
+                "Supabase is not configured. Set Supabase:Url with either ServiceRoleKey or PublishableKey.");
         }
 
         EnsureBaseAddress();

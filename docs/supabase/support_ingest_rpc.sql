@@ -1,6 +1,7 @@
--- Support form ingest RPCs (server calls with Support:IngestSecret).
--- Do NOT put the real secret in git. Set it in Vercel as Support__IngestSecret / SUPPORT_INGEST_SECRET
--- and mirror it in private.app_secrets where name='support_ingest'.
+-- Support form ingest RPCs (server calls with publishable/anon key).
+-- p_secret is optional: empty/null is allowed; a non-empty wrong secret is rejected.
+-- Optionally mirror a shared secret in private.app_secrets (name='support_ingest') and
+-- Support__IngestSecret / SUPPORT_INGEST_SECRET — keep them in sync if used.
 
 create schema if not exists private;
 
