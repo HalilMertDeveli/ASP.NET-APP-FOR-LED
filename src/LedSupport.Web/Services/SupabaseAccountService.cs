@@ -184,7 +184,14 @@ public sealed class SupabaseAccountService : ISupabaseAccountService
         };
         ApplyServiceRole(request);
         request.Headers.TryAddWithoutValidation("Prefer", "return=minimal");
-        await _http.SendAsync(request, cancellationToken);
+        try
+        {
+            await _http.SendAsync(request, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "last_login_at update skipped");
+        }
     }
 
     public async Task DeleteAccountAsync(string userId, CancellationToken cancellationToken = default)
