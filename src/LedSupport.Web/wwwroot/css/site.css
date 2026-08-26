@@ -550,6 +550,35 @@ code {
   padding: 0.5rem 0;
 }
 
+.brand-block-media {
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.2fr);
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.brand-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-panel);
+}
+
+.brand-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.brand-copy {
+  min-width: 0;
+}
+
 .brand-badge {
   display: inline-flex;
   padding: 0.35rem 0.8rem;
@@ -566,6 +595,11 @@ code {
 .brand-badge-b { color: var(--blue); box-shadow: 0 0 18px rgba(59, 130, 246, 0.15); }
 .brand-badge-p { color: var(--purple); box-shadow: 0 0 18px rgba(168, 85, 247, 0.15); }
 
+@media (max-width: 900px) {
+  .brand-block-media {
+    grid-template-columns: 1fr;
+  }
+}
 .check-list {
   margin: 1.1rem 0 1.4rem;
   padding-left: 1.15rem;

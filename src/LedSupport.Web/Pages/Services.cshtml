@@ -3,6 +3,50 @@
     ViewData["Title"] = "LED Ekran Hizmetleri ve Teknik Destek";
     ViewData["MetaDescription"] = "Colorlight teknik destek, NovaStar teknik destek ve Huidu teknik destek: kart ayarları, mapping, gönderici ayarları, yazılım kurulumu ve uzaktan LED ekran desteği.";
     ViewData["CanonicalPath"] = "/Services";
+
+    var brands = new[]
+    {
+        new {
+            Id = "colorlight",
+            Name = "Colorlight",
+            BadgeClass = "brand-badge-g",
+            Image = "/images/brands/controller-a.webp",
+            Alt = "Colorlight teknik destek için temsili kontrol ve elektronik ekipman görseli",
+            Title = "Colorlight teknik destek",
+            Lead = "Colorlight kontrol sistemlerinde kart ve alıcı ayarlarından görüntü sorunlarına kadar uçtan uca LED ekran teknik destek.",
+            SectionClass = "section"
+        },
+        new {
+            Id = "novastar",
+            Name = "NovaStar",
+            BadgeClass = "brand-badge-b",
+            Image = "/images/brands/controller-b.webp",
+            Alt = "NovaStar teknik destek için temsili laboratuvar ve kontrol ekipmanı görseli",
+            Title = "NovaStar teknik destek",
+            Lead = "NovaStar gönderici / alıcı mimarisinde konfigürasyon, mapping, kalibrasyon ve yazılım tarafında hızlı çözüm.",
+            SectionClass = "section section-alt"
+        },
+        new {
+            Id = "huidu",
+            Name = "Huidu",
+            BadgeClass = "brand-badge-p",
+            Image = "/images/brands/controller-c.webp",
+            Alt = "Huidu teknik destek için temsili sunucu ve ağ ekipmanı görseli",
+            Title = "Huidu teknik destek",
+            Lead = "Huidu kontrol kartı kurulumu, parametre ayarları ve saha ekiplerine anlaşılır uzaktan yönlendirme.",
+            SectionClass = "section"
+        }
+    };
+
+    var bullets = new[]
+    {
+        "Kart ve alıcı kart ayarları",
+        "Ekran çözünürlüğü ve mapping",
+        "Gönderici kart ayarları",
+        "Yazılım kurulumu ve yapılandırma",
+        "Bağlantı ve görüntü sorunları",
+        "Uzaktan teknik destek"
+    };
 }
 
 <section class="page-hero" aria-labelledby="services-page-title">
@@ -16,65 +60,35 @@
     </div>
 </section>
 
-<section class="section" id="colorlight" aria-labelledby="colorlight-title">
-    <div class="container brand-block" data-reveal>
-        <div class="brand-badge brand-badge-g">Colorlight</div>
-        <h2 id="colorlight-title">Colorlight teknik destek</h2>
-        <p>
-            Colorlight kontrol sistemlerinde kart ve alıcı ayarlarından görüntü sorunlarına kadar
-            uçtan uca LED ekran teknik destek.
-        </p>
-        <ul class="check-list">
-            <li>Kart ve alıcı kart ayarları</li>
-            <li>Ekran çözünürlüğü ve mapping</li>
-            <li>Gönderici kart ayarları</li>
-            <li>Yazılım kurulumu ve yapılandırma</li>
-            <li>Bağlantı ve görüntü sorunları</li>
-            <li>Uzaktan teknik destek</li>
-        </ul>
-        <a class="btn btn-led" asp-page="/Contact" asp-route-system="Colorlight">Destek Talep Et</a>
-    </div>
-</section>
-
-<section class="section section-alt" id="novastar" aria-labelledby="novastar-title">
-    <div class="container brand-block" data-reveal>
-        <div class="brand-badge brand-badge-b">NovaStar</div>
-        <h2 id="novastar-title">NovaStar teknik destek</h2>
-        <p>
-            NovaStar gönderici / alıcı mimarisinde konfigürasyon, mapping, kalibrasyon
-            ve yazılım tarafında hızlı çözüm.
-        </p>
-        <ul class="check-list">
-            <li>Kart ve alıcı kart ayarları</li>
-            <li>Ekran çözünürlüğü ve mapping</li>
-            <li>Gönderici kart ayarları</li>
-            <li>Yazılım kurulumu ve yapılandırma</li>
-            <li>Bağlantı ve görüntü sorunları</li>
-            <li>Uzaktan teknik destek</li>
-        </ul>
-        <a class="btn btn-led" asp-page="/Contact" asp-route-system="NovaStar">Destek Talep Et</a>
-    </div>
-</section>
-
-<section class="section" id="huidu" aria-labelledby="huidu-title">
-    <div class="container brand-block" data-reveal>
-        <div class="brand-badge brand-badge-p">Huidu</div>
-        <h2 id="huidu-title">Huidu teknik destek</h2>
-        <p>
-            Huidu kontrol kartı kurulumu, parametre ayarları ve saha ekiplerine
-            anlaşılır uzaktan yönlendirme.
-        </p>
-        <ul class="check-list">
-            <li>Kart ve alıcı kart ayarları</li>
-            <li>Ekran çözünürlüğü ve mapping</li>
-            <li>Gönderici kart ayarları</li>
-            <li>Yazılım kurulumu ve yapılandırma</li>
-            <li>Bağlantı ve görüntü sorunları</li>
-            <li>Uzaktan teknik destek</li>
-        </ul>
-        <a class="btn btn-led" asp-page="/Contact" asp-route-system="Huidu">Destek Talep Et</a>
-    </div>
-</section>
+@foreach (var brand in brands)
+{
+    <section class="@brand.SectionClass" id="@brand.Id" aria-labelledby="@($"{brand.Id}-title")">
+        <div class="container brand-block brand-block-media" data-reveal>
+            <div class="brand-media">
+                <img
+                    src="@brand.Image"
+                    asp-append-version="true"
+                    alt="@brand.Alt"
+                    width="900"
+                    height="600"
+                    loading="eager"
+                    decoding="async" />
+            </div>
+            <div class="brand-copy">
+                <div class="brand-badge @brand.BadgeClass">@brand.Name</div>
+                <h2 id="@($"{brand.Id}-title")">@brand.Title</h2>
+                <p>@brand.Lead</p>
+                <ul class="check-list">
+                    @foreach (var item in bullets)
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+                <a class="btn btn-led" asp-page="/Contact" asp-route-system="@brand.Name">Destek Talep Et</a>
+            </div>
+        </div>
+    </section>
+}
 
 <section class="section section-alt" aria-labelledby="faq-title">
     <div class="container">

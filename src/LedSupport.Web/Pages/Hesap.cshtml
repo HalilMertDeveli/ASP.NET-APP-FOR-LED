@@ -37,7 +37,26 @@
                 <div class="profile-head">
                     @if (!string.IsNullOrWhiteSpace(profile.AvatarUrl))
                     {
-                        <img class="profile-avatar" src="@profile.AvatarUrl" alt="" width="72" height="72" />
+                        <img
+                            class="profile-avatar"
+                            src="@profile.AvatarUrl"
+                            alt="@($"{profile.FullName} profil fotoğrafı")"
+                            width="72"
+                            height="72"
+                            referrerpolicy="no-referrer"
+                            loading="lazy"
+                            decoding="async"
+                            onerror="this.onerror=null;this.src='/images/avatar-default.svg';" />
+                    }
+                    else
+                    {
+                        <img
+                            class="profile-avatar"
+                            src="/images/avatar-default.svg"
+                            alt=""
+                            width="72"
+                            height="72"
+                            decoding="async" />
                     }
                     <div>
                         <h2>@profile.FullName</h2>
