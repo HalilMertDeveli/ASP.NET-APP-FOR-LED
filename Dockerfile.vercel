@@ -19,8 +19,8 @@ ENV PORT=8080
 ENV ASPNETCORE_HTTP_PORTS=8080
 ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 ENV Site__BaseUrl=https://asp-net-app-for-led.vercel.app
-# Mail defaults (override secrets via Vercel env). Do not put API keys here.
-ENV Resend__FromEmail=LED Teknik Destek <onboarding@resend.dev>
+# Mail defaults (API key via Vercel env only)
+ENV Resend__FromEmail="LED Teknik Destek <onboarding@resend.dev>"
 ENV Resend__ToEmail=halilmertdeveliii@gmail.com
 ENV Support__Mode=Direct
 ENV Support__RequireFirestore=false
