@@ -74,7 +74,7 @@ public class ContactModel : PageModel
             Name = Input.Name.Trim(),
             Company = string.IsNullOrWhiteSpace(Input.Company) ? null : Input.Company.Trim(),
             Email = Input.Email.Trim(),
-            Phone = string.IsNullOrWhiteSpace(Input.Phone) ? null : Input.Phone.Trim(),
+            Phone = Input.Phone.Trim(),
             System = Input.System,
             Subject = Input.Subject.Trim(),
             Message = Input.Message.Trim(),
@@ -121,9 +121,11 @@ public class ContactModel : PageModel
         [Display(Name = "E-posta")]
         public string Email { get; set; } = string.Empty;
 
-        [StringLength(40)]
-        [Display(Name = "Telefon (opsiyonel)")]
-        public string? Phone { get; set; }
+        [Required(ErrorMessage = "Telefon numarası gerekli")]
+        [StringLength(40, MinimumLength = 7, ErrorMessage = "Geçerli bir telefon numarası girin")]
+        [Phone(ErrorMessage = "Geçerli bir telefon numarası girin")]
+        [Display(Name = "Telefon")]
+        public string Phone { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Sistem seçimi gerekli")]
         [Display(Name = "Kullanılan sistem")]

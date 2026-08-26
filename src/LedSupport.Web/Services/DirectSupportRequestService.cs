@@ -57,6 +57,12 @@ public sealed class DirectSupportRequestService : ISupportRequestService
                 "Çok fazla talep gönderildi. Lütfen bir süre sonra tekrar deneyin.");
         }
 
+        // Email delivery is the customer-critical path. Firestore is optional unless
+        // credentials exist AND RequireFirestore is enabled.
+        var firestoreConfigured =
+            !string.IsNullOrWhiteSpace(_firebase.CredentialsPath) &&
+            !_firebase.CredentialsPath.Contains("YOUR_", StringComparison.Ordinal);
+
         string requestId;
         try
         {
@@ -68,19 +74,21 @@ public sealed class DirectSupportRequestService : ISupportRequestService
                 ex,
                 "Firestore save failed. ProjectId={ProjectId}, CredentialsConfigured={HasCreds}, RequireFirestore={Require}",
                 _firebase.ProjectId,
-                !string.IsNullOrWhiteSpace(_firebase.CredentialsPath) &&
-                !_firebase.CredentialsPath.Contains("YOUR_", StringComparison.Ordinal),
+                firestoreConfigured,
                 _support.RequireFirestore);
 
-            if (_support.RequireFirestore)
+            if (_support.RequireFirestore && firestoreConfigured)
             {
                 return SupportSubmitResult.Fail(
                     SupportSubmitResultKind.UpstreamError,
                     "Talebiniz gönderilemedi. Lütfen daha sonra tekrar deneyin veya doğrudan iletişime geçin.");
             }
 
-            requestId = $"local-{Guid.NewGuid():N}";
-            _logger.LogWarning("Continuing without Firestore using local id {Id}", requestId);
+            requestId = $"mail-{Guid.NewGuid():N}";
+            _logger.LogWarning(
+                "Continuing without Firestore using id {Id} (configured={Configured})",
+                requestId,
+                firestoreConfigured);
         }
 
         try

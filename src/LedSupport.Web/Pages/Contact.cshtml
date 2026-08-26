@@ -67,7 +67,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="Input.Phone" class="form-label"></label>
-                            <input asp-for="Input.Phone" class="form-control" autocomplete="tel" inputmode="tel" maxlength="40" />
+                            <input asp-for="Input.Phone" class="form-control" autocomplete="tel" inputmode="tel" required minlength="7" maxlength="40" placeholder="+90 5xx xxx xx xx" />
                             <span asp-validation-for="Input.Phone" class="text-danger"></span>
                         </div>
                     </div>

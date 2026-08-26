@@ -47,20 +47,24 @@ public sealed class ResendEmailService : IResendEmailService
         }
 
         var text = new StringBuilder()
-            .AppendLine("Yeni LED teknik destek talebi")
-            .AppendLine("----------------------------------------")
-            .AppendLine($"Talep ID     : {requestId}")
-            .AppendLine($"Talep tarihi : {createdAt:yyyy-MM-dd HH:mm:ss} UTC")
-            .AppendLine($"Ad Soyad     : {request.Name}")
-            .AppendLine($"Firma adı    : {request.Company ?? "-"}")
-            .AppendLine($"E-posta      : {request.Email}")
-            .AppendLine($"Telefon      : {request.Phone ?? "-"}")
-            .AppendLine($"Sistem       : {request.System}")
-            .AppendLine($"Konu         : {request.Subject}")
+            .AppendLine("LED Support - Yeni Destek Talebi")
+            .AppendLine("========================================")
+            .AppendLine($"Ad Soyad : {request.Name}")
+            .AppendLine($"Telefon  : {request.Phone ?? "-"}")
+            .AppendLine($"E-posta  : {request.Email}")
+            .AppendLine($"Firma    : {request.Company ?? "-"}")
+            .AppendLine($"Sistem   : {request.System}")
+            .AppendLine($"Konu     : {request.Subject}")
             .AppendLine()
-            .AppendLine("Sorun açıklaması:")
+            .AppendLine("Talep / sorun açıklaması:")
             .AppendLine(request.Message)
+            .AppendLine()
             .AppendLine("----------------------------------------")
+            .AppendLine($"Tarih    : {createdAt:yyyy-MM-dd HH:mm:ss} UTC")
+            .AppendLine($"Talep ID : {requestId}")
+            .AppendLine($"IP       : {request.ClientIp ?? "-"}")
+            .AppendLine("========================================")
+            .AppendLine("Yanıtlamak için bu e-postaya Reply kullanın (Reply-To = müşteri).")
             .ToString();
 
         using var message = new HttpRequestMessage(HttpMethod.Post, "emails");
@@ -70,7 +74,7 @@ public sealed class ResendEmailService : IResendEmailService
             from = _settings.FromEmail,
             to = new[] { _settings.ToEmail },
             reply_to = request.Email,
-            subject = $"[LED Teknik Destek] Yeni Talep - {request.Subject}",
+            subject = $"LED Support - Yeni Destek Talebi: {request.Subject}",
             text
         });
 
