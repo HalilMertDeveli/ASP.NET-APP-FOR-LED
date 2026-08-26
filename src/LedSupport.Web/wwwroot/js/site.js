@@ -41,8 +41,11 @@
         io.unobserve(entry.target);
       });
     },
-    { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+    { threshold: 0.01, rootMargin: "80px 0px 80px 0px" }
   );
 
   items.forEach((el) => io.observe(el));
+  window.setTimeout(() => {
+    items.forEach((el) => el.classList.add("is-visible"));
+  }, 1200);
 })();

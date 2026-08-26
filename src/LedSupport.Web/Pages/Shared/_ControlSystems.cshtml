@@ -48,7 +48,7 @@
         <div class="row g-4">
             @foreach (var sys in systems)
             {
-                <div class="col-lg-4" data-reveal>
+                <div class="col-lg-4">
                     <article class="control-card">
                         <div class="control-media">
                             <img
@@ -56,7 +56,7 @@
                                 alt="@sys.Alt"
                                 width="900"
                                 height="600"
-                                loading="lazy"
+                                loading="eager"
                                 decoding="async" />
                             <span class="control-badge">@sys.Name</span>
                         </div>

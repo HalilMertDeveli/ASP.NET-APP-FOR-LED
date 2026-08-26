@@ -18,14 +18,14 @@
         <div class="led-gallery">
             @foreach (var item in items)
             {
-                <article class="gallery-card" data-reveal>
+                <article class="gallery-card">
                     <div class="gallery-media">
                         <img
                             src="@item.Src"
                             alt="@item.Alt"
                             width="1000"
                             height="700"
-                            loading="lazy"
+                            loading="eager"
                             decoding="async" />
                     </div>
                     <div class="gallery-caption">
