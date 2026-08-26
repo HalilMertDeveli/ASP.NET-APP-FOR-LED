@@ -7,11 +7,17 @@ using Microsoft.Extensions.Options;
 
 // Map common Supabase env names onto ASP.NET configuration keys.
 MapEnvAlias("SUPABASE_URL", "Supabase__Url");
+MapEnvAlias("NEXT_PUBLIC_SUPABASE_URL", "Supabase__Url");
 MapEnvAlias("SUPABASE_SERVICE_ROLE_KEY", "Supabase__ServiceRoleKey");
+MapEnvAlias("SUPABASE_SECRET_KEY", "Supabase__ServiceRoleKey");
 MapEnvAlias("SUPABASE_KEY", "Supabase__ServiceRoleKey");
 MapEnvAlias("SUPABASE_ANON_KEY", "Supabase__PublishableKey");
 MapEnvAlias("SUPABASE_PUBLISHABLE_KEY", "Supabase__PublishableKey");
+MapEnvAlias("NEXT_PUBLIC_SUPABASE_ANON_KEY", "Supabase__PublishableKey");
+MapEnvAlias("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "Supabase__PublishableKey");
 MapEnvAlias("RESEND_API_KEY", "Resend__ApiKey");
+MapEnvAlias("RESEND_FROM_EMAIL", "Resend__FromEmail");
+MapEnvAlias("RESEND_TO_EMAIL", "Resend__ToEmail");
 
 // Vercel/dashboard sometimes sets empty env placeholders (""). That breaks bool/int binding.
 foreach (var key in new[]
@@ -24,7 +30,14 @@ foreach (var key in new[]
     "Supabase__Url",
     "Supabase__PublishableKey",
     "Supabase__ServiceRoleKey",
-    "Supabase__AnonKey"
+    "Supabase__AnonKey",
+    "Resend__ApiKey",
+    "Resend__FromEmail",
+    "Resend__ToEmail",
+    "SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_SECRET_KEY",
+    "RESEND_API_KEY"
 })
 {
     var value = Environment.GetEnvironmentVariable(key);
