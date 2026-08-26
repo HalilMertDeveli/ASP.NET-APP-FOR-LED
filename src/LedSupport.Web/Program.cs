@@ -3,6 +3,25 @@ using LedSupport.Web.Services;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 
+// Vercel/dashboard sometimes sets empty env placeholders (""). That breaks bool/int binding.
+foreach (var key in new[]
+{
+    "Support__RequireFirestore",
+    "Support__RateLimitPerWindow",
+    "Support__RateLimitWindowMinutes",
+    "Smtp__Port",
+    "Smtp__EnableSsl",
+    "FirebaseSupport__RateLimitPerWindow",
+    "FirebaseSupport__RateLimitWindowMinutes"
+})
+{
+    var value = Environment.GetEnvironmentVariable(key);
+    if (value is not null && string.IsNullOrWhiteSpace(value))
+    {
+        Environment.SetEnvironmentVariable(key, null);
+    }
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Vercel / PaaS: listen on $PORT; local defaults stay from launchSettings / --urls
