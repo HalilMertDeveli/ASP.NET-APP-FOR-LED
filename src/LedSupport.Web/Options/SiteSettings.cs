@@ -26,6 +26,12 @@ public sealed class SupportSettings
     /// <summary>When true, Supabase write failure fails the whole request.</summary>
     public bool RequireStore { get; set; } = true;
 
+    /// <summary>
+    /// Server-only shared secret for SECURITY DEFINER ingest RPCs when service_role is unavailable.
+    /// Never send to the browser.
+    /// </summary>
+    public string IngestSecret { get; set; } = string.Empty;
+
     public int RateLimitPerWindow { get; set; } = 3;
     public int RateLimitWindowMinutes { get; set; } = 15;
 }

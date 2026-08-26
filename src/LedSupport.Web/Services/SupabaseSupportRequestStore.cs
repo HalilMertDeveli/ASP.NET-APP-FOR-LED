@@ -18,29 +18,54 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
 
     private readonly HttpClient _http;
     private readonly SupabaseSettings _settings;
+    private readonly SupportSettings _support;
     private readonly ILogger<SupabaseSupportRequestStore> _logger;
 
     public SupabaseSupportRequestStore(
         HttpClient http,
         IOptions<SupabaseSettings> settings,
+        IOptions<SupportSettings> support,
         ILogger<SupabaseSupportRequestStore> logger)
     {
         _http = http;
         _settings = settings.Value;
+        _support = support.Value;
         _logger = logger;
     }
 
     public bool IsConfigured =>
+        HasServiceRoleAuth || HasIngestAuth;
+
+    private bool HasServiceRoleAuth =>
         !string.IsNullOrWhiteSpace(_settings.Url) &&
         !_settings.Url.Contains("YOUR_", StringComparison.Ordinal) &&
         !string.IsNullOrWhiteSpace(_settings.ServiceRoleKey) &&
         !_settings.ServiceRoleKey.Contains("YOUR_", StringComparison.Ordinal);
+
+    private bool HasIngestAuth =>
+        !string.IsNullOrWhiteSpace(_settings.Url) &&
+        !_settings.Url.Contains("YOUR_", StringComparison.Ordinal) &&
+        !string.IsNullOrWhiteSpace(_settings.PublishableKey) &&
+        !_settings.PublishableKey.Contains("YOUR_", StringComparison.Ordinal) &&
+        !string.IsNullOrWhiteSpace(_support.IngestSecret) &&
+        !_support.IngestSecret.Contains("YOUR_", StringComparison.Ordinal);
+
+    /// <summary>
+    /// Prefer SECURITY DEFINER ingest RPCs when configured.
+    /// This avoids relying on a mismatched service_role JWT from another Supabase project.
+    /// </summary>
+    private bool UseIngestRpc => HasIngestAuth;
 
     public async Task<SupportMessageSaveResult> SaveAsync(
         SupportRequestDto request,
         CancellationToken cancellationToken = default)
     {
         EnsureConfigured();
+
+        if (UseIngestRpc)
+        {
+            return await SaveViaIngestRpcAsync(request, cancellationToken);
+        }
 
         if (request.IdempotencyKey is { } key && key != Guid.Empty)
         {
@@ -113,12 +138,39 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         string? emailError,
         CancellationToken cancellationToken = default)
     {
-        if (!IsConfigured || string.IsNullOrWhiteSpace(requestId) || !Guid.TryParse(requestId, out _))
+        if (!IsConfigured || string.IsNullOrWhiteSpace(requestId) || !Guid.TryParse(requestId, out var id))
         {
             return;
         }
 
         EnsureBaseAddress();
+
+        if (UseIngestRpc)
+        {
+            using var rpc = new HttpRequestMessage(HttpMethod.Post, "rest/v1/rpc/mark_support_email_result")
+            {
+                Content = JsonContent.Create(new
+                {
+                    p_secret = _support.IngestSecret,
+                    p_id = id,
+                    p_email_sent = emailSent,
+                    p_email_error = Truncate(emailError, 500)
+                }, options: JsonOptions)
+            };
+            ApplyHeaders(rpc);
+            using var rpcResponse = await _http.SendAsync(rpc, cancellationToken);
+            if (!rpcResponse.IsSuccessStatusCode)
+            {
+                var body = await rpcResponse.Content.ReadAsStringAsync(cancellationToken);
+                _logger.LogWarning(
+                    "Supabase email status RPC failed for {Id}: {Status} {Body}",
+                    requestId,
+                    (int)rpcResponse.StatusCode,
+                    Truncate(body, 500));
+            }
+
+            return;
+        }
 
         var payload = new Dictionary<string, object?>
         {
@@ -152,12 +204,41 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         string requestId,
         CancellationToken cancellationToken = default)
     {
-        if (!IsConfigured || string.IsNullOrWhiteSpace(requestId) || !Guid.TryParse(requestId, out _))
+        if (!IsConfigured || string.IsNullOrWhiteSpace(requestId) || !Guid.TryParse(requestId, out var id))
         {
             return EmailSendClaimResult.Failed;
         }
 
         EnsureBaseAddress();
+
+        if (UseIngestRpc)
+        {
+            using var rpc = new HttpRequestMessage(HttpMethod.Post, "rest/v1/rpc/claim_support_email_send")
+            {
+                Content = JsonContent.Create(new
+                {
+                    p_secret = _support.IngestSecret,
+                    p_id = id
+                }, options: JsonOptions)
+            };
+            ApplyHeaders(rpc);
+            using var rpcResponse = await _http.SendAsync(rpc, cancellationToken);
+            var body = await rpcResponse.Content.ReadAsStringAsync(cancellationToken);
+            if (!rpcResponse.IsSuccessStatusCode)
+            {
+                _logger.LogWarning(
+                    "Supabase email claim RPC failed for {Id}: {Status} {Body}",
+                    requestId,
+                    (int)rpcResponse.StatusCode,
+                    Truncate(body, 500));
+                return EmailSendClaimResult.Failed;
+            }
+
+            var result = body.Trim().Trim('"');
+            return string.Equals(result, "claimed", StringComparison.OrdinalIgnoreCase)
+                ? EmailSendClaimResult.Claimed
+                : EmailSendClaimResult.AlreadyHandled;
+        }
 
         var payload = new Dictionary<string, object?>
         {
@@ -175,18 +256,18 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         message.Headers.TryAddWithoutValidation("Prefer", "return=representation");
 
         using var response = await _http.SendAsync(message, cancellationToken);
-        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             _logger.LogWarning(
                 "Supabase email claim failed for {Id}: {Status} {Body}",
                 requestId,
                 (int)response.StatusCode,
-                Truncate(body, 500));
+                Truncate(responseBody, 500));
             return EmailSendClaimResult.Failed;
         }
 
-        using var doc = JsonDocument.Parse(body);
+        using var doc = JsonDocument.Parse(responseBody);
         if (doc.RootElement.ValueKind == JsonValueKind.Array && doc.RootElement.GetArrayLength() > 0)
         {
             return EmailSendClaimResult.Claimed;
@@ -195,11 +276,107 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         return EmailSendClaimResult.AlreadyHandled;
     }
 
+    private async Task<SupportMessageSaveResult> SaveViaIngestRpcAsync(
+        SupportRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        EnsureBaseAddress();
+
+        using var message = new HttpRequestMessage(HttpMethod.Post, "rest/v1/rpc/submit_support_message")
+        {
+            Content = JsonContent.Create(new
+            {
+                p_secret = _support.IngestSecret,
+                p_idempotency_key = request.IdempotencyKey == Guid.Empty ? (Guid?)null : request.IdempotencyKey,
+                p_name = request.Name,
+                p_email = request.Email,
+                p_phone = request.Phone,
+                p_company = request.Company,
+                p_system = request.System,
+                p_subject = request.Subject,
+                p_message = request.Message,
+                p_client_ip = Truncate(request.ClientIp, 64),
+                p_user_agent = Truncate(request.UserAgent, 512)
+            }, options: JsonOptions)
+        };
+        ApplyHeaders(message);
+
+        using var response = await _http.SendAsync(message, cancellationToken);
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("Supabase ingest RPC failed: {Status} {Body}", (int)response.StatusCode, Truncate(body, 500));
+            throw new InvalidOperationException("Supabase support_messages insert failed.");
+        }
+
+        using var doc = JsonDocument.Parse(body);
+        var root = doc.RootElement;
+        var id = root.TryGetProperty("id", out var idProp) ? idProp.GetString() : null;
+        var status = root.TryGetProperty("email_status", out var st) ? st.GetString() : "pending";
+        var already = root.TryGetProperty("already_persisted", out var ap) && ap.ValueKind == JsonValueKind.True;
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            throw new InvalidOperationException("Supabase ingest RPC returned no id.");
+        }
+
+        _logger.LogInformation("Support request saved via ingest RPC {Id}", id);
+        return new SupportMessageSaveResult
+        {
+            Id = id,
+            EmailStatus = status ?? "pending",
+            AlreadyPersisted = already
+        };
+    }
+
     private async Task<SupportMessageSaveResult?> FindByIdempotencyKeyAsync(
         Guid key,
         CancellationToken cancellationToken)
     {
         EnsureBaseAddress();
+
+        if (UseIngestRpc)
+        {
+            using var rpc = new HttpRequestMessage(HttpMethod.Post, "rest/v1/rpc/find_support_message_by_idempotency")
+            {
+                Content = JsonContent.Create(new
+                {
+                    p_secret = _support.IngestSecret,
+                    p_idempotency_key = key
+                }, options: JsonOptions)
+            };
+            ApplyHeaders(rpc);
+            using var rpcResponse = await _http.SendAsync(rpc, cancellationToken);
+            if (!rpcResponse.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var body = await rpcResponse.Content.ReadAsStringAsync(cancellationToken);
+            if (string.IsNullOrWhiteSpace(body) || body == "null")
+            {
+                return null;
+            }
+
+            using var doc = JsonDocument.Parse(body);
+            if (doc.RootElement.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined)
+            {
+                return null;
+            }
+
+            var id = doc.RootElement.TryGetProperty("id", out var idProp) ? idProp.GetString() : null;
+            var status = doc.RootElement.TryGetProperty("email_status", out var st) ? st.GetString() : "pending";
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null;
+            }
+
+            return new SupportMessageSaveResult
+            {
+                Id = id,
+                EmailStatus = status ?? "pending",
+                AlreadyPersisted = true
+            };
+        }
 
         using var message = new HttpRequestMessage(
             HttpMethod.Get,
@@ -212,25 +389,25 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
             return null;
         }
 
-        var body = await response.Content.ReadAsStringAsync(cancellationToken);
-        using var doc = JsonDocument.Parse(body);
-        if (doc.RootElement.ValueKind != JsonValueKind.Array || doc.RootElement.GetArrayLength() == 0)
+        var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+        using var arrayDoc = JsonDocument.Parse(responseBody);
+        if (arrayDoc.RootElement.ValueKind != JsonValueKind.Array || arrayDoc.RootElement.GetArrayLength() == 0)
         {
             return null;
         }
 
-        var row = doc.RootElement[0];
-        var id = row.TryGetProperty("id", out var idProp) ? idProp.GetString() : null;
-        var status = row.TryGetProperty("email_status", out var st) ? st.GetString() : "pending";
-        if (string.IsNullOrWhiteSpace(id))
+        var row = arrayDoc.RootElement[0];
+        var rowId = row.TryGetProperty("id", out var rowIdProp) ? rowIdProp.GetString() : null;
+        var rowStatus = row.TryGetProperty("email_status", out var rowSt) ? rowSt.GetString() : "pending";
+        if (string.IsNullOrWhiteSpace(rowId))
         {
             return null;
         }
 
         return new SupportMessageSaveResult
         {
-            Id = id,
-            EmailStatus = status ?? "pending",
+            Id = rowId,
+            EmailStatus = rowStatus ?? "pending",
             AlreadyPersisted = true
         };
     }
@@ -240,7 +417,7 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
         if (!IsConfigured)
         {
             throw new InvalidOperationException(
-                "Supabase is not configured. Set Supabase:Url and Supabase:ServiceRoleKey via environment variables.");
+                "Supabase is not configured. Set Supabase:Url with either ServiceRoleKey or PublishableKey + Support:IngestSecret.");
         }
 
         EnsureBaseAddress();
@@ -256,8 +433,9 @@ public sealed class SupabaseSupportRequestStore : ISupportRequestStore
 
     private void ApplyHeaders(HttpRequestMessage message)
     {
-        message.Headers.TryAddWithoutValidation("apikey", _settings.ServiceRoleKey);
-        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _settings.ServiceRoleKey);
+        var key = UseIngestRpc ? _settings.PublishableKey : _settings.ServiceRoleKey;
+        message.Headers.TryAddWithoutValidation("apikey", key);
+        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", key);
     }
 
     private static string? ReadId(JsonElement root)

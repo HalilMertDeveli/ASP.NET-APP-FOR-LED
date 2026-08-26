@@ -18,6 +18,8 @@ MapEnvAlias("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "Supabase__PublishableKey");
 MapEnvAlias("RESEND_API_KEY", "Resend__ApiKey");
 MapEnvAlias("RESEND_FROM_EMAIL", "Resend__FromEmail");
 MapEnvAlias("RESEND_TO_EMAIL", "Resend__ToEmail");
+MapEnvAlias("SUPPORT_EMAIL", "Resend__ToEmail");
+MapEnvAlias("SUPPORT_INGEST_SECRET", "Support__IngestSecret");
 
 // Vercel/dashboard sometimes sets empty env placeholders (""). That breaks bool/int binding.
 foreach (var key in new[]
@@ -34,10 +36,12 @@ foreach (var key in new[]
     "Resend__ApiKey",
     "Resend__FromEmail",
     "Resend__ToEmail",
+    "Support__IngestSecret",
     "SUPABASE_URL",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_SECRET_KEY",
-    "RESEND_API_KEY"
+    "RESEND_API_KEY",
+    "SUPPORT_INGEST_SECRET"
 })
 {
     var value = Environment.GetEnvironmentVariable(key);
@@ -210,29 +214,38 @@ static void LogSupportConfiguration(WebApplication app)
 
     var resendOk = !string.IsNullOrWhiteSpace(resend.ApiKey) &&
                    !resend.ApiKey.Contains("YOUR_", StringComparison.Ordinal);
-    var supabaseOk = !string.IsNullOrWhiteSpace(supabase.Url) &&
-                     !supabase.Url.Contains("YOUR_", StringComparison.Ordinal) &&
-                     !string.IsNullOrWhiteSpace(supabase.ServiceRoleKey) &&
-                     !supabase.ServiceRoleKey.Contains("YOUR_", StringComparison.Ordinal);
+    var serviceRoleOk = !string.IsNullOrWhiteSpace(supabase.Url) &&
+                        !supabase.Url.Contains("YOUR_", StringComparison.Ordinal) &&
+                        !string.IsNullOrWhiteSpace(supabase.ServiceRoleKey) &&
+                        !supabase.ServiceRoleKey.Contains("YOUR_", StringComparison.Ordinal);
+    var ingestOk = !string.IsNullOrWhiteSpace(supabase.Url) &&
+                   !supabase.Url.Contains("YOUR_", StringComparison.Ordinal) &&
+                   !string.IsNullOrWhiteSpace(supabase.PublishableKey) &&
+                   !supabase.PublishableKey.Contains("YOUR_", StringComparison.Ordinal) &&
+                   !string.IsNullOrWhiteSpace(support.IngestSecret) &&
+                   !support.IngestSecret.Contains("YOUR_", StringComparison.Ordinal);
+    var supabaseOk = serviceRoleOk || ingestOk;
 
     logger.LogInformation(
-        "Support mode={Mode}, ResendConfigured={Resend}, SupabaseConfigured={Supabase}, RequireStore={Req}, ToEmail={To}",
+        "Support mode={Mode}, ResendConfigured={Resend}, SupabaseConfigured={Supabase}, ServiceRole={ServiceRole}, IngestRpc={Ingest}, RequireStore={Req}, ToEmail={To}",
         support.Mode,
         resendOk,
         supabaseOk,
+        serviceRoleOk,
+        ingestOk,
         support.RequireStore,
         resend.ToEmail);
 
     if (!resendOk)
     {
         logger.LogError(
-            "Contact form will fail until Resend:ApiKey is set via user-secrets / env. " +
-            "Example: dotnet user-secrets set \"Resend:ApiKey\" \"re_xxx\"");
+            "Contact form mail will fail until Resend:ApiKey / RESEND_API_KEY is set. " +
+            "Example: vercel env add RESEND_API_KEY production");
     }
 
     if (!supabaseOk)
     {
         logger.LogError(
-            "Contact form persistence will fail until Supabase:Url and Supabase:ServiceRoleKey are set.");
+            "Contact form persistence will fail until Supabase:Url is set with either ServiceRoleKey or PublishableKey + Support:IngestSecret.");
     }
 }

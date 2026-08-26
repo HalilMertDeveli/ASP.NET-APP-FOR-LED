@@ -139,6 +139,7 @@ public sealed class ResendEmailService : IResendEmailService
             <p><strong>E-posta:</strong> {E(request.Email)}</p>
             <p><strong>Telefon:</strong> {E(request.Phone)}</p>
             <p><strong>Firma:</strong> {E(request.Company)}</p>
+            <p><strong>Sistem:</strong> {E(request.System)}</p>
             <p><strong>Konu:</strong> {E(request.Subject)}</p>
             <p><strong>Mesaj:</strong></p>
             <pre style="white-space:pre-wrap;font-family:inherit;">{E(request.Message)}</pre>
@@ -155,6 +156,7 @@ public sealed class ResendEmailService : IResendEmailService
         sb.AppendLine($"E-posta: {request.Email}");
         sb.AppendLine($"Telefon: {request.Phone ?? "-"}");
         sb.AppendLine($"Firma: {request.Company ?? "-"}");
+        sb.AppendLine($"Sistem: {request.System}");
         sb.AppendLine($"Konu: {request.Subject}");
         sb.AppendLine();
         sb.AppendLine("Mesaj:");
