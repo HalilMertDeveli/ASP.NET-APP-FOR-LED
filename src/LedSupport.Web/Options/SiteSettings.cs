@@ -6,10 +6,10 @@ public sealed class SiteSettings
 
     public string CompanyName { get; set; } = "Led Teknik Destek";
     public string Tagline { get; set; } = "LED Ekran Teknik Destek";
-    public string Email { get; set; } = "halilmertdeveliii@gmail.com";
-    public string Phone { get; set; } = "+90 542 519 2119";
-    public string PhoneHref { get; set; } = "tel:+905425192119";
-    public string WhatsAppUrl { get; set; } = "https://wa.me/905425192119";
+    public string Email { get; set; } = "musa_devay@hotmail.com";
+    public string Phone { get; set; } = "0542 817 11 29";
+    public string PhoneHref { get; set; } = "tel:+905428171129";
+    public string WhatsAppUrl { get; set; } = "https://wa.me/905428171129";
     public string BaseUrl { get; set; } = "https://localhost:5052";
     public string DefaultOgImage { get; set; } = "/images/og-default.svg";
 }
