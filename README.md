@@ -215,7 +215,7 @@ I (Halil Mert Develi) own this repository and built the application:
 - Built the realtime chat (server-side writes, Supabase Realtime for live updates).
 - Containerized the app and set up the Vercel container deployment with environment-based configuration.
 
-Some commits were made with AI-assisted tooling (Cursor), as recorded in the commit history.
+
 
 ## Limitations
 
